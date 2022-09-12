@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+//import 'package:mqtt_client/mqtt_client.dart';
+//import 'dart:io';
 import 'screens/login_page.dart';
 
 void main() {
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Authentication',
+      title: 'Smart Industry',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,

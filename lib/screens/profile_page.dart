@@ -22,38 +22,39 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     _currentUser = widget.user;
     super.initState();
+    print('UID ${_currentUser.uid}');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: Text('Perfil'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'NAME: ${_currentUser.displayName}',
+              'ID: ${_currentUser.uid}',
               style: Theme.of(context).textTheme.bodyText1,
             ),
             SizedBox(height: 16.0),
             Text(
-              'EMAIL: ${_currentUser.email}',
+              'email: ${_currentUser.email}',
               style: Theme.of(context).textTheme.bodyText1,
             ),
             SizedBox(height: 16.0),
             _currentUser.emailVerified
                 ? Text(
-                    'Email verified',
+                    'Email verificado',
                     style: Theme.of(context)
                         .textTheme
                         .bodyText1!
                         .copyWith(color: Colors.green),
                   )
                 : Text(
-                    'Email not verified',
+                    'Email NO verificado',
                     style: Theme.of(context)
                         .textTheme
                         .bodyText1!
@@ -75,7 +76,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             _isSendingVerification = false;
                           });
                         },
-                        child: Text('Verify email'),
+                        child: Text('Verifcar email'),
                       ),
                       SizedBox(width: 8.0),
                       IconButton(
@@ -110,9 +111,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       );
                     },
-                    child: Text('Sign out'),
+                    child: Text('Cerrar Cesión'),
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.red,
+                      backgroundColor: Colors.red,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),

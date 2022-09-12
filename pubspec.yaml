@@ -29,11 +29,15 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   firebase_core: ^1.0.4
-  firebase_auth: ^1.1.1
+  firebase_auth: ^3.8.0
+  mqtt_client: ^9.7.2
+  json_annotation: ^4.6.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+    #build_runner: ^2.0.0
+    #json_serializable: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

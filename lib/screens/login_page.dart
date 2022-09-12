@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_authentication/screens/profile_page.dart';
-import 'package:flutter_authentication/screens/register_page.dart';
-import 'package:flutter_authentication/utils/fire_auth.dart';
-import 'package:flutter_authentication/utils/validator.dart';
+import '/screens/profile_page.dart';
+import '/screens/register_page.dart';
+import '/screens/panel_page.dart';
+import '/utils/fire_auth.dart';
+import '/utils/validator.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -30,7 +31,8 @@ class _LoginPageState extends State<LoginPage> {
     if (user != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => ProfilePage(
+          // builder:(context) => PanelPage(),
+          builder: (context) => PanelPage(
             user: user,
           ),
         ),
@@ -49,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Firebase Authentication'),
+          title: Text('Panel de Ergonomia'),
         ),
         body: FutureBuilder(
           future: _initializeFirebase(),
@@ -63,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 24.0),
                       child: Text(
-                        'Login',
+                        'Acceder',
                         style: Theme.of(context).textTheme.headline1,
                       ),
                     ),
@@ -147,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                                           }
                                         },
                                         child: Text(
-                                          'Sign In',
+                                          'Entrar',
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),
@@ -164,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                                           );
                                         },
                                         child: Text(
-                                          'Register',
+                                          'Registrarse',
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),
