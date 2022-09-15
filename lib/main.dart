@@ -14,8 +14,9 @@ class MyApp extends StatelessWidget {
       title: 'Smart Industry',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        brightness: Brightness.light,
-        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Color(0xFF181616),
+        brightness: Brightness.dark,
+        //primarySwatch: Color(0xFF2196F3),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             textStyle: TextStyle(

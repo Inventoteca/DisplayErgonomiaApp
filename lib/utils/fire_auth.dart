@@ -17,8 +17,8 @@ class FireAuth {
       );
 
       user = userCredential.user;
-      await user!.updateProfile(displayName: name);
-      await user.reload();
+      //await user!.updateProfile(displayName: name);
+      await user?.reload();
       user = auth.currentUser;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_authentication/screens/login_page.dart';
 import 'package:flutter_authentication/utils/fire_auth.dart';
+import '/screens/panel_page.dart';
 
 class ProfilePage extends StatefulWidget {
   final User user;
@@ -43,6 +44,25 @@ class _ProfilePageState extends State<ProfilePage> {
             Text(
               'email: ${_currentUser.email}',
               style: Theme.of(context).textTheme.bodyText1,
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => PanelPage(
+                      user: _currentUser,
+                    ),
+                  ),
+                );
+              },
+              child: Text('Panel'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
             ),
             SizedBox(height: 16.0),
             _currentUser.emailVerified
