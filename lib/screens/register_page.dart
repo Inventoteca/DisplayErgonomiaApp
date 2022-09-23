@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_authentication/screens/profile_page.dart';
-import 'package:flutter_authentication/utils/fire_auth.dart';
-import 'package:flutter_authentication/utils/validator.dart';
+import '/screens/profile_page.dart';
+import '/utils/fire_auth.dart';
+import '/utils/validator.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -33,7 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Register'),
+          title: Text('Registro'),
         ),
         body: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -52,7 +52,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           name: value,
                         ),
                         decoration: InputDecoration(
-                          hintText: "Name",
+                          hintText: "Nombre",
                           errorBorder: UnderlineInputBorder(
                             borderRadius: BorderRadius.circular(6.0),
                             borderSide: BorderSide(
@@ -87,7 +87,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           password: value,
                         ),
                         decoration: InputDecoration(
-                          hintText: "Password",
+                          hintText: "Contraseña",
                           errorBorder: UnderlineInputBorder(
                             borderRadius: BorderRadius.circular(6.0),
                             borderSide: BorderSide(
@@ -118,6 +118,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                               _passwordTextController.text,
                                         );
 
+                                        await user?.updateDisplayName(
+                                            _nameTextController.text);
+
                                         setState(() {
                                           _isProcessing = false;
                                         });
@@ -135,7 +138,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       }
                                     },
                                     child: Text(
-                                      'Sign up',
+                                      'Registrar',
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),

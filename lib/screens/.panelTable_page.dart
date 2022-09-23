@@ -58,7 +58,41 @@ class _PanelPageState extends State<PanelPage> {
   //bool _isSigningOut = false;
 
   late User _currentUser;
-  final _icons = <String>[];
+  Map<String, IconData> iconsdata = {
+    'temp': Icons.thermostat_rounded,
+    'hum': Icons.water_drop,
+    'uv': Icons.sunny,
+    'db': Icons.campaign,
+    'lux': Icons.light_rounded,
+    'ppm': Icons.local_florist,
+    //),
+  };
+
+  final _sensorUnits = <String>[
+    '°C',
+    '%',
+    'UV',
+    'dB',
+    'Lux',
+    'PPM',
+  ];
+  final _sensorList = <String>[
+    '°C',
+    '%',
+    'UV',
+    'dB',
+    'Lux',
+    'PPM',
+  ];
+
+  //final _listOfIcons = List<num>.of(_icons);
+  //final tiles = _sensorList;
+  //final divided = tiles.isNotEmpty
+  //    ? ListTile.divideTiles(
+  //        context: context,
+  //        tiles: tiles,
+  //      ).toList()
+  //    : <Widget>[];
 
   //@override
   void initState() {
@@ -74,151 +108,44 @@ class _PanelPageState extends State<PanelPage> {
   //@override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: NavBar(user: _currentUser),
-      appBar: AppBar(
-        title: Text('Panel'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // --------- temperatura
-            Text.rich(
-              TextSpan(
-                children: <InlineSpan>[
-                  WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Icon(
-                        Icons.thermostat_rounded,
-                        color: Colors.white,
-                        size: 60,
-                      )),
-                  TextSpan(
-                      text: ' $pt1',
-                      style: TextStyle(fontSize: 50, color: _pt1Color)),
-                  TextSpan(
-                      text: ' °C',
-                      style: TextStyle(fontSize: 50, color: Colors.orange)),
-                ],
-              ),
-            ),
+        drawer: NavBar(user: _currentUser),
+        appBar: AppBar(
+          title: Text('Panel'),
+        ),
+        body: ListView.builder(
+            padding: const EdgeInsets.all(8),
+            itemCount: _sensorList.length,
+            itemBuilder: (context, int index) {
+              return Container(
+                height: 80,
+                //color: Colors.red,
+                child: Center(
+                  //child: Icon(iconsdata.values.elementAt(0)),
+                  child: Text(
+                    '${_sensorList.elementAt(index)}',
+                    //'text',
+                    //index.toString(),
+                    style: TextStyle(fontSize: 60.0),
+                  ),
+                ),
+              );
+            }));
 
-            //SevenSegmentDisplay(
-            //  value: pt1,
-            //  size: 5.0,
-            //  backgroundColor: Colors.transparent,
-            //  segmentStyle: HexSegmentStyle(
-            //    enabledColor: _pt1Color,
-            //    disabledColor: Colors.transparent,
-            //  ),
-            //),
+    // iconsdata.values.elementAt(0),
 
-            SizedBox(height: 16.0),
-            // --------- humedad
-            Text.rich(
-              TextSpan(
-                children: <InlineSpan>[
-                  WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Icon(
-                        Icons.water_drop,
-                        color: Colors.white,
-                        size: 60,
-                      )),
-                  TextSpan(
-                      text: ' $pt2',
-                      style: TextStyle(fontSize: 50, color: _pt2Color)),
-                  TextSpan(
-                      text: ' %',
-                      style: TextStyle(fontSize: 50, color: Colors.orange)),
-                ],
-              ),
-            ),
-            SizedBox(height: 16.0),
-            // --------- uv
-            Text.rich(
-              TextSpan(
-                children: <InlineSpan>[
-                  WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Icon(
-                        Icons.sunny,
-                        color: Colors.white,
-                        size: 60,
-                      )),
-                  TextSpan(
-                      text: '$pt3',
-                      style: TextStyle(fontSize: 50, color: _pt3Color)),
-                  TextSpan(
-                      text: ' UV',
-                      style: TextStyle(fontSize: 50, color: Colors.orange)),
-                ],
-              ),
-            ),
-            SizedBox(height: 16.0),
-            // --------- db
-            Text.rich(
-              TextSpan(
-                children: <InlineSpan>[
-                  WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Icon(
-                        Icons.campaign,
-                        color: Colors.white,
-                        size: 60,
-                      )),
-                  TextSpan(
-                      text: '$pt4',
-                      style: TextStyle(fontSize: 50, color: _pt4Color)),
-                  TextSpan(
-                      text: ' dB',
-                      style: TextStyle(fontSize: 50, color: Colors.orange)),
-                ],
-              ),
-            ),
-            SizedBox(height: 16.0),
-            // --------- lux
-            Text.rich(
-              TextSpan(
-                children: <InlineSpan>[
-                  WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Icon(
-                        Icons.light_rounded,
-                        color: Colors.white,
-                        size: 60,
-                      )),
-                  TextSpan(
-                      text: '$pt5',
-                      style: TextStyle(fontSize: 50, color: _pt5Color)),
-                  TextSpan(
-                      text: ' Lux',
-                      style: TextStyle(fontSize: 50, color: Colors.orange)),
-                ],
-              ),
-            ),
-            SizedBox(height: 16.0),
-            // --------- aire
-            Text.rich(
-              TextSpan(
-                children: <InlineSpan>[
-                  WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Icon(
-                        Icons.local_florist,
-                        color: Colors.white,
-                        size: 60,
-                      )),
-                  TextSpan(
-                      text: '$pt6',
-                      style: TextStyle(fontSize: 50, color: _pt6Color)),
-                  TextSpan(
-                      text: ' PPM',
-                      style: TextStyle(fontSize: 50, color: Colors.orange)),
-                ],
-              ),
-            ),
-            SizedBox(height: 16.0),
+    //_sensorList.elementAt(0),
+
+    //SevenSegmentDisplay(
+    //  value: pt1,
+    //  size: 5.0,
+    //  backgroundColor: Colors.transparent,
+    //  segmentStyle: HexSegmentStyle(
+    //    enabledColor: _pt1Color,
+    //    disabledColor: Colors.transparent,
+    //  ),
+    //),
+
+    /*          SizedBox(height: 16.0),
             Text(
               '$pt7',
               style: TextStyle(fontSize: 10, color: Colors.blueGrey),
@@ -258,7 +185,7 @@ class _PanelPageState extends State<PanelPage> {
           ],
         ),
       ),
-    );
+    );*/
   }
 
   Future _getId() async {
@@ -346,38 +273,38 @@ class _PanelPageState extends State<PanelPage> {
     if (event[0].topic.compareTo('inv/' + _currentUser.uid + '/temperatura') ==
         0)
       setState(() {
-        pt1 = message;
+        _sensorList[0] = message;
         _pt1Color = Colors.red;
       });
     else if (event[0].topic.compareTo('inv/' + _currentUser.uid + '/humedad') ==
         0)
       setState(() {
-        pt2 = message;
+        _sensorList[1] = message;
         _pt2Color = Colors.white;
       });
     else if (event[0].topic == 'inv/' + _currentUser.uid + '/uv')
       setState(() {
-        pt3 = message;
+        _sensorList[2] = message;
         _pt3Color = Colors.white;
       });
     else if (event[0].topic == 'inv/' + _currentUser.uid + '/ruido')
       setState(() {
-        pt4 = message;
+        _sensorList[3] = message;
         _pt4Color = Colors.white;
       });
     else if (event[0].topic == 'inv/' + _currentUser.uid + '/lux')
       setState(() {
-        pt5 = message;
+        _sensorList[4] = message;
         _pt5Color = Colors.red;
       });
     else if (event[0].topic == 'inv/' + _currentUser.uid + '/aire')
       setState(() {
-        pt6 = message;
+        _sensorList[5] = message;
         _pt6Color = Colors.white;
       });
     else {
       setState(() {
-        pt7 = message;
+        _sensorList[6] = message;
         _pt7Color = Colors.grey;
       });
     }

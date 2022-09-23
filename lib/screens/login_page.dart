@@ -3,7 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import '/screens/profile_page.dart';
 import '/screens/register_page.dart';
-import '/screens/panel_page.dart';
+//import '/screens/panel_page.dart';
+import '/screens/panelList_page.dart';
 import '/utils/fire_auth.dart';
 import '/utils/validator.dart';
 
@@ -31,7 +32,6 @@ class _LoginPageState extends State<LoginPage> {
     if (user != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          // builder:(context) => PanelPage(),
           builder: (context) => PanelPage(
             user: user,
           ),
@@ -61,14 +61,17 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.only(left: 24.0, right: 24.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 24.0),
-                      child: Text(
-                        'Acceder',
-                        style: Theme.of(context).textTheme.headline1,
-                      ),
+                  children: <Widget>[
+                    Image.asset(
+                      'lib/images/LogoVertical.png',
+                      fit: BoxFit.contain,
                     ),
+
+                    //child: Image.asset('images/logoVertical'),
+                    //  child: Image.file(
+                    //    file:'images/LogoVertical.png',
+                    //    fit: BoxFit.cover,),
+
                     Form(
                       key: _formKey,
                       child: Column(
