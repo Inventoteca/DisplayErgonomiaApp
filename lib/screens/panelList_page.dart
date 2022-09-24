@@ -39,16 +39,16 @@ MqttConnectionState? connectionState;
 
 StreamSubscription? subscription;
 
-class PanelPage extends StatefulWidget {
+class PanelListPage extends StatefulWidget {
   final User user;
 
-  const PanelPage({required this.user});
+  const PanelListPage({required this.user});
 
   @override
-  _PanelPageState createState() => _PanelPageState();
+  _PanelListPageState createState() => _PanelListPageState();
 }
 
-class _PanelPageState extends State<PanelPage> {
+class _PanelListPageState extends State<PanelListPage> {
   MqttServerClient? client = MqttServerClient(broker, clientID)
     ..port = port
     ..keepAlivePeriod = 20;

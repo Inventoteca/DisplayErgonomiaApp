@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:smart_industry/screens/NavBar.dart';
+import 'package:smart_industry/screens/panelList_page.dart';
+import 'package:smart_industry/screens/panel_page.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:json_rpc_2/json_rpc_2.dart';
 import 'package:flutter/material.dart';
@@ -26,22 +28,20 @@ class _devicelistState extends State<devicelist> {
     _currentUser = widget.user;
     connected = false; //initially connection status is "NO" so its FALSE
 
-    //_currentUser.updatePhotoURL(data);
+    _currentUser.updatePhotoURL(data);
     var dataList = jsonDecode(_currentUser.photoURL.toString());
 
     if (dataList != null) {
-      //debugPrint('Paneles: $dataList');
-      //panelDataList = dataList;
-      var tagObjsJson =
-          jsonDecode(_currentUser.photoURL.toString())['panels'] as List;
+      var tagObjsJson = jsonDecode(_currentUser.photoURL.toString()) as List;
 
       List<Tag> tagObjs =
           tagObjsJson.map((tagJson) => Tag.fromJson(tagJson)).toList();
 
       panelDataList = tagObjs;
-      debugPrint('Paneles: $tagObjs ');
+      debugPrint('Paneles: $panelDataList');
     } else {
       debugPrint('No hay panels');
+      panelDataList = List.empty();
     }
 
     // var tagObjsJson = jsonDecode(_currentUser.photoURL.toString())['panels'];
@@ -59,27 +59,48 @@ class _devicelistState extends State<devicelist> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawer: NavBar(user: _currentUser),
-        appBar: AppBar(
-          title: Text('Dispositivos'),
-        ),
-        body: ListView.builder(
-            itemCount: panelDataList.length,
-            itemBuilder: (context, int index) {
-              return Container(
-                height: 80,
-                //color: Colors.red,
-                child: Center(
-                  //child: Icon(iconsdata.values.elementAt(0)),
-                  child: Text(
-                    '${panelDataList.elementAt(index)}',
-                    //'text',
-                    //index.toString(),
-                    style: TextStyle(fontSize: 10.0),
-                  ),
-                ),
-              );
-            }));
+      drawer: NavBar(user: _currentUser),
+      appBar: AppBar(
+        title: Text('Dispositivos'),
+      ),
+      body: ListView.builder(
+          itemCount: panelDataList.length,
+          itemBuilder: (context, int index) {
+            return ElevatedButton(
+              child: Text('${panelDataList.elementAt(index)}'),
+              onPressed: () => {
+                //debugPrint('PanelPage'),
+                //PanelPage(
+                //  user: _currentUser,
+                //)
+                if (index == 0)
+                  {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => PanelListPage(user: _currentUser),
+                      ),
+                    ),
+                  }
+                else if (index == 1)
+                  {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => PanelPage(user: _currentUser),
+                      ),
+                    ),
+                  }
+              },
+              //color: Colors.red,
+              //child: Center(
+              //child: Icon(iconsdata.values.elementAt(0)),
+              // child: Text(
+              // '${panelDataList.elementAt(index)}',
+              //'text',
+              //index.toString(),
+              // style: TextStyle(fontSize: 10.0),
+            );
+          }),
+    );
   }
 }
 

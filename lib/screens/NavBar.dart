@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import '/screens/profile_page.dart';
-import '/screens/panel_page.dart';
+import '/screens/device_list_page.dart';
 
 class NavBar extends StatefulWidget {
   final User user;
@@ -58,7 +58,9 @@ class _NavBarState extends State<NavBar> {
             onTap: () => {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
-                  builder: (context) => PanelPage(user: _currentUser),
+                  builder: (context) => devicelist(
+                    user: _currentUser,
+                  ),
                 ),
               ),
             },
