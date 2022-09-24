@@ -247,13 +247,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.4"
-  json_annotation:
+  json_rpc_2:
     dependency: "direct main"
     description:
-      name: json_annotation
+      name: json_rpc_2
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.6.0"
+    version: "3.0.2"
   matcher:
     dependency: transitive
     description:
@@ -371,6 +371,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.2"
+  web_socket_channel:
+    dependency: "direct main"
+    description:
+      name: web_socket_channel
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.0"
   win32:
     dependency: transitive
     description:

@@ -77,8 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
               SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () async {
-                  await _currentUser
-                      .updateDisplayName(_nameTextController.text);
+                  await _currentUser.updatePhotoURL(_nameTextController.text);
                 },
                 child: Text('Actualizar'),
                 style: ElevatedButton.styleFrom(

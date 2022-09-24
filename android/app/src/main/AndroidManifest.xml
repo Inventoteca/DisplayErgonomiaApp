@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.flutter_authentication">
    <application
+        android:usesCleartextTraffic="true"
         android:label="Smart Industry"
         android:icon="@mipmap/launcher_icon">
         <activity

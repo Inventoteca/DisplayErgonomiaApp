@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import '/screens/profile_page.dart';
 import '/screens/register_page.dart';
+import 'device_list_page.dart';
 //import '/screens/panel_page.dart';
 import '/screens/panelList_page.dart';
 import '/utils/fire_auth.dart';
@@ -32,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     if (user != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => PanelPage(
+          builder: (context) => devicelist(
             user: user,
           ),
         ),
