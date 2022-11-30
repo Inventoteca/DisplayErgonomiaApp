@@ -32,10 +32,16 @@ dependencies:
   mqtt_client: ^9.7.2
   #json_annotation: ^4.6.0
   segment_display: ^0.5.0
-  device_info_plus: ^3.2.3
+  #device_info_plus: ^3.2.3
   device_info: ^2.0.3
   web_socket_channel: ^2.2.0
   json_rpc_2: ^3.0.2
+  #wifi_iot: ^0.3.17
+  #wifi_scan: ^0.4.0+1
+  esp_smartconfig: ^1.1.10
+  network_info_plus: ^2.3.0
+  permission_handler: ^10.0.2
+  #esptouch_flutter: ^1.0.0
   #firebase_storage: ^10.3.9
 
 #dependency_overrides:

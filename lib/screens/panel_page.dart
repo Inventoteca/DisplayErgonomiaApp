@@ -293,8 +293,11 @@ class _PanelPageState extends State<PanelPage> {
     final builder = MqttClientPayloadBuilder();
     builder.addString(message);
 
-    client?.publishMessage('inv/' + _currentUser.uid + '/app',
+    //client?.publishMessage('inv/' + _currentUser.uid + '/app',
+    //    MqttQos.atLeastOnce, builder.payload!);
+    client?.publishMessage('inv/' + '3C:71:BF:FC:BF:94' + '/app',
         MqttQos.atLeastOnce, builder.payload!);
+
     builder.clear();
   }
 
@@ -316,7 +319,7 @@ class _PanelPageState extends State<PanelPage> {
       client?.disconnect();
     }
 
-    final topic1 = 'inv/' + _currentUser.uid + '/#'; // Wildcard topic
+    final topic1 = 'inv/' + '3C:71:BF:FC:BF:94' + '/#'; // Wildcard topic
     client?.subscribe(topic1, MqttQos.atMostOnce);
     subscription = client?.updates?.listen(onMessage);
     onSubscribe(topic1);
@@ -343,34 +346,32 @@ class _PanelPageState extends State<PanelPage> {
     //print("[MQTT client] message with topic: ${event[0].topic}");
     debugPrint("[MQTT client] ${event[0].topic}: $message");
 
-    if (event[0].topic.compareTo('inv/' + _currentUser.uid + '/temperatura') ==
-        0)
+    if (event[0].topic.compareTo('inv/' + '3C:71:BF:FC:BF:94' + '/t') == 0)
       setState(() {
         pt1 = message;
         _pt1Color = Colors.red;
       });
-    else if (event[0].topic.compareTo('inv/' + _currentUser.uid + '/humedad') ==
-        0)
+    else if (event[0].topic.compareTo('inv/' + '3C:71:BF:FC:BF:94' + '/h') == 0)
       setState(() {
         pt2 = message;
         _pt2Color = Colors.white;
       });
-    else if (event[0].topic == 'inv/' + _currentUser.uid + '/uv')
+    else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/uv')
       setState(() {
         pt3 = message;
         _pt3Color = Colors.white;
       });
-    else if (event[0].topic == 'inv/' + _currentUser.uid + '/ruido')
+    else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/db')
       setState(() {
         pt4 = message;
         _pt4Color = Colors.white;
       });
-    else if (event[0].topic == 'inv/' + _currentUser.uid + '/lux')
+    else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/lux')
       setState(() {
         pt5 = message;
         _pt5Color = Colors.red;
       });
-    else if (event[0].topic == 'inv/' + _currentUser.uid + '/aire')
+    else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/ppm')
       setState(() {
         pt6 = message;
         _pt6Color = Colors.white;

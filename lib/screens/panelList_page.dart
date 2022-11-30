@@ -270,14 +270,12 @@ class _PanelListPageState extends State<PanelListPage> {
     //print("[MQTT client] message with topic: ${event[0].topic}");
     debugPrint("[MQTT client] ${event[0].topic}: $message");
 
-    if (event[0].topic.compareTo('inv/' + _currentUser.uid + '/temperatura') ==
-        0)
+    if (event[0].topic.compareTo('inv/' + _currentUser.uid + '/t') == 0)
       setState(() {
         _sensorList[0] = message;
         _pt1Color = Colors.red;
       });
-    else if (event[0].topic.compareTo('inv/' + _currentUser.uid + '/humedad') ==
-        0)
+    else if (event[0].topic.compareTo('inv/' + _currentUser.uid + '/h') == 0)
       setState(() {
         _sensorList[1] = message;
         _pt2Color = Colors.white;
@@ -287,7 +285,7 @@ class _PanelListPageState extends State<PanelListPage> {
         _sensorList[2] = message;
         _pt3Color = Colors.white;
       });
-    else if (event[0].topic == 'inv/' + _currentUser.uid + '/ruido')
+    else if (event[0].topic == 'inv/' + _currentUser.uid + '/db')
       setState(() {
         _sensorList[3] = message;
         _pt4Color = Colors.white;
@@ -297,7 +295,7 @@ class _PanelListPageState extends State<PanelListPage> {
         _sensorList[4] = message;
         _pt5Color = Colors.red;
       });
-    else if (event[0].topic == 'inv/' + _currentUser.uid + '/aire')
+    else if (event[0].topic == 'inv/' + _currentUser.uid + '/ppm')
       setState(() {
         _sensorList[5] = message;
         _pt6Color = Colors.white;

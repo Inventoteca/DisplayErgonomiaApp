@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Panel de Ergonomia'),
+          title: Text('Smart Industry'),
         ),
         body: FutureBuilder(
           future: _initializeFirebase(),
