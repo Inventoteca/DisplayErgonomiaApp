@@ -58,7 +58,7 @@ class _NavBarState extends State<NavBar> {
             onTap: () => {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
-                  builder: (context) => devicelist(
+                  builder: (context) => DeviceList(
                     user: _currentUser,
                   ),
                 ),

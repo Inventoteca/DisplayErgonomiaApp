@@ -1,5 +1,5 @@
 //import 'dart:async';
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, unused_element
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
@@ -18,7 +18,7 @@ String broker = 'inventoteca.com';
 int port = 1883;
 //String username         = 'fcg.._seu_user_no_brokerrix';
 //String passwd           = '0qVi...seu_pass_no_nroker';
-String clientID = 'androidabcd1';
+String clientID = '';
 String pt1 = '';
 String pt2 = '';
 String pt3 = '';
@@ -44,36 +44,28 @@ class PanelPage extends StatefulWidget {
 
   const PanelPage({required this.user, required String id});
 
-  @override
+  //@override
   _PanelPageState createState() => _PanelPageState();
 }
 
 class _PanelPageState extends State<PanelPage> {
-  // MqttServerClient? client = MqttServerClient(broker, clientID)
-  //   ..port = port
-  //   ..keepAlivePeriod = 0;
-  //  ..onSubscribed = onSubscribed;
-  //..onConnected = onConnected;
   MqttServerClient? client;
 
   //bool _isSigningOut = false;
 
   late User _currentUser;
-  final _icons = <String>[];
-
-  //@override
+  //final _icons = <String>[];
   void initState() {
     _currentUser = widget.user;
     _getId();
-    //connect(broker, _currentUser.uid);
-    //debugPrint('CID $clientID');
-    //connect(broker, clientID);
-    //Future<String> mqid = _getId();
-
-    //debugPrint('CID $_getId()');
-    //connect(broker, _getId());
     super.initState();
-    //debugPrint('UID ${_currentUser.uid}');
+  }
+
+  @override
+  void dispose() {
+    //timer.cancel();
+    onDisConnected();
+    super.dispose();
   }
 
   //@override
@@ -272,16 +264,13 @@ class _PanelPageState extends State<PanelPage> {
       // import 'dart:io'
       var iosDeviceInfo = await deviceInfo.iosInfo;
       clientID = iosDeviceInfo.identifierForVendor; // unique ID on iOS
-      //connect(broker, '$iosDeviceInfo');
     } else if (Platform.isAndroid) {
       var androidDeviceInfo = await deviceInfo.androidInfo;
       clientID = androidDeviceInfo.androidId; // unique ID on Android
-      //connect(broker, '$androidDeviceInfo');
     }
     debugPrint('CID $clientID');
     client = MqttServerClient(broker, clientID);
     connect(broker, clientID);
-    //return clientID;
   }
 
 //--------------------------------- onSubscribe
@@ -295,7 +284,8 @@ class _PanelPageState extends State<PanelPage> {
 
 // -------------------------------- onDisconected
   void onDisConnected() {
-    print('Disconnected');
+    debugPrint('Disconnected');
+    client?.disconnect();
   }
 
 // -------------------------------- onPublish
@@ -318,8 +308,8 @@ class _PanelPageState extends State<PanelPage> {
   void connect(String? top, String? left) async {
     print('mqtt conection');
     final connMessage = MqttConnectMessage()
-        .keepAliveFor(0)
-        .withWillTopic('inv/' + _currentUser.uid + '/app')
+        .keepAliveFor(10)
+        .withWillTopic('inv/' + '$_currentUser.email' + '/app')
         .withWillMessage('$left,$top')
         .startClean()
         .withWillQos(MqttQos.atLeastOnce);
@@ -340,60 +330,66 @@ class _PanelPageState extends State<PanelPage> {
 
 // ---------------------------------------------------------- onMsg
   void onMessage(List<MqttReceivedMessage> event) {
-    //print(event.length);
+    if (mounted) {
+//print(event.length);
 
-    //final topicFilter = MqttClientTopicFilter('inv/random', client?.updates);
+      //final topicFilter = MqttClientTopicFilter('inv/random', client?.updates);
 
-    final MqttPublishMessage recMess = event[0].payload as MqttPublishMessage;
-    final String message =
-        MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+      final MqttPublishMessage recMess = event[0].payload as MqttPublishMessage;
+      final String message =
+          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
-    /// The above may seem a little convoluted for users only interested in the
-    /// payload, some users however may be interested in the received publish message,
-    /// lets not constrain ourselves yet until the package has been in the wild
-    /// for a while.
-    /// The payload is a byte buffer, this will be specific to the topic
-    //debugPrint('[MQTT client] MQTT message: topic is <${event[0].topic}>, '
-    //    'payload is <-- $message -->');
-    //print(client.connectionState);
-    //print("[MQTT client] message with topic: ${event[0].topic}");
-    debugPrint("[MQTT client] ${event[0].topic}: $message");
+      /// The above may seem a little convoluted for users only interested in the
+      /// payload, some users however may be interested in the received publish message,
+      /// lets not constrain ourselves yet until the package has been in the wild
+      /// for a while.
+      /// The payload is a byte buffer, this will be specific to the topic
+      //debugPrint('[MQTT client] MQTT message: topic is <${event[0].topic}>, '
+      //    'payload is <-- $message -->');
 
-    if (event[0].topic.compareTo('inv/' + '3C:71:BF:FC:BF:94' + '/t') == 0)
-      setState(() {
-        pt1 = message;
-        _pt1Color = Colors.red;
-      });
-    else if (event[0].topic.compareTo('inv/' + '3C:71:BF:FC:BF:94' + '/h') == 0)
-      setState(() {
-        pt2 = message;
-        _pt2Color = Colors.white;
-      });
-    else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/uv')
-      setState(() {
-        pt3 = message;
-        _pt3Color = Colors.white;
-      });
-    else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/db')
-      setState(() {
-        pt4 = message;
-        _pt4Color = Colors.white;
-      });
-    else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/lux')
-      setState(() {
-        pt5 = message;
-        _pt5Color = Colors.red;
-      });
-    else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/ppm')
-      setState(() {
-        pt6 = message;
-        _pt6Color = Colors.white;
-      });
-    else {
-      setState(() {
-        pt7 = message;
-        _pt7Color = Colors.grey;
-      });
+      //print("[MQTT client] message with topic: ${event[0].topic}");
+
+      //debugPrint("[MQTT client] ${event[0].topic}: $message");
+
+      if (event[0].topic.compareTo('inv/' + '3C:71:BF:FC:BF:94' + '/t') == 0)
+        setState(() {
+          pt1 = message;
+          _pt1Color = Colors.red;
+        });
+      else if (event[0].topic.compareTo('inv/' + '3C:71:BF:FC:BF:94' + '/h') ==
+          0)
+        setState(() {
+          pt2 = message;
+          _pt2Color = Colors.white;
+        });
+      else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/uv')
+        setState(() {
+          pt3 = message;
+          _pt3Color = Colors.white;
+        });
+      else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/db')
+        setState(() {
+          pt4 = message;
+          _pt4Color = Colors.white;
+        });
+      else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/lux')
+        setState(() {
+          pt5 = message;
+          _pt5Color = Colors.red;
+        });
+      else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/ppm')
+        setState(() {
+          pt6 = message;
+          _pt6Color = Colors.white;
+        });
+      else {
+        setState(() {
+          pt7 = message;
+          _pt7Color = Colors.grey;
+        });
+      }
+    } else {
+      onDisConnected();
     }
   }
 }

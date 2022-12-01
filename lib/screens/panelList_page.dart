@@ -1,11 +1,11 @@
 //import 'dart:async';
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, unused_element
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '/screens/profile_page.dart';
+//import '/screens/profile_page.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 //import 'package:segment_display/segment_display.dart';

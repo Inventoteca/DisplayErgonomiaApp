@@ -1,15 +1,15 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:io';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+//import 'dart:io';
+//import 'package:flutter/src/widgets/container.dart';
+//import 'package:flutter/src/widgets/framework.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:esp_smartconfig/esp_smartconfig.dart';
 import 'package:loggerx/loggerx.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'dart:developer' as developer;
-import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
+//import 'package:flutter/services.dart';
+//import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_industry/screens/device_list_page.dart';
@@ -27,13 +27,13 @@ class AddDevice extends StatefulWidget {
 class _AddDeviceState extends State<AddDevice> {
   late User _currentUser;
   final info = NetworkInfo();
-  final String _connectionStatus = 'Unknown';
+  //final String _connectionStatus = 'Unknown';
   bool _isLoading = false;
   late String _ssid;
   late String _bssid;
   late String _password;
   late String _msg = 'Mensaje';
-  late String _data;
+  //late String _data;
   bool _isObscure = true;
   late List<Tag> panelDataList;
   final data =
@@ -69,7 +69,7 @@ class _AddDeviceState extends State<AddDevice> {
     //}
 
     _initNetworkInfo();
-    _ReadResponse();
+    readResponse();
   }
 
   // ---------------------------ssidListen
@@ -114,7 +114,7 @@ class _AddDeviceState extends State<AddDevice> {
     }
   }
 
-  Future<void> _ReadResponse() async {
+  Future<void> readResponse() async {
     provisioner.listen((response) async {
       log.info("Wait for response");
       String bssidResp = '$response';
@@ -150,7 +150,7 @@ class _AddDeviceState extends State<AddDevice> {
       });
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => devicelist(
+          builder: (context) => DeviceList(
             user: _currentUser,
           ),
         ),
@@ -211,7 +211,7 @@ class _AddDeviceState extends State<AddDevice> {
 
     String ssid = "";
     String bssid = "";
-    String msg_ssid = "";
+    String msgSsid = "";
 
     PermissionWithService locationPermission = Permission.locationWhenInUse;
     var permissionStatus = await locationPermission.status;
@@ -228,7 +228,7 @@ class _AddDeviceState extends State<AddDevice> {
         final info = NetworkInfo();
         ssid = await info.getWifiName() as String;
         bssid = await info.getWifiBSSID() as String;
-        msg_ssid = '${ssid.split('"')[1]}';
+        msgSsid = '${ssid.split('"')[1]}';
         //final splitted = ssid.split('"');
         // print(splitted[1]);
         // print(bssid);
@@ -240,7 +240,7 @@ class _AddDeviceState extends State<AddDevice> {
 
         setState(() {
           //_ssidFilter.text = ssid.split('"')[1];
-          _ssidFilter.text = msg_ssid;
+          _ssidFilter.text = msgSsid;
           _bssidFilter.text = bssid;
           _msg = "WiFi Details OK";
           developer.log(_ssidFilter.text);

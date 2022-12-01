@@ -5,7 +5,7 @@ import '/screens/profile_page.dart';
 import '/screens/register_page.dart';
 import 'device_list_page.dart';
 //import '/screens/panel_page.dart';
-import '/screens/panelList_page.dart';
+//import '/screens/panelList_page.dart';
 import '/utils/fire_auth.dart';
 import '/utils/validator.dart';
 
@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     if (user != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => devicelist(
+          builder: (context) => DeviceList(
             user: user,
           ),
         ),

@@ -7,17 +7,17 @@ import 'package:smart_industry/screens/device_add_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
-class devicelist extends StatefulWidget {
+class DeviceList extends StatefulWidget {
   //const webSocket({Key? key}) : super(key: key);
   final User user;
   final String id = "";
-  const devicelist({required this.user});
+  const DeviceList({required this.user});
 
   @override
-  State<devicelist> createState() => _devicelistState();
+  State<DeviceList> createState() => _DeviceListState();
 }
 
-class _devicelistState extends State<devicelist> {
+class _DeviceListState extends State<DeviceList> {
   late User _currentUser;
   late List<Tag> panelDataList;
 
