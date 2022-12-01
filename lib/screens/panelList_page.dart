@@ -18,7 +18,7 @@ String broker = 'inventoteca.com';
 int port = 1883;
 //String username         = 'fcg.._seu_user_no_brokerrix';
 //String passwd           = '0qVi...seu_pass_no_nroker';
-String clientID = 'androidabcd1';
+String clientID = '';
 String pt1 = '';
 String pt2 = '';
 String pt3 = '';
@@ -99,8 +99,8 @@ class _PanelListPageState extends State<PanelListPage> {
     _currentUser = widget.user;
     //connect(broker, _currentUser.uid);
     _getId();
-    debugPrint('CID $clientID');
-    connect(broker, clientID);
+    //debugPrint('CID $clientID');
+    //connect(broker, clientID);
     super.initState();
     debugPrint('UID ${_currentUser.uid}');
   }
@@ -198,6 +198,9 @@ class _PanelListPageState extends State<PanelListPage> {
       var androidDeviceInfo = await deviceInfo.androidInfo;
       clientID = androidDeviceInfo.androidId; // unique ID on Android
     }
+    debugPrint('CID $clientID');
+    //debugPrint('CID $clientID');
+    connect(broker, clientID);
   }
 
 //--------------------------------- onSubscribe

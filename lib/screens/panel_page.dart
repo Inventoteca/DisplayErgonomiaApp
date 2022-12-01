@@ -42,18 +42,19 @@ StreamSubscription? subscription;
 class PanelPage extends StatefulWidget {
   final User user;
 
-  const PanelPage({required this.user});
+  const PanelPage({required this.user, required String id});
 
   @override
   _PanelPageState createState() => _PanelPageState();
 }
 
 class _PanelPageState extends State<PanelPage> {
-  MqttServerClient? client = MqttServerClient(broker, clientID)
-    ..port = port
-    ..keepAlivePeriod = 20;
+  // MqttServerClient? client = MqttServerClient(broker, clientID)
+  //   ..port = port
+  //   ..keepAlivePeriod = 0;
   //  ..onSubscribed = onSubscribed;
   //..onConnected = onConnected;
+  MqttServerClient? client;
 
   //bool _isSigningOut = false;
 
@@ -63,12 +64,16 @@ class _PanelPageState extends State<PanelPage> {
   //@override
   void initState() {
     _currentUser = widget.user;
-    //connect(broker, _currentUser.uid);
     _getId();
-    debugPrint('CID $clientID');
-    connect(broker, clientID);
+    //connect(broker, _currentUser.uid);
+    //debugPrint('CID $clientID');
+    //connect(broker, clientID);
+    //Future<String> mqid = _getId();
+
+    //debugPrint('CID $_getId()');
+    //connect(broker, _getId());
     super.initState();
-    debugPrint('UID ${_currentUser.uid}');
+    //debugPrint('UID ${_currentUser.uid}');
   }
 
   //@override
@@ -267,10 +272,16 @@ class _PanelPageState extends State<PanelPage> {
       // import 'dart:io'
       var iosDeviceInfo = await deviceInfo.iosInfo;
       clientID = iosDeviceInfo.identifierForVendor; // unique ID on iOS
+      //connect(broker, '$iosDeviceInfo');
     } else if (Platform.isAndroid) {
       var androidDeviceInfo = await deviceInfo.androidInfo;
       clientID = androidDeviceInfo.androidId; // unique ID on Android
+      //connect(broker, '$androidDeviceInfo');
     }
+    debugPrint('CID $clientID');
+    client = MqttServerClient(broker, clientID);
+    connect(broker, clientID);
+    //return clientID;
   }
 
 //--------------------------------- onSubscribe
@@ -278,6 +289,7 @@ class _PanelPageState extends State<PanelPage> {
     if (connectionState == MqttConnectionState.connected) {
       print('[MQTT client] Subscribing to ${topic.trim()}');
       client?.subscribe(topic, MqttQos.exactlyOnce);
+      //client?.subscribe(topic, MqttQos.atMostOnce);
     }
   }
 
@@ -306,7 +318,7 @@ class _PanelPageState extends State<PanelPage> {
   void connect(String? top, String? left) async {
     print('mqtt conection');
     final connMessage = MqttConnectMessage()
-        //.keepAliveFor(60)
+        .keepAliveFor(0)
         .withWillTopic('inv/' + _currentUser.uid + '/app')
         .withWillMessage('$left,$top')
         .startClean()
@@ -320,9 +332,10 @@ class _PanelPageState extends State<PanelPage> {
     }
 
     final topic1 = 'inv/' + '3C:71:BF:FC:BF:94' + '/#'; // Wildcard topic
-    client?.subscribe(topic1, MqttQos.atMostOnce);
+    //client?.subscribe(topic1, MqttQos.atMostOnce);
+    //onSubscribe(topic1);
+    client?.subscribe(topic1, MqttQos.atLeastOnce);
     subscription = client?.updates?.listen(onMessage);
-    onSubscribe(topic1);
   }
 
 // ---------------------------------------------------------- onMsg

@@ -10,6 +10,7 @@ import 'dart:convert';
 class devicelist extends StatefulWidget {
   //const webSocket({Key? key}) : super(key: key);
   final User user;
+  final String id = "";
   const devicelist({required this.user});
 
   @override
@@ -21,16 +22,16 @@ class _devicelistState extends State<devicelist> {
   late List<Tag> panelDataList;
 
   late bool connected; //boolean value to track if WebSocket is connected
-  final data =
-      '[ {"id": "3C:71:BF:FC:BF:94", "type": "ergo", "name":"Inventoteca", "mod":true}, {"id": "123456", "type": "CRUZ", "name": "Demo", "mod":false}]';
+  //final data =
+  //  '[ {"id": "3C:71:BF:FC:BF:94", "type": "ergo", "name":"Inventoteca", "mod":true}, {"id": "123456", "type": "cruz", "name": "Demo", "mod":false}]';
 
-  // final data = '[]';
+  final data = '[]';
 
   void initState() {
     _currentUser = widget.user;
     connected = false; //initially connection status is "NO" so its FALSE
 
-    _currentUser.updatePhotoURL(data); //Uncoment for Test only
+    // _currentUser.updatePhotoURL(data); //Uncoment for Test only
     var dataList = jsonDecode(_currentUser.photoURL.toString());
 
     if (dataList != null) {
@@ -87,7 +88,17 @@ class _devicelistState extends State<devicelist> {
                 //PanelPage(
                 //  user: _currentUser,
                 //)
-                if (index == 0)
+                if (panelDataList.elementAt(index).tipo.compareTo("ergo") == 0)
+                  {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => PanelPage(
+                            user: _currentUser,
+                            id: panelDataList.elementAt(index).nombre),
+                      ),
+                    ),
+                  }
+                else if (panelDataList.elementAt(index).tipo == 'cruz')
                   {
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -95,11 +106,11 @@ class _devicelistState extends State<devicelist> {
                       ),
                     ),
                   }
-                else if (index == 1)
+                else // if (panelDataList.elementAt(index).tipo == 'cruz')
                   {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => PanelPage(user: _currentUser),
+                        builder: (context) => PanelListPage(user: _currentUser),
                       ),
                     ),
                   }
