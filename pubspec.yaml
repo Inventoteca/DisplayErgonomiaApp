@@ -41,6 +41,7 @@ dependencies:
   esp_smartconfig: ^1.1.10
   network_info_plus: ^2.3.0
   permission_handler: ^10.0.2
+  shared_preferences: ^2.0.15
   #esptouch_flutter: ^1.0.0
   #firebase_storage: ^10.3.9
 

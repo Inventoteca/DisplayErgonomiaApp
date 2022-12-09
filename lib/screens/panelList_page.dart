@@ -11,6 +11,7 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 //import 'package:segment_display/segment_display.dart';
 import 'package:device_info/device_info.dart';
 import '/screens/NavBar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:client_information/client_information.dart';
 //import 'package:json_annotation/json_annotation.dart';
 
@@ -36,8 +37,8 @@ late Color _pt7Color = Colors.black;
 const topicID = 'inv/random'; // Not a wildcard topic
 
 MqttConnectionState? connectionState;
-
 StreamSubscription? subscription;
+late SharedPreferences _prefs;
 
 class PanelListPage extends StatefulWidget {
   final User user;
@@ -108,7 +109,10 @@ class _PanelListPageState extends State<PanelListPage> {
   //@override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawer: NavBar(user: _currentUser),
+        drawer: NavBar(
+          user: _currentUser,
+          prefs: _prefs,
+        ),
         appBar: AppBar(
           title: Text('Panel'),
         ),

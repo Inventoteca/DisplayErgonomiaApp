@@ -5,6 +5,9 @@ import '/utils/fire_auth.dart';
 import '/utils/validator.dart';
 //import '/screens/panel_page.dart';
 import '/screens/NavBar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+late SharedPreferences _prefs;
 
 class ProfilePage extends StatefulWidget {
   final User user;
@@ -37,7 +40,10 @@ class _ProfilePageState extends State<ProfilePage> {
         _focusName.unfocus();
       },
       child: Scaffold(
-        drawer: NavBar(user: _currentUser),
+        drawer: NavBar(
+          user: _currentUser,
+          prefs: _prefs,
+        ),
         appBar: AppBar(
           title: Text('Perfil'),
         ),

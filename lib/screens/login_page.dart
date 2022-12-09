@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,16 @@ import 'device_list_page.dart';
 //import '/screens/panelList_page.dart';
 import '/utils/fire_auth.dart';
 import '/utils/validator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:device_info/device_info.dart';
+
+//late User _currentUser;
+//late User user;
+late SharedPreferences _prefs;
+late String broker = '';
+late int port = 0;
+late String mqttClient = '';
+//late User _currentUser;
 
 class LoginPage extends StatefulWidget {
   @override
@@ -25,6 +37,12 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _isProcessing = false;
 
+  void initState() {
+    //_currentUser = user;
+    _loadConfig();
+    super.initState();
+  }
+
   Future<FirebaseApp> _initializeFirebase() async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
 
@@ -35,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
         MaterialPageRoute(
           builder: (context) => DeviceList(
             user: user,
+            prefs: _prefs,
           ),
         ),
       );
@@ -192,5 +211,43 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  // -------------------------------- _getId
+  Future _getId() async {
+    var deviceInfo = DeviceInfoPlugin();
+    String clientID = '';
+    if (Platform.isIOS) {
+      // import 'dart:io'
+      var iosDeviceInfo = await deviceInfo.iosInfo;
+      clientID = iosDeviceInfo.identifierForVendor; // unique ID on iOS
+    } else if (Platform.isAndroid) {
+      var androidDeviceInfo = await deviceInfo.androidInfo;
+      clientID = androidDeviceInfo.androidId; // unique ID on Android
+    }
+    return clientID;
+  }
+
+  // -------------------------------- _loadConfig
+  Future _loadConfig() async {
+    final prefs = await SharedPreferences.getInstance();
+    final prefBroker = prefs.getString('broker') ?? 'inventoteca.com';
+    final prefPort = prefs.getInt('port') ?? 1883;
+    final prefMqttClient = prefs.getString('mqttClient') ?? await _getId();
+    setState(() {
+      mqttClient = prefMqttClient;
+      broker = prefBroker;
+      port = prefPort;
+      _prefs = prefs;
+
+      prefs.setString('broker', prefBroker);
+      prefs.setString('mqttClient', mqttClient);
+      prefs.setInt('port', port);
+
+      //debugPrint('$mqttClient');
+    });
+    //client = MqttServerClient('test.mosquitto.org', '');
+    //client = MqttServerClient(broker, mqttClient);
+    //connect('topicoapp', 'msg app');
   }
 }

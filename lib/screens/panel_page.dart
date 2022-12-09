@@ -11,8 +11,7 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 //import 'package:segment_display/segment_display.dart';
 import 'package:device_info/device_info.dart';
 import '/screens/NavBar.dart';
-//import 'package:client_information/client_information.dart';
-//import 'package:json_annotation/json_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 String broker = 'inventoteca.com';
 int port = 1883;
@@ -33,16 +32,19 @@ late Color _pt4Color = Colors.black;
 late Color _pt5Color = Colors.black;
 late Color _pt6Color = Colors.black;
 late Color _pt7Color = Colors.black;
-const topicID = 'inv/random'; // Not a wildcard topic
+//const topicID = 'inv/random'; // Not a wildcard topic
 
 MqttConnectionState? connectionState;
-
 StreamSubscription? subscription;
+late User _currentUser;
+late SharedPreferences _prefs;
 
 class PanelPage extends StatefulWidget {
   final User user;
+  final SharedPreferences prefs;
 
-  const PanelPage({required this.user, required String id});
+  const PanelPage(
+      {required this.user, required String id, required this.prefs});
 
   //@override
   _PanelPageState createState() => _PanelPageState();
@@ -53,17 +55,19 @@ class _PanelPageState extends State<PanelPage> {
 
   //bool _isSigningOut = false;
 
-  late User _currentUser;
+  //late User _currentUser;
+  late SharedPreferences prefs;
+
   //final _icons = <String>[];
   void initState() {
     _currentUser = widget.user;
+    _prefs = widget.prefs;
     _getId();
     super.initState();
   }
 
   @override
   void dispose() {
-    //timer.cancel();
     onDisConnected();
     super.dispose();
   }
@@ -71,7 +75,10 @@ class _PanelPageState extends State<PanelPage> {
   //@override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: NavBar(user: _currentUser),
+      drawer: NavBar(
+        user: _currentUser,
+        prefs: _prefs,
+      ),
       appBar: AppBar(
         title: Text('Panel'),
       ),
@@ -268,7 +275,7 @@ class _PanelPageState extends State<PanelPage> {
       var androidDeviceInfo = await deviceInfo.androidInfo;
       clientID = androidDeviceInfo.androidId; // unique ID on Android
     }
-    debugPrint('CID $clientID');
+    debugPrint('MID $clientID');
     client = MqttServerClient(broker, clientID);
     connect(broker, clientID);
   }
@@ -284,7 +291,7 @@ class _PanelPageState extends State<PanelPage> {
 
 // -------------------------------- onDisconected
   void onDisConnected() {
-    debugPrint('Disconnected');
+    debugPrint('Panel Disconnected');
     client?.disconnect();
   }
 
@@ -304,12 +311,12 @@ class _PanelPageState extends State<PanelPage> {
   }
 
 // --------------------------------- onConnected
-
   void connect(String? top, String? left) async {
-    print('mqtt conection');
+    print('mqtt conection panel');
     final connMessage = MqttConnectMessage()
-        .keepAliveFor(10)
-        .withWillTopic('inv/' + '$_currentUser.email' + '/app')
+        //.keepAliveFor(10)
+        //.withWillTopic('inv/' + '$_currentUser.email' + '/app')
+        .withWillTopic('inv/' + '${_currentUser.email}' + '/app')
         .withWillMessage('$left,$top')
         .startClean()
         .withWillQos(MqttQos.atLeastOnce);

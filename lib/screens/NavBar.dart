@@ -3,11 +3,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import '/screens/profile_page.dart';
 import '/screens/device_list_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+late SharedPreferences _prefs;
 
 class NavBar extends StatefulWidget {
   final User user;
+  final SharedPreferences prefs;
 
-  const NavBar({required this.user});
+  const NavBar({required this.user, required this.prefs});
 
   @override
   _NavBarState createState() => _NavBarState();
@@ -18,10 +22,7 @@ class _NavBarState extends State<NavBar> {
 
   void initState() {
     _currentUser = widget.user;
-    //connect(broker, _currentUser.uid);
-    //_getId();
-    //debugPrint('CID $clientID');
-    //connect(broker, clientID);
+    _prefs = widget.prefs;
     super.initState();
     debugPrint('UID ${_currentUser.displayName}');
   }
@@ -60,6 +61,7 @@ class _NavBarState extends State<NavBar> {
                 MaterialPageRoute(
                   builder: (context) => DeviceList(
                     user: _currentUser,
+                    prefs: _prefs,
                   ),
                 ),
               ),

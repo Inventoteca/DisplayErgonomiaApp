@@ -13,7 +13,10 @@ import 'dart:developer' as developer;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_industry/screens/device_list_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+
+late SharedPreferences _prefs;
 
 class AddDevice extends StatefulWidget {
   //const AddDevice({super.key});
@@ -152,6 +155,7 @@ class _AddDeviceState extends State<AddDevice> {
         MaterialPageRoute(
           builder: (context) => DeviceList(
             user: _currentUser,
+            prefs: _prefs,
           ),
         ),
       );
