@@ -20,7 +20,9 @@ MqttConnectionState? connectionState;
 StreamSubscription? subscription;
 late User _currentUser;
 late SharedPreferences _prefs;
-late List<Tag> panelDataList = List.empty();
+late List<dynamic> panelDataList = List.empty();
+String data =
+    '[ {"id": "3C:71:BF:FC:BF:94", "type": "ergo", "name":"Inventoteca", "mod":true}, {"id": "123456", "type": "cruz", "name": "Demo", "mod":false}]';
 
 class DeviceList extends StatefulWidget {
   //const webSocket({Key? key}) : super(key: key);
@@ -40,20 +42,21 @@ class _DeviceListState extends State<DeviceList> {
   //late User _currentUser;
   late SharedPreferences prefs;
 
-  //final data =
-  //  '[ {"id": "3C:71:BF:FC:BF:94", "type": "ergo", "name":"Inventoteca", "mod":true}, {"id": "123456", "type": "cruz", "name": "Demo", "mod":false}]';
-
   void initState() {
     _currentUser = widget.user;
     _prefs = widget.prefs;
+
+    // final data =
+    //     '[ {"id": "3C:71:BF:FC:BF:94", "type": "ergo", "name":"Inventoteca", "mod":true}, {"id": "123456", "type": "cruz", "name": "Demo", "mod":false}]';
+
+    //  _currentUser.updatePhotoURL(data); //Uncoment for Test only
+
     _loadPanels();
     _loadConfig();
     //_getId();
     super.initState();
 
     //connected = false; //initially connection status is "NO" so its FALSE
-
-    // _currentUser.updatePhotoURL(data); //Uncoment for Test only
 
     //final prefBroker = _prefs.getString('broker') ?? 'inventoteca.com';
     // final prefPort = _prefs.getInt('port') ?? 1883;
@@ -79,6 +82,96 @@ class _DeviceListState extends State<DeviceList> {
   //  super.dispose();
   //}
 
+  //------------------------------------------------------------- _loadPanels
+  void _loadPanels() {
+    //var dataList = jsonDecode(data);
+    //var dataList = jsonDecode(_currentUser.photoURL.toString());
+    List<dynamic> jsonDataList = jsonDecode(_currentUser.photoURL.toString());
+
+    if (jsonDataList.isNotEmpty) {
+      var tagObjsJson = jsonDecode(_currentUser.photoURL.toString()) as List;
+
+      // List<Tag> tagObjs =
+      //    tagObjsJson.map((tagJson) => Tag.fromJson(tagJson)).toList();
+
+      panelDataList = tagObjsJson;
+    } else {
+      debugPrint('No hay panels');
+      panelDataList = List.empty();
+
+      /*if (panelDataList.isEmpty) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => AddDevice(
+              user: _currentUser,
+            ),
+          ),
+        );
+      }*/
+    }
+    debugPrint('Load Panels: $panelDataList');
+  }
+
+  //------------------------------------------------------------- _panelDEL
+  Future<void> _panelDEL(var cmd) async {
+    Map<String, dynamic> data = jsonDecode(cmd);
+    //  var data = jsonDecode(
+    //      '{"id": "123fds", "tipo": "NEO", "nombre":"Nuevo", "mod":true}');
+
+    var dataList = jsonDecode(_currentUser.photoURL.toString());
+    bool delpanel = false;
+
+    List<dynamic> jsonDataList = dataList as List;
+
+    jsonDataList.forEach((element) {
+      //debugPrint('${element['id']}');
+      if ('${element['id']}' == '${data['id']}') {
+        delpanel = true;
+      } //else {
+      //newpanel = true;
+      //}
+    });
+
+    if (delpanel) {
+      jsonDataList.removeWhere((element) => element["id"] == "${data['id']}");
+      debugPrint('Removed panel ${data['id']}');
+      debugPrint('Panel: ${jsonEncode(jsonDataList)}');
+      await _currentUser.updatePhotoURL(jsonEncode(jsonDataList));
+    } else {
+      debugPrint('Panel not on list');
+    }
+  }
+
+  //------------------------------------------------------------- _panelADD
+  Future<void> _panelADD(var cmd) async {
+    Map<String, dynamic> data = jsonDecode(cmd);
+    //  var data = jsonDecode(
+    //      '{"id": "123fds", "tipo": "NEO", "nombre":"Nuevo", "mod":true}');
+
+    var dataList = jsonDecode(_currentUser.photoURL.toString());
+    bool newpanel = true;
+
+    List<dynamic> jsonDataList = dataList as List;
+
+    jsonDataList.forEach((element) {
+      debugPrint('${element['id']}');
+      if ('${element['id']}' == '${data['id']}') {
+        newpanel = false;
+      } //else {
+      //newpanel = true;
+      //}
+    });
+
+    if (newpanel) {
+      jsonDataList.add(data);
+      debugPrint('New panel');
+      debugPrint('Panel: ${jsonEncode(jsonDataList)}');
+      await _currentUser.updatePhotoURL(jsonEncode(jsonDataList));
+    } else {
+      debugPrint('Panel already on list');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,25 +187,26 @@ class _DeviceListState extends State<DeviceList> {
           itemBuilder: (context, int index) {
             return ElevatedButton(
               //child: Text('${panelDataList.elementAt(index)}'),
-              child: Text('${panelDataList.elementAt(index).nombre}'),
+              child: Text('${panelDataList.elementAt(index)['name']}'),
               onPressed: () => {
                 //debugPrint('PanelPage'),
                 //PanelPage(
                 //  user: _currentUser,
                 //)
-                if (panelDataList.elementAt(index).tipo.compareTo("ergo") == 0)
+                if (panelDataList.elementAt(index)['type'].compareTo("ergo") ==
+                    0)
                   {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => PanelPage(
                           user: _currentUser,
-                          id: panelDataList.elementAt(index).nombre,
+                          id: panelDataList.elementAt(index)['name'],
                           prefs: _prefs,
                         ),
                       ),
                     ),
                   }
-                else if (panelDataList.elementAt(index).tipo == 'cruz')
+                else if (panelDataList.elementAt(index)['type'] == 'cruz')
                   {
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -170,12 +264,6 @@ class _DeviceListState extends State<DeviceList> {
 
   // -------------------------------- _loadConfig
   Future _loadConfig() async {
-    //debugPrint('Broker $prefBroker');
-    //debugPrint('mqttClient $prefMqttClient');
-    //debugPrint('port $prefPort');
-    //debugPrint(left);
-    //debugPrint(top);
-    //var status = await _loadPanels();
     debugPrint('UID ${_prefs.getString('mqttClient')}');
     client = MqttServerClient.withPort('${_prefs.getString('broker')}',
         '${_prefs.getString('mqttClient')}', 1883);
@@ -222,9 +310,10 @@ class _DeviceListState extends State<DeviceList> {
         //.withWillTopic('inv/' + '$_currentUser.email' + '/app')
         .withWillTopic('inv/' + '${_currentUser.email}' + '/app')
         .withWillMessage('$left,$top')
-        .startClean()
+        //.startClean()
         .withClientIdentifier('$left')
-        .withWillQos(MqttQos.atLeastOnce);
+        //.withWillRetain()
+        .withWillQos(MqttQos.exactlyOnce);
     client?.connectionMessage = connMessage;
     try {
       await client!.connect();
@@ -251,38 +340,21 @@ class _DeviceListState extends State<DeviceList> {
       final String message =
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
-      debugPrint("[MQTT client] ${event[0].topic}: $message");
+      //debugPrint("[MQTT client] ${event[0].topic}: $message");
+
+      if (event[0].topic.compareTo('inv/' + '${_currentUser.email}' + '/add') ==
+          0) {
+        _panelADD(message);
+      } else if (event[0]
+              .topic
+              .compareTo('inv/' + '${_currentUser.email}' + '/del') ==
+          0) {
+        _panelDEL(message);
+      }
     } else {
       debugPrint('not mounted');
       onDisConnected();
     }
-  }
-}
-
-void _loadPanels() {
-  var dataList = jsonDecode(_currentUser.photoURL.toString());
-
-  if (dataList != null) {
-    var tagObjsJson = jsonDecode(_currentUser.photoURL.toString()) as List;
-
-    List<Tag> tagObjs =
-        tagObjsJson.map((tagJson) => Tag.fromJson(tagJson)).toList();
-
-    panelDataList = tagObjs;
-    debugPrint('Panel: $panelDataList');
-  } else {
-    debugPrint('No hay panels');
-    panelDataList = List.empty();
-
-    /*if (panelDataList.isEmpty) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => AddDevice(
-              user: _currentUser,
-            ),
-          ),
-        );
-      }*/
   }
 }
 
@@ -299,7 +371,7 @@ class Tag {
         json['name'] as String, json['mod'] as bool);
   }
 
-  //@override
+  @override
   String toString() {
     return '{ ${this.idpanel}, ${this.tipo} , ${this.nombre} , ${this.mod} }';
   }
