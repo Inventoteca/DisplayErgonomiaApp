@@ -126,11 +126,14 @@ class _RegisterPageState extends State<RegisterPage> {
                                         });
 
                                         if (user != null) {
+                                          var _prefs;
                                           Navigator.of(context)
                                               .pushAndRemoveUntil(
                                             MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ProfilePage(user: user),
+                                              builder: (context) => ProfilePage(
+                                                user: user,
+                                                prefs: _prefs,
+                                              ),
                                             ),
                                             ModalRoute.withName('/'),
                                           );

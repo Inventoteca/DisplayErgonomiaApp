@@ -11,8 +11,9 @@ late SharedPreferences _prefs;
 
 class ProfilePage extends StatefulWidget {
   final User user;
+  final SharedPreferences prefs;
 
-  const ProfilePage({required this.user});
+  const ProfilePage({required this.user, required this.prefs});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -29,6 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     _currentUser = widget.user;
+    _prefs = widget.prefs;
     super.initState();
     debugPrint('UID ${_currentUser.uid}');
   }

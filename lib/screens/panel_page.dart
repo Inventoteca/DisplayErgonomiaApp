@@ -1,23 +1,20 @@
-//import 'dart:async';
-// ignore_for_file: deprecated_member_use, unused_element
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '/screens/profile_page.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 //import 'package:segment_display/segment_display.dart';
-import 'package:device_info/device_info.dart';
+//import 'package:device_info/device_info.dart';
 import '/screens/NavBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-String broker = 'inventoteca.com';
-int port = 1883;
-//String username         = 'fcg.._seu_user_no_brokerrix';
-//String passwd           = '0qVi...seu_pass_no_nroker';
-String clientID = '';
+MqttConnectionState? connectionState;
+StreamSubscription? subscription;
+late User _currentUser;
+late SharedPreferences _prefs;
+late String _panelID;
+
 String pt1 = '';
 String pt2 = '';
 String pt3 = '';
@@ -32,19 +29,13 @@ late Color _pt4Color = Colors.black;
 late Color _pt5Color = Colors.black;
 late Color _pt6Color = Colors.black;
 late Color _pt7Color = Colors.black;
-//const topicID = 'inv/random'; // Not a wildcard topic
-
-MqttConnectionState? connectionState;
-StreamSubscription? subscription;
-late User _currentUser;
-late SharedPreferences _prefs;
 
 class PanelPage extends StatefulWidget {
   final User user;
   final SharedPreferences prefs;
+  final String id;
 
-  const PanelPage(
-      {required this.user, required String id, required this.prefs});
+  const PanelPage({required this.user, required this.prefs, required this.id});
 
   //@override
   _PanelPageState createState() => _PanelPageState();
@@ -62,7 +53,9 @@ class _PanelPageState extends State<PanelPage> {
   void initState() {
     _currentUser = widget.user;
     _prefs = widget.prefs;
-    _getId();
+    _panelID = widget.id;
+    debugPrint(_panelID);
+    _loadConfig();
     super.initState();
   }
 
@@ -230,7 +223,12 @@ class _PanelPageState extends State<PanelPage> {
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () async {
-                onPublish('Hola');
+                onPublish(
+                    '0',
+                    '${_prefs.getString('rootTopic')}' +
+                        'panels/' +
+                        _panelID +
+                        '/app');
               },
               child: Text('Enviar'),
               style: ElevatedButton.styleFrom(
@@ -247,6 +245,7 @@ class _PanelPageState extends State<PanelPage> {
                   MaterialPageRoute(
                     builder: (context) => ProfilePage(
                       user: _currentUser,
+                      prefs: _prefs,
                     ),
                   ),
                 );
@@ -265,19 +264,29 @@ class _PanelPageState extends State<PanelPage> {
     );
   }
 
-  Future _getId() async {
-    var deviceInfo = DeviceInfoPlugin();
-    if (Platform.isIOS) {
-      // import 'dart:io'
-      var iosDeviceInfo = await deviceInfo.iosInfo;
-      clientID = iosDeviceInfo.identifierForVendor; // unique ID on iOS
-    } else if (Platform.isAndroid) {
-      var androidDeviceInfo = await deviceInfo.androidInfo;
-      clientID = androidDeviceInfo.androidId; // unique ID on Android
-    }
-    debugPrint('MID $clientID');
-    client = MqttServerClient(broker, clientID);
-    connect(broker, clientID);
+  //Future _getId() async {
+  //  var deviceInfo = DeviceInfoPlugin();
+  //  if (Platform.isIOS) {
+  // import 'dart:io'
+  //    var iosDeviceInfo = await deviceInfo.iosInfo;
+  //    clientID = iosDeviceInfo.identifierForVendor; // unique ID on iOS
+  //  } else if (Platform.isAndroid) {
+  //    var androidDeviceInfo = await deviceInfo.androidInfo;
+  //    clientID = androidDeviceInfo.androidId; // unique ID on Android
+  //  }
+  //  debugPrint('MID $clientID');
+  //client = MqttServerClient(broker, clientID);
+  //connect(broker, clientID);
+  //}
+
+  // -------------------------------- _loadConfig
+  Future _loadConfig() async {
+    debugPrint('UID ${_prefs.getString('mqttClient')}');
+    client = MqttServerClient.withPort('${_prefs.getString('broker')}',
+        '${_prefs.getString('mqttClient')}', 1883);
+    //client = MqttServerClient(broker, mqttClient);
+    connect('prefBroker', '${_prefs.getString('mqttClient')}');
+    //MqttUtilities.asyncSleep(60);
   }
 
 //--------------------------------- onSubscribe
@@ -292,11 +301,13 @@ class _PanelPageState extends State<PanelPage> {
 // -------------------------------- onDisconected
   void onDisConnected() {
     debugPrint('Panel Disconnected');
+    onPublish('0',
+        '${_prefs.getString('rootTopic')}' + 'panels/' + _panelID + '/app');
     client?.disconnect();
   }
 
 // -------------------------------- onPublish
-  void onPublish(String message) {
+  void onPublish(String message, String topic) {
     print('send msg: $message');
 
     final builder = MqttClientPayloadBuilder();
@@ -304,8 +315,7 @@ class _PanelPageState extends State<PanelPage> {
 
     //client?.publishMessage('inv/' + _currentUser.uid + '/app',
     //    MqttQos.atLeastOnce, builder.payload!);
-    client?.publishMessage('inv/' + '3C:71:BF:FC:BF:94' + '/app',
-        MqttQos.atLeastOnce, builder.payload!);
+    client?.publishMessage('$topic', MqttQos.atLeastOnce, builder.payload!);
 
     builder.clear();
   }
@@ -316,10 +326,14 @@ class _PanelPageState extends State<PanelPage> {
     final connMessage = MqttConnectMessage()
         //.keepAliveFor(10)
         //.withWillTopic('inv/' + '$_currentUser.email' + '/app')
-        .withWillTopic('inv/' + '${_currentUser.email}' + '/app')
-        .withWillMessage('$left,$top')
+        .withWillTopic('${_prefs.getString('rootTopic')}' +
+            'panels/' +
+            '$_panelID' +
+            '/app')
+        .withWillMessage('0')
         .startClean()
-        .withWillQos(MqttQos.atLeastOnce);
+        //.withWillRetain()
+        .withWillQos(MqttQos.exactlyOnce);
     client?.connectionMessage = connMessage;
     try {
       await client?.connect();
@@ -328,11 +342,17 @@ class _PanelPageState extends State<PanelPage> {
       client?.disconnect();
     }
 
-    final topic1 = 'inv/' + '3C:71:BF:FC:BF:94' + '/#'; // Wildcard topic
+    final topic1 = '${_prefs.getString('rootTopic')}' +
+        'panels/' +
+        _panelID +
+        '/#'; // Wildcard topic
     //client?.subscribe(topic1, MqttQos.atMostOnce);
     //onSubscribe(topic1);
     client?.subscribe(topic1, MqttQos.atLeastOnce);
     subscription = client?.updates?.listen(onMessage);
+
+    onPublish('1',
+        '${_prefs.getString('rootTopic')}' + 'panels/' + _panelID + '/app');
   }
 
 // ---------------------------------------------------------- onMsg
@@ -358,40 +378,65 @@ class _PanelPageState extends State<PanelPage> {
 
       //debugPrint("[MQTT client] ${event[0].topic}: $message");
 
-      if (event[0].topic.compareTo('inv/' + '3C:71:BF:FC:BF:94' + '/t') == 0)
+      if (event[0].topic.compareTo('${_prefs.getString('rootTopic')}' +
+              'panels/' +
+              _panelID +
+              '/sensors/t') ==
+          0)
         setState(() {
           pt1 = message;
           _pt1Color = Colors.red;
         });
-      else if (event[0].topic.compareTo('inv/' + '3C:71:BF:FC:BF:94' + '/h') ==
+      else if (event[0].topic.compareTo('${_prefs.getString('rootTopic')}' +
+              'panels/' +
+              _panelID +
+              '/sensors/h') ==
           0)
         setState(() {
           pt2 = message;
           _pt2Color = Colors.white;
         });
-      else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/uv')
+      else if (event[0].topic ==
+          '${_prefs.getString('rootTopic')}' +
+              'panels/' +
+              _panelID +
+              '/sensors/uv')
         setState(() {
           pt3 = message;
           _pt3Color = Colors.white;
         });
-      else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/db')
+      else if (event[0].topic ==
+          '${_prefs.getString('rootTopic')}' +
+              'panels/' +
+              _panelID +
+              '/sensors/db')
         setState(() {
           pt4 = message;
           _pt4Color = Colors.white;
         });
-      else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/lux')
+      else if (event[0].topic ==
+          '${_prefs.getString('rootTopic')}' +
+              'panels/' +
+              _panelID +
+              '/sensors/lux')
         setState(() {
           pt5 = message;
           _pt5Color = Colors.red;
         });
-      else if (event[0].topic == 'inv/' + '3C:71:BF:FC:BF:94' + '/ppm')
+      else if (event[0].topic ==
+          '${_prefs.getString('rootTopic')}' +
+              'panels/' +
+              _panelID +
+              '/sensors/ppm')
         setState(() {
           pt6 = message;
           _pt6Color = Colors.white;
         });
       else {
         setState(() {
-          pt7 = message;
+          //debugPrint(message);
+          debugPrint("[MQTT client] ${event[0].topic}: $message");
+          //pt7 = message;
           _pt7Color = Colors.grey;
         });
       }

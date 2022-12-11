@@ -165,7 +165,10 @@ class _LoginPageState extends State<LoginPage> {
                                                   .pushReplacement(
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      ProfilePage(user: user),
+                                                      ProfilePage(
+                                                    user: user,
+                                                    prefs: _prefs,
+                                                  ),
                                                 ),
                                               );
                                             }
@@ -234,15 +237,18 @@ class _LoginPageState extends State<LoginPage> {
     final prefBroker = prefs.getString('broker') ?? 'inventoteca.com';
     final prefPort = prefs.getInt('port') ?? 1883;
     final prefMqttClient = prefs.getString('mqttClient') ?? await _getId();
+    final rootTopic = prefs.getString('rootTopic') ?? 'smart/';
     setState(() {
       mqttClient = prefMqttClient;
       broker = prefBroker;
       port = prefPort;
+
       _prefs = prefs;
 
       prefs.setString('broker', prefBroker);
       prefs.setString('mqttClient', mqttClient);
       prefs.setInt('port', port);
+      prefs.setString('rootTopic', rootTopic);
 
       //debugPrint('$mqttClient');
     });

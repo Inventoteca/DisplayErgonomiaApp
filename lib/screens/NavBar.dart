@@ -100,7 +100,10 @@ class _NavBarState extends State<NavBar> {
               onTap: () => {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (context) => ProfilePage(user: _currentUser),
+                        builder: (context) => ProfilePage(
+                          user: _currentUser,
+                          prefs: _prefs,
+                        ),
                       ),
                     ),
                   }),

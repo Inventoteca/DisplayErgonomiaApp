@@ -6,4 +6,11 @@ smart/users/'$email'/del
 smart/users/'$email'/del
 
 
-smart/panels/'$id'/add
+smart/panels/'$id'/app
+smart/panels/'$id'/sensors
+smart/panels/'$id'/sensors/t
+smart/panels/'$id'/sensors/h
+smart/panels/'$id'/sensors/uv
+smart/panels/'$id'/sensors/db
+smart/panels/'$id'/sensors/lux
+smart/panels/'$id'/sensors/ppm

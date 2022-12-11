@@ -42,8 +42,9 @@ late SharedPreferences _prefs;
 
 class PanelListPage extends StatefulWidget {
   final User user;
+  final SharedPreferences prefs;
 
-  const PanelListPage({required this.user});
+  const PanelListPage({required this.user, required this.prefs});
 
   @override
   _PanelListPageState createState() => _PanelListPageState();
@@ -98,6 +99,7 @@ class _PanelListPageState extends State<PanelListPage> {
   //@override
   void initState() {
     _currentUser = widget.user;
+    _prefs = widget.prefs;
     //connect(broker, _currentUser.uid);
     _getId();
     //debugPrint('CID $clientID');

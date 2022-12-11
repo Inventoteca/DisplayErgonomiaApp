@@ -6,23 +6,19 @@ import 'package:smart_industry/screens/device_add_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:async';
-import 'dart:io';
-import 'package:device_info/device_info.dart';
+//import 'dart:io';
+//import 'package:device_info/device_info.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-//import '../.mqtt_client.dart';
-String clientID = '';
-String broker = 'inventoteca.com';
-int port = 1883;
 MqttConnectionState? connectionState;
 StreamSubscription? subscription;
 late User _currentUser;
 late SharedPreferences _prefs;
 late List<dynamic> panelDataList = List.empty();
-String data =
-    '[ {"id": "3C:71:BF:FC:BF:94", "type": "ergo", "name":"Inventoteca", "mod":true}, {"id": "123456", "type": "cruz", "name": "Demo", "mod":false}]';
+//String data =
+//    '[ {"id": "3C:71:BF:FC:BF:94", "type": "ergo", "name":"Inventoteca", "mod":true}, {"id": "123456", "type": "cruz", "name": "Demo", "mod":false}]';
 
 class DeviceList extends StatefulWidget {
   //const webSocket({Key? key}) : super(key: key);
@@ -31,7 +27,7 @@ class DeviceList extends StatefulWidget {
 
   const DeviceList({required this.user, required this.prefs});
 
-  //@override
+  @override
   _DeviceListState createState() => _DeviceListState();
 }
 
@@ -46,13 +42,12 @@ class _DeviceListState extends State<DeviceList> {
     _currentUser = widget.user;
     _prefs = widget.prefs;
 
-    // final data =
-    //     '[ {"id": "3C:71:BF:FC:BF:94", "type": "ergo", "name":"Inventoteca", "mod":true}, {"id": "123456", "type": "cruz", "name": "Demo", "mod":false}]';
+    //final data =
+    //    '[ {"id": "3C:71:BF:FC:BF:94", "type": "ergo", "name":"Inventoteca", "mod":true}, {"id": "123456", "type": "cruz", "name": "Demo", "mod":false}]';
 
     //  _currentUser.updatePhotoURL(data); //Uncoment for Test only
-
-    _loadPanels();
     _loadConfig();
+
     //_getId();
     super.initState();
 
@@ -61,18 +56,6 @@ class _DeviceListState extends State<DeviceList> {
     //final prefBroker = _prefs.getString('broker') ?? 'inventoteca.com';
     // final prefPort = _prefs.getInt('port') ?? 1883;
     // final prefMqttClient = _prefs.getString('mqttClient') ?? 'genericID';
-
-    //client = MqttServerClient('$prefBroker', '$prefMqttClient');
-
-    // var tagObjsJson = jsonDecode(_currentUser.photoURL.toString())['panels'];
-    //   ? jsonDecode(_currentUser.photoURL.toString())['panels'] as List
-    //    : List.empty();
-    //var tagObjsJson = _currentUser.photoURL;
-
-    //List<Tag> tagObjs =
-    //  tagObjsJson.map((tagJson) => Tag.fromJson(tagJson)).toList();
-    //debugPrint('Paneles: $tagObjsJson');
-    //debugPrint('Paneles: ${_currentUser.photoURL}');
   }
 
   //@override
@@ -118,27 +101,29 @@ class _DeviceListState extends State<DeviceList> {
     //  var data = jsonDecode(
     //      '{"id": "123fds", "tipo": "NEO", "nombre":"Nuevo", "mod":true}');
 
-    var dataList = jsonDecode(_currentUser.photoURL.toString());
-    bool delpanel = false;
+    if (data.isNotEmpty) {
+      var dataList = jsonDecode(_currentUser.photoURL.toString());
+      bool delpanel = false;
 
-    List<dynamic> jsonDataList = dataList as List;
+      List<dynamic> jsonDataList = dataList as List;
 
-    jsonDataList.forEach((element) {
-      //debugPrint('${element['id']}');
-      if ('${element['id']}' == '${data['id']}') {
-        delpanel = true;
-      } //else {
-      //newpanel = true;
-      //}
-    });
+      jsonDataList.forEach((element) {
+        //debugPrint('${element['id']}');
+        if ('${element['id']}' == '${data['id']}') {
+          delpanel = true;
+        } //else {
+        //newpanel = true;
+        //}
+      });
 
-    if (delpanel) {
-      jsonDataList.removeWhere((element) => element["id"] == "${data['id']}");
-      debugPrint('Removed panel ${data['id']}');
-      debugPrint('Panel: ${jsonEncode(jsonDataList)}');
-      await _currentUser.updatePhotoURL(jsonEncode(jsonDataList));
-    } else {
-      debugPrint('Panel not on list');
+      if (delpanel) {
+        jsonDataList.removeWhere((element) => element["id"] == "${data['id']}");
+        debugPrint('Removed panel ${data['id']}');
+        debugPrint('Panel: ${jsonEncode(jsonDataList)}');
+        await _currentUser.updatePhotoURL(jsonEncode(jsonDataList));
+      } else {
+        debugPrint('Panel not on list');
+      }
     }
   }
 
@@ -148,27 +133,29 @@ class _DeviceListState extends State<DeviceList> {
     //  var data = jsonDecode(
     //      '{"id": "123fds", "tipo": "NEO", "nombre":"Nuevo", "mod":true}');
 
-    var dataList = jsonDecode(_currentUser.photoURL.toString());
-    bool newpanel = true;
+    if (data.isNotEmpty) {
+      var dataList = jsonDecode(_currentUser.photoURL.toString());
+      bool newpanel = true;
 
-    List<dynamic> jsonDataList = dataList as List;
+      List<dynamic> jsonDataList = dataList as List;
 
-    jsonDataList.forEach((element) {
-      debugPrint('${element['id']}');
-      if ('${element['id']}' == '${data['id']}') {
-        newpanel = false;
-      } //else {
-      //newpanel = true;
-      //}
-    });
+      jsonDataList.forEach((element) {
+        debugPrint('${element['id']}');
+        if ('${element['id']}' == '${data['id']}') {
+          newpanel = false;
+        } //else {
+        //newpanel = true;
+        //}
+      });
 
-    if (newpanel) {
-      jsonDataList.add(data);
-      debugPrint('New panel');
-      debugPrint('Panel: ${jsonEncode(jsonDataList)}');
-      await _currentUser.updatePhotoURL(jsonEncode(jsonDataList));
-    } else {
-      debugPrint('Panel already on list');
+      if (newpanel) {
+        jsonDataList.add(data);
+        debugPrint('New panel');
+        debugPrint('Panel: ${jsonEncode(jsonDataList)}');
+        await _currentUser.updatePhotoURL(jsonEncode(jsonDataList));
+      } else {
+        debugPrint('Panel already on list');
+      }
     }
   }
 
@@ -193,14 +180,13 @@ class _DeviceListState extends State<DeviceList> {
                 //PanelPage(
                 //  user: _currentUser,
                 //)
-                if (panelDataList.elementAt(index)['type'].compareTo("ergo") ==
-                    0)
+                if (panelDataList.elementAt(index)['type'] == 'ergo')
                   {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => PanelPage(
                           user: _currentUser,
-                          id: panelDataList.elementAt(index)['name'],
+                          id: panelDataList.elementAt(index)['id'],
                           prefs: _prefs,
                         ),
                       ),
@@ -210,7 +196,10 @@ class _DeviceListState extends State<DeviceList> {
                   {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => PanelListPage(user: _currentUser),
+                        builder: (context) => PanelListPage(
+                          user: _currentUser,
+                          prefs: _prefs,
+                        ),
                       ),
                     ),
                   }
@@ -218,7 +207,10 @@ class _DeviceListState extends State<DeviceList> {
                   {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => PanelListPage(user: _currentUser),
+                        builder: (context) => PanelListPage(
+                          user: _currentUser,
+                          prefs: _prefs,
+                        ),
                       ),
                     ),
                   }
@@ -247,29 +239,30 @@ class _DeviceListState extends State<DeviceList> {
     );
   }
 
-  Future _getId() async {
-    var deviceInfo = DeviceInfoPlugin();
-    if (Platform.isIOS) {
-      // import 'dart:io'
-      var iosDeviceInfo = await deviceInfo.iosInfo;
-      clientID = iosDeviceInfo.identifierForVendor; // unique ID on iOS
-    } else if (Platform.isAndroid) {
-      var androidDeviceInfo = await deviceInfo.androidInfo;
-      clientID = androidDeviceInfo.androidId; // unique ID on Android
-    }
-    debugPrint('MID $clientID');
-    client = MqttServerClient(broker, clientID);
-    connect(broker, clientID);
-  }
+  // Future _getId() async {
+  //  var deviceInfo = DeviceInfoPlugin();
+  //  if (Platform.isIOS) {
+  // import 'dart:io'
+  //    var iosDeviceInfo = await deviceInfo.iosInfo;
+  //    clientID = iosDeviceInfo.identifierForVendor; // unique ID on iOS
+  //  } else if (Platform.isAndroid) {
+  //    var androidDeviceInfo = await deviceInfo.androidInfo;
+  //    clientID = androidDeviceInfo.androidId; // unique ID on Android
+  //  }
+  //  debugPrint('MID $clientID');
+  //  client = MqttServerClient(broker, clientID);
+  //  connect(broker, clientID);
+  //}
 
   // -------------------------------- _loadConfig
   Future _loadConfig() async {
     debugPrint('UID ${_prefs.getString('mqttClient')}');
+    final port = _prefs.getInt('port');
     client = MqttServerClient.withPort('${_prefs.getString('broker')}',
-        '${_prefs.getString('mqttClient')}', 1883);
+        '${_prefs.getString('mqttClient')}', port!);
     //client = MqttServerClient(broker, mqttClient);
     connect('prefBroker', '${_prefs.getString('mqttClient')}');
-    //MqttUtilities.asyncSleep(60);
+    _loadPanels();
   }
 
 //--------------------------------- onSubscribe
@@ -296,8 +289,13 @@ class _DeviceListState extends State<DeviceList> {
 
     //client?.publishMessage('inv/' + _currentUser.uid + '/app',
     //    MqttQos.atLeastOnce, builder.payload!);
-    client?.publishMessage('inv/' + '3C:71:BF:FC:BF:94' + '/app',
-        MqttQos.atLeastOnce, builder.payload!);
+    client?.publishMessage(
+        '${_prefs.getString('rootTopic')}' +
+            'users/' +
+            '${_currentUser.email}' +
+            '/app',
+        MqttQos.atLeastOnce,
+        builder.payload!);
 
     builder.clear();
   }
@@ -308,9 +306,12 @@ class _DeviceListState extends State<DeviceList> {
     final connMessage = MqttConnectMessage()
         //.keepAliveFor(10)
         //.withWillTopic('inv/' + '$_currentUser.email' + '/app')
-        .withWillTopic('inv/' + '${_currentUser.email}' + '/app')
+        .withWillTopic('${_prefs.getString('rootTopic')}' +
+            'users/' +
+            '${_currentUser.email}' +
+            '/app')
         .withWillMessage('$left,$top')
-        //.startClean()
+        .startClean()
         .withClientIdentifier('$left')
         //.withWillRetain()
         .withWillQos(MqttQos.exactlyOnce);
@@ -322,7 +323,10 @@ class _DeviceListState extends State<DeviceList> {
       client?.disconnect();
     }
 
-    final topic1 = 'inv/' + '${_currentUser.email}' + '/#'; // Wildcard topic
+    final topic1 = '${_prefs.getString('rootTopic')}' +
+        'users/' +
+        '${_currentUser.email}' +
+        '/#'; // Wildcard topic
     //client?.subscribe(topic1, MqttQos.atMostOnce);
     //onSubscribe(topic1);
     client?.subscribe(topic1, MqttQos.exactlyOnce);
@@ -342,37 +346,22 @@ class _DeviceListState extends State<DeviceList> {
 
       //debugPrint("[MQTT client] ${event[0].topic}: $message");
 
-      if (event[0].topic.compareTo('inv/' + '${_currentUser.email}' + '/add') ==
+      if (event[0].topic.compareTo('${_prefs.getString('rootTopic')}' +
+              'users/' +
+              '${_currentUser.email}' +
+              '/add') ==
           0) {
         _panelADD(message);
-      } else if (event[0]
-              .topic
-              .compareTo('inv/' + '${_currentUser.email}' + '/del') ==
+      } else if (event[0].topic.compareTo('${_prefs.getString('rootTopic')}' +
+              'users/' +
+              '${_currentUser.email}' +
+              '/del') ==
           0) {
         _panelDEL(message);
       }
     } else {
-      debugPrint('not mounted');
+      debugPrint('device list not mounted');
       onDisConnected();
     }
-  }
-}
-
-class Tag {
-  String idpanel;
-  String tipo;
-  String nombre;
-  bool mod;
-
-  Tag(this.idpanel, this.tipo, this.nombre, this.mod);
-
-  factory Tag.fromJson(dynamic json) {
-    return Tag(json['id'] as String, json['type'] as String,
-        json['name'] as String, json['mod'] as bool);
-  }
-
-  @override
-  String toString() {
-    return '{ ${this.idpanel}, ${this.tipo} , ${this.nombre} , ${this.mod} }';
   }
 }
