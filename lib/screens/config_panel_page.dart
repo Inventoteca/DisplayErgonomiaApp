@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:smart_industry/screens/config_panel_page.dart';
+import 'package:smart_industry/screens/panelList_page.dart';
 import '/screens/profile_page.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -34,18 +34,19 @@ late Color _pt6Color = Colors.black;
 late Color _pt7Color = Colors.black;
 Map<String, dynamic> _jsonDataList = {};
 
-class PanelPage extends StatefulWidget {
+class ConfigPanelPage extends StatefulWidget {
   final User user;
   final SharedPreferences prefs;
   final String id;
 
-  const PanelPage({required this.user, required this.prefs, required this.id});
+  const ConfigPanelPage(
+      {required this.user, required this.prefs, required this.id});
 
   //@override
-  _PanelPageState createState() => _PanelPageState();
+  _ConfigPanelPageState createState() => _ConfigPanelPageState();
 }
 
-class _PanelPageState extends State<PanelPage> {
+class _ConfigPanelPageState extends State<ConfigPanelPage> {
   MqttServerClient? client;
 
   //bool _isSigningOut = false;
@@ -227,21 +228,12 @@ class _PanelPageState extends State<PanelPage> {
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () async {
-                //  onPublish(
-                //      '0',
-                //      '${_prefs.getString('rootTopic')}' +
-                //          'panels/' +
-                //          _panelID +
-                //          '/app');
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => ConfigPanelPage(
-                      user: _currentUser,
-                      prefs: _prefs,
-                      id: _panelID,
-                    ),
-                  ),
-                );
+                onPublish(
+                    '0',
+                    '${_prefs.getString('rootTopic')}' +
+                        'panels/' +
+                        _panelID +
+                        '/app');
               },
               child: Text('Enviar'),
               style: ElevatedButton.styleFrom(
