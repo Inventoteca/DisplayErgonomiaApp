@@ -78,14 +78,14 @@ class _ConfigPanelPageState extends State<ConfigPanelPage> {
         prefs: _prefs,
       ),
       appBar: AppBar(
-        title: Text('Panel'),
+        title: Text('Configuraciones'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // --------- temperatura
-            Text.rich(
+            /*Text.rich(
               TextSpan(
                 children: <InlineSpan>[
                   WidgetSpan(
@@ -104,6 +104,7 @@ class _ConfigPanelPageState extends State<ConfigPanelPage> {
                 ],
               ),
             ),
+            */
 
             //SevenSegmentDisplay(
             //  value: pt1,
@@ -115,9 +116,10 @@ class _ConfigPanelPageState extends State<ConfigPanelPage> {
             //  ),
             //),
 
-            SizedBox(height: 16.0),
+            // SizedBox(height: 16.0),
+
             // --------- humedad
-            Text.rich(
+            /*  Text.rich(
               TextSpan(
                 children: <InlineSpan>[
                   WidgetSpan(
@@ -220,10 +222,11 @@ class _ConfigPanelPageState extends State<ConfigPanelPage> {
                 ],
               ),
             ),
+            */
             SizedBox(height: 16.0),
             Text(
               '$pt7',
-              style: TextStyle(fontSize: 10, color: Colors.blueGrey),
+              style: TextStyle(fontSize: 20, color: Colors.blueGrey),
             ),
             SizedBox(height: 16.0),
             ElevatedButton(
@@ -496,7 +499,7 @@ class _ConfigPanelPageState extends State<ConfigPanelPage> {
   }
 
   void panelConfig(String message) {
-    pt7 = "config received";
+    pt7 = message;
     _pt7Color = Colors.grey;
     //debugPrint("[MQTT client]: $message");
     Map<String, dynamic> jsonDataList = jsonDecode(message.toString());

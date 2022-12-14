@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:smart_industry/screens/config_panel_page.dart';
+import 'package:smart_industry/screens/charts_panel_page.dart';
 import '/screens/profile_page.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -235,7 +236,7 @@ class _PanelPageState extends State<PanelPage> {
                 //          '/app');
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => ConfigPanelPage(
+                    builder: (context) => ChartsPanelPage(
                       user: _currentUser,
                       prefs: _prefs,
                       id: _panelID,
@@ -243,7 +244,7 @@ class _PanelPageState extends State<PanelPage> {
                   ),
                 );
               },
-              child: Text('Enviar'),
+              child: Text('Graficas'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 shape: RoundedRectangleBorder(
@@ -254,16 +255,17 @@ class _PanelPageState extends State<PanelPage> {
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () async {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => ProfilePage(
+                    builder: (context) => ConfigPanelPage(
                       user: _currentUser,
                       prefs: _prefs,
+                      id: _panelID,
                     ),
                   ),
                 );
               },
-              child: Text('Perfil'),
+              child: Text('Configuraciones'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 shape: RoundedRectangleBorder(
