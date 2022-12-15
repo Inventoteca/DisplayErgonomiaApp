@@ -89,11 +89,11 @@ class _PanelPageState extends State<PanelPage> {
               TextSpan(
                 children: <InlineSpan>[
                   WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
+                      alignment: PlaceholderAlignment.bottom,
                       child: Icon(
                         Icons.thermostat_rounded,
                         color: Colors.white,
-                        size: 60,
+                        size: 50,
                       )),
                   TextSpan(
                       text: ' $pt1',
@@ -121,11 +121,11 @@ class _PanelPageState extends State<PanelPage> {
               TextSpan(
                 children: <InlineSpan>[
                   WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
+                      alignment: PlaceholderAlignment.bottom,
                       child: Icon(
                         Icons.water_drop,
                         color: Colors.white,
-                        size: 60,
+                        size: 50,
                       )),
                   TextSpan(
                       text: ' $pt2',
@@ -142,7 +142,7 @@ class _PanelPageState extends State<PanelPage> {
               TextSpan(
                 children: <InlineSpan>[
                   WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
+                      alignment: PlaceholderAlignment.bottom,
                       child: Icon(
                         Icons.sunny,
                         color: Colors.white,
@@ -163,7 +163,7 @@ class _PanelPageState extends State<PanelPage> {
               TextSpan(
                 children: <InlineSpan>[
                   WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
+                      alignment: PlaceholderAlignment.bottom,
                       child: Icon(
                         Icons.campaign,
                         color: Colors.white,
@@ -184,7 +184,7 @@ class _PanelPageState extends State<PanelPage> {
               TextSpan(
                 children: <InlineSpan>[
                   WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
+                      alignment: PlaceholderAlignment.bottom,
                       child: Icon(
                         Icons.light_rounded,
                         color: Colors.white,
@@ -205,7 +205,7 @@ class _PanelPageState extends State<PanelPage> {
               TextSpan(
                 children: <InlineSpan>[
                   WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
+                      alignment: PlaceholderAlignment.bottom,
                       child: Icon(
                         Icons.local_florist,
                         color: Colors.white,
