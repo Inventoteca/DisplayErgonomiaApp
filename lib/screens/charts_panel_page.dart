@@ -20,6 +20,7 @@ late User _currentUser;
 late SharedPreferences _prefs;
 late String _panelID;
 late TooltipBehavior _tooltipBehavior;
+late bool _chartReceived = false;
 String t = '20';
 String h = '40';
 String uv = '0.0';
@@ -92,6 +93,8 @@ class ChartsPanelPageState extends State<ChartsPanelPage> {
         primaryXAxis: DateTimeAxis(),
         // NumericAxis(majorGridLines: const MajorGridLines(width: 0)),
         primaryYAxis: NumericAxis(
+            //visibleMaximum: 100,
+            //anchorRangeToVisiblePoints: true,
             axisLine: const AxisLine(width: 0),
             majorTickLines: const MajorTickLines(size: 0)),
         series: <ChartSeries<ChartData, DateTime>>[
@@ -101,7 +104,7 @@ class ChartsPanelPageState extends State<ChartsPanelPage> {
               _chartSeriesController = controller;
             },
             enableTooltip: true,
-            name: 'Temperatura',
+            name: 'Temperatura [°C]',
             dataSource: chartData!,
             color: const Color.fromRGBO(192, 108, 132, 1),
             xValueMapper: (ChartData sensors, _) => sensors.timex,
@@ -115,7 +118,7 @@ class ChartsPanelPageState extends State<ChartsPanelPage> {
               _chartSeriesController = controller;
             },
             enableTooltip: true,
-            name: 'Humedad',
+            name: 'Humedad [%]',
             dataSource: chartData!,
             color: Color.fromARGB(212, 118, 170, 121),
             xValueMapper: (ChartData sensors, _) => sensors.timex,
@@ -129,7 +132,7 @@ class ChartsPanelPageState extends State<ChartsPanelPage> {
               _chartSeriesController = controller;
             },
             enableTooltip: true,
-            name: 'UltraVioleta',
+            name: 'UltraVioleta [Index]',
             dataSource: chartData!,
             color: Color.fromARGB(213, 134, 118, 170),
             xValueMapper: (ChartData sensors, _) => sensors.timex,
@@ -143,9 +146,9 @@ class ChartsPanelPageState extends State<ChartsPanelPage> {
               _chartSeriesController = controller;
             },
             enableTooltip: true,
-            name: 'Ruido',
+            name: 'Ruido [dB]',
             dataSource: chartData!,
-            color: Color.fromARGB(255, 243, 239, 177),
+            color: Color.fromARGB(255, 94, 157, 252),
             xValueMapper: (ChartData sensors, _) => sensors.timex,
             yValueMapper: (ChartData sensors, _) => sensors.db,
             dataLabelSettings: DataLabelSettings(isVisible: false),
@@ -157,21 +160,21 @@ class ChartsPanelPageState extends State<ChartsPanelPage> {
               _chartSeriesController = controller;
             },
             enableTooltip: true,
-            name: 'Iluminación',
+            name: 'Iluminacion [Lux x10]',
             dataSource: chartData!,
-            color: Color.fromARGB(255, 235, 236, 236),
+            color: Color.fromARGB(255, 234, 252, 133),
             xValueMapper: (ChartData sensors, _) => sensors.timex,
             yValueMapper: (ChartData sensors, _) => sensors.lux,
             dataLabelSettings: DataLabelSettings(isVisible: false),
             animationDuration: 0,
           ),
-          //----------------------------------- Ligth
+          //----------------------------------- Air
           LineSeries<ChartData, DateTime>(
             onRendererCreated: (ChartSeriesController controller) {
               _chartSeriesController = controller;
             },
             enableTooltip: true,
-            name: 'Aire (ppm x 10)',
+            name: 'Aire [PPM x10]',
             dataSource: chartData!,
             color: Color.fromARGB(255, 112, 112, 112),
             xValueMapper: (ChartData sensors, _) => sensors.timex,
@@ -292,6 +295,26 @@ class ChartsPanelPageState extends State<ChartsPanelPage> {
 
           //debugPrint("[MQTT client] ${event[0].topic}: $message");
         });
+
+      //------------------ panel/app/response-----------------------
+      if (event[0].topic.compareTo('${_prefs.getString('rootTopic')}' +
+              'panels/' +
+              _panelID +
+              '/app/response') ==
+          0)
+        setState(() {
+          debugPrint("Chart Received");
+        });
+
+      //------------------ panel/app/report-----------------------
+      if (event[0].topic.compareTo('${_prefs.getString('rootTopic')}' +
+              'panels/' +
+              _panelID +
+              '/app/report') ==
+          0)
+        setState(() {
+          debugPrint("Report Received");
+        });
     } else {
       onDisConnected();
     }
@@ -360,7 +383,7 @@ class ChartsPanelPageState extends State<ChartsPanelPage> {
     client?.subscribe(topic1, MqttQos.atLeastOnce);
     subscription = client?.updates?.listen(onMessage);
 
-    onPublish('1',
+    onPublish('{"method":"Chart"}',
         '${_prefs.getString('rootTopic')}' + 'panels/' + _panelID + '/app');
   }
 
@@ -376,21 +399,20 @@ class ChartsPanelPageState extends State<ChartsPanelPage> {
           int.parse(h),
           double.parse(uv),
           int.parse(db),
-          int.parse(lux),
+          int.parse(lux) / 10,
           int.parse(ppm) / 10));
       //chartData!.add(ChartData(count, newnumber));
-      if (chartData!.length == 2000) {
-        chartData!.removeAt(0);
-        _chartSeriesController?.updateDataSource(
-          addedDataIndexes: <int>[chartData!.length - 1],
-          removedDataIndexes: <int>[0],
-        );
-      } else {
-        _chartSeriesController?.updateDataSource(
-          addedDataIndexes: <int>[chartData!.length - 1],
-        );
-      }
-      //count = count + 1;
+      //if (chartData!.length == 2000) {
+      //  chartData!.removeAt(0);
+      //  _chartSeriesController?.updateDataSource(
+      //    addedDataIndexes: <int>[chartData!.length - 1],
+      //    removedDataIndexes: <int>[0],
+      //  );
+      //} else {
+      _chartSeriesController?.updateDataSource(
+        addedDataIndexes: <int>[chartData!.length - 1],
+      );
+      //}
     }
   }
 }

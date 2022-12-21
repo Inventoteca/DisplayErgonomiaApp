@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:smart_industry/screens/NavBar.dart';
 import 'package:smart_industry/screens/panelList_page.dart';
 import 'package:smart_industry/screens/panel_page.dart';
@@ -7,13 +6,11 @@ import 'package:smart_industry/screens/device_add_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:async';
-import 'dart:io' as io;
+//import 'dart:io';
 //import 'package:device_info/device_info.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 MqttConnectionState? connectionState;
 StreamSubscription? subscription;
@@ -49,11 +46,9 @@ class _DeviceListState extends State<DeviceList> {
     //    '[ {"id": "3C:71:BF:FC:BF:94", "type": "ergo", "name":"Inventoteca", "mod":true}, {"id": "123456", "type": "cruz", "name": "Demo", "mod":false}]';
 
     //  _currentUser.updatePhotoURL(data); //Uncoment for Test only
-
     _loadConfig();
 
     //_getId();
-
     super.initState();
 
     //connected = false; //initially connection status is "NO" so its FALSE
@@ -69,6 +64,39 @@ class _DeviceListState extends State<DeviceList> {
   //  onDisConnected();
   //  super.dispose();
   //}
+
+  //------------------------------------------------------------- _loadPanels
+  void _loadPanels() {
+    //var dataList = jsonDecode(data);
+    //var dataList = jsonDecode(_currentUser.photoURL.toString());
+    List<dynamic> jsonDataList = List.empty();
+    if (jsonDecode(_currentUser.photoURL.toString()) != null) {
+      jsonDataList = jsonDecode(_currentUser.photoURL.toString());
+    }
+
+    if (jsonDataList.isNotEmpty) {
+      var tagObjsJson = jsonDecode(_currentUser.photoURL.toString()) as List;
+
+      // List<Tag> tagObjs =
+      //    tagObjsJson.map((tagJson) => Tag.fromJson(tagJson)).toList();
+
+      panelDataList = tagObjsJson;
+    } else {
+      debugPrint('No hay panels');
+      panelDataList = List.empty();
+
+      /*if (panelDataList.isEmpty) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => AddDevice(
+              user: _currentUser,
+            ),
+          ),
+        );
+      }*/
+    }
+    debugPrint('Load Panels: $panelDataList');
+  }
 
   //------------------------------------------------------------- _panelDEL
   Future<void> _panelDEL(var cmd) async {
@@ -104,18 +132,15 @@ class _DeviceListState extends State<DeviceList> {
 
   //------------------------------------------------------------- _panelADD
   Future<void> _panelADD(var cmd) async {
-    //debugPrint('Adding List');
+    debugPrint('Adding List');
     //if (jsonDecode(cmd) != null)
     {
       Map<String, dynamic> data;
       data = jsonDecode(cmd);
-      //var dataList = jsonDecode(_currentUser.photoURL.toString());
-
-      if (panelDataList.isEmpty) {
-        //setState(() {
-        panelDataList = List.empty(growable: true);
-        //});
-
+      var dataList = jsonDecode(_currentUser.photoURL.toString());
+      debugPrint('$dataList');
+      if (dataList == null) {
+        dataList = List.empty(growable: true);
       }
 
       //  var data = jsonDecode(
@@ -124,50 +149,27 @@ class _DeviceListState extends State<DeviceList> {
       if (data.isNotEmpty) {
         bool newpanel = true;
 
-        List<dynamic> jsonDataList = panelDataList;
+        List<dynamic> jsonDataList = dataList as List;
 
         jsonDataList.forEach((element) {
           debugPrint('${element['id']}');
           if ('${element['id']}' == '${data['id']}') {
             newpanel = false;
-          }
+          } //else {
+          //newpanel = true;
+          //}
         });
 
         if (newpanel) {
           jsonDataList.add(data);
           debugPrint('New panel');
           debugPrint('Panel: ${jsonEncode(jsonDataList)}');
-
-          //await _currentUser.updatePhotoURL(jsonEncode(jsonDataList));
-          await uploadString(jsonEncode(jsonDataList));
-          setState(() {
-            panelDataList = jsonDataList;
-          });
+          await _currentUser.updatePhotoURL(jsonEncode(jsonDataList));
         } else {
           debugPrint('Panel already on list');
         }
       }
     }
-  }
-
-  /// A new string is uploaded to storage.
-  UploadTask uploadString(String putStringText) {
-    //const String putStringText = '[]';
-
-    // Create a Reference to the file
-    Reference ref = FirebaseStorage.instance
-        .ref()
-        .child('${_currentUser.email}')
-        .child('/panels.json');
-
-    // Start upload of putString
-    return ref.putString(
-      putStringText,
-      //metadata: SettableMetadata(
-      //  contentLanguage: 'en',
-      //  customMetadata: <String, String>{'example': 'putString'},
-      //),
-    );
   }
 
   @override
@@ -180,7 +182,62 @@ class _DeviceListState extends State<DeviceList> {
       appBar: AppBar(
         title: Text('Dispositivos'),
       ),
-      body: projectWidget(),
+      body: ListView.builder(
+          itemCount: panelDataList.length,
+          itemBuilder: (context, int index) {
+            return ElevatedButton(
+              //child: Text('${panelDataList.elementAt(index)}'),
+              child: Text('${panelDataList.elementAt(index)['name']}'),
+              onPressed: () => {
+                //debugPrint('PanelPage'),
+                //PanelPage(
+                //  user: _currentUser,
+                //)
+                if (panelDataList.elementAt(index)['type'] == 'ergo')
+                  {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => PanelPage(
+                          user: _currentUser,
+                          id: panelDataList.elementAt(index)['id'],
+                          prefs: _prefs,
+                        ),
+                      ),
+                    ),
+                  }
+                else if (panelDataList.elementAt(index)['type'] == 'cruz')
+                  {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => PanelListPage(
+                          user: _currentUser,
+                          prefs: _prefs,
+                        ),
+                      ),
+                    ),
+                  }
+                else // if (panelDataList.elementAt(index).tipo == 'cruz')
+                  {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => PanelListPage(
+                          user: _currentUser,
+                          prefs: _prefs,
+                        ),
+                      ),
+                    ),
+                  }
+              },
+              //color: Colors.red,
+              //child: Center(
+              //child: Icon(iconsdata.values.elementAt(0)),
+              // child: Text(
+              // '${panelDataList.elementAt(index)}',
+              //'text',
+              //index.toString(),
+              // style: TextStyle(fontSize: 10.0),
+            );
+          }),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).push(
@@ -196,110 +253,6 @@ class _DeviceListState extends State<DeviceList> {
     );
   }
 
-  Widget projectWidget() {
-    return FutureBuilder<List<dynamic>>(
-        future: _downloadFile(),
-        builder: (context, AsyncSnapshot<List<dynamic>> projectSnap) {
-          if (!projectSnap.hasData) {
-            // while data is loading:
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            return ListView.builder(
-                itemCount: panelDataList.length,
-                itemBuilder: (context, int index) {
-                  return ElevatedButton(
-                    //child: Text('${panelDataList.elementAt(index)}'),
-                    child: Text('${panelDataList.elementAt(index)['name']}'),
-                    onPressed: () => {
-                      //debugPrint('PanelPage'),
-                      //PanelPage(
-                      //  user: _currentUser,
-                      //)
-                      if (panelDataList.elementAt(index)['type'] == 'ergo')
-                        {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => PanelPage(
-                                user: _currentUser,
-                                id: panelDataList.elementAt(index)['id'],
-                                prefs: _prefs,
-                              ),
-                            ),
-                          ),
-                        }
-                      else if (panelDataList.elementAt(index)['type'] == 'cruz')
-                        {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => PanelListPage(
-                                user: _currentUser,
-                                prefs: _prefs,
-                              ),
-                            ),
-                          ),
-                        }
-                      else // if (panelDataList.elementAt(index).tipo == 'cruz')
-                        {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => PanelListPage(
-                                user: _currentUser,
-                                prefs: _prefs,
-                              ),
-                            ),
-                          ),
-                        }
-                    },
-                    //color: Colors.red,
-                    //child: Center(
-                    //child: Icon(iconsdata.values.elementAt(0)),
-                    // child: Text(
-                    // '${panelDataList.elementAt(index)}',
-                    //'text',
-                    //index.toString(),
-                    // style: TextStyle(fontSize: 10.0),
-                  );
-                });
-          }
-        });
-  }
-
-  Future<List> _downloadFile() async {
-// Create a Reference to the file
-    Reference ref = FirebaseStorage.instance
-        .ref()
-        .child('${_currentUser.email}')
-        .child('/panels.json');
-
-    // if ('${ref.name}' == 'panels.json') {
-    final io.Directory systemTempDir = io.Directory.systemTemp;
-    final io.File tempFile = io.File('${systemTempDir.path}/temp-${ref.name}');
-    if (tempFile.existsSync()) await tempFile.delete();
-
-    await ref.writeToFile(tempFile);
-
-    //panelDataList = json.decode(tempFile.readAsStringSync()) as List;
-
-    //debugPrint('$panelDataList');
-    return json.decode(tempFile.readAsStringSync()) as List;
-    // panelDataList = jsonResponse as List;
-
-    //ScaffoldMessenger.of(context).showSnackBar(
-    //  SnackBar(
-    //    content: Text(
-    //      'Success!\n Downloaded ${ref.name} \n from bucket: ${ref.bucket}\n '
-    //      'at path: ${ref.fullPath} \n'
-    //      'Wrote "${ref.fullPath}" to tmp-${ref.name}',
-    //    ),
-    //  ),
-    //);
-    // } else {
-    // uploadString();
-    //}
-  }
-
   // -------------------------------- _loadConfig
   Future _loadConfig() async {
     debugPrint('UID ${_prefs.getString('mqttClient')}');
@@ -308,8 +261,7 @@ class _DeviceListState extends State<DeviceList> {
         '${_prefs.getString('mqttClient')}', port!);
     //client = MqttServerClient(broker, mqttClient);
     connect('prefBroker', '${_prefs.getString('mqttClient')}');
-    // _loadPanels();
-    panelDataList = await _downloadFile();
+    _loadPanels();
   }
 
 //--------------------------------- onSubscribe

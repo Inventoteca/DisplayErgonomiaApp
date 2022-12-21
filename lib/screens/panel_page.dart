@@ -12,6 +12,7 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 //import 'package:device_info/device_info.dart';
 import '/screens/NavBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wakelock/wakelock.dart';
 
 MqttConnectionState? connectionState;
 StreamSubscription? subscription;
@@ -42,7 +43,7 @@ class PanelPage extends StatefulWidget {
 
   const PanelPage({required this.user, required this.prefs, required this.id});
 
-  //@override
+  @override
   _PanelPageState createState() => _PanelPageState();
 }
 
@@ -60,17 +61,19 @@ class _PanelPageState extends State<PanelPage> {
     _prefs = widget.prefs;
     _panelID = widget.id;
     debugPrint(_panelID);
+    Wakelock.enable();
     _loadConfig();
     super.initState();
   }
 
   @override
   void dispose() {
+    Wakelock.disable();
     onDisConnected();
     super.dispose();
   }
 
-  //@override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: NavBar(
@@ -292,7 +295,7 @@ class _PanelPageState extends State<PanelPage> {
 //--------------------------------- onSubscribe
   void onSubscribe(String topic) {
     if (connectionState == MqttConnectionState.connected) {
-      print('[MQTT client] Subscribing to ${topic.trim()}');
+      debugPrint('[MQTT client] Subscribing to ${topic.trim()}');
       client?.subscribe(topic, MqttQos.exactlyOnce);
       //client?.subscribe(topic, MqttQos.atMostOnce);
     }
@@ -300,22 +303,25 @@ class _PanelPageState extends State<PanelPage> {
 
 // -------------------------------- onDisconected
   void onDisConnected() {
-    debugPrint('Panel Disconnected');
-    onPublish('0',
-        '${_prefs.getString('rootTopic')}' + 'panels/' + _panelID + '/app');
-    client?.disconnect();
+    if ((mounted)) {
+      debugPrint('Panel Disconnected');
+      onPublish('0',
+          '${_prefs.getString('rootTopic')}' + 'panels/' + _panelID + '/app');
+      client?.disconnect();
+    }
   }
 
 // -------------------------------- onPublish
   void onPublish(String message, String topic) {
-    print('send msg: $message');
+    debugPrint('send msg: $message');
 
     final builder = MqttClientPayloadBuilder();
     builder.addString(message);
 
     //client?.publishMessage('inv/' + _currentUser.uid + '/app',
     //    MqttQos.atLeastOnce, builder.payload!);
-    client?.publishMessage('$topic', MqttQos.atLeastOnce, builder.payload!);
+    if (mounted)
+      client?.publishMessage('$topic', MqttQos.atLeastOnce, builder.payload!);
 
     builder.clear();
   }
@@ -335,6 +341,7 @@ class _PanelPageState extends State<PanelPage> {
         //.withWillRetain()
         .withWillQos(MqttQos.exactlyOnce);
     client?.connectionMessage = connMessage;
+    //client?.autoReconnect = true;
     try {
       await client?.connect();
     } catch (e) {
@@ -491,12 +498,22 @@ class _PanelPageState extends State<PanelPage> {
           panelConfig(message);
         });
 
+      //------------------ panel/app/report-----------------------
+      else if (event[0].topic.compareTo('${_prefs.getString('rootTopic')}' +
+              'panels/' +
+              _panelID +
+              '/app/report') ==
+          0)
+        setState(() {
+          debugPrint("Report Received");
+        });
+
       //------------------ Unknown -----------------------
       else {
         setState(() {
           //debugPrint(message);
           debugPrint("[MQTT client] ${event[0].topic}: $message");
-          pt7 = message;
+          //pt7 = message;
           _pt7Color = Colors.grey;
         });
       }

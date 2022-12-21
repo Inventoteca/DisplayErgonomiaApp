@@ -1,5 +1,8 @@
+//import 'dart:js';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '/screens/about_us_page.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import '/screens/profile_page.dart';
 import '/screens/device_list_page.dart';
@@ -48,9 +51,10 @@ class _NavBarState extends State<NavBar> {
             decoration: BoxDecoration(
               color: Colors.blue,
               image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: NetworkImage(
-                      'https://oflutter.com/wp-content/uploads/2021/02/profile-bg3.jpg')),
+                  fit: BoxFit.fitWidth,
+                  image: AssetImage('lib/images/charts.jpg'),
+                  colorFilter:
+                      ColorFilter.mode(Colors.grey[800]!, BlendMode.modulate)),
             ),
           ),
           ListTile(
@@ -98,7 +102,7 @@ class _NavBarState extends State<NavBar> {
               leading: Icon(Icons.settings),
               title: Text('Ajustes'),
               onTap: () => {
-                    Navigator.of(context).pushReplacement(
+                    Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => ProfilePage(
                           user: _currentUser,
@@ -110,7 +114,11 @@ class _NavBarState extends State<NavBar> {
           ListTile(
             leading: Icon(Icons.person),
             title: Text('Nosotros'),
-            onTap: () => null,
+            onTap: () => {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => AboutUs(),
+              ))
+            },
           ),
           Divider(),
           ListTile(

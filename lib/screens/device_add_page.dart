@@ -3,8 +3,10 @@
 //import 'dart:io';
 //import 'package:flutter/src/widgets/container.dart';
 //import 'package:flutter/src/widgets/framework.dart';
+import 'package:esptouch_smartconfig/esptouch_smartconfig.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:esp_smartconfig/esp_smartconfig.dart';
+import 'package:flutter/services.dart';
 import 'package:loggerx/loggerx.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'dart:developer' as developer;
@@ -15,13 +17,15 @@ import 'package:flutter/material.dart';
 import 'package:smart_industry/screens/device_list_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:firebase_storage/firebase_storage.dart';
 
 late SharedPreferences _prefs;
 
 class AddDevice extends StatefulWidget {
   //const AddDevice({super.key});
   final User user;
-  const AddDevice({required this.user});
+  final SharedPreferences prefs;
+  const AddDevice({required this.user, required this.prefs});
 
   @override
   State<AddDevice> createState() => _AddDeviceState();
@@ -38,12 +42,15 @@ class _AddDeviceState extends State<AddDevice> {
   late String _msg = 'Mensaje';
   //late String _data;
   bool _isObscure = true;
-  late List<Tag> panelDataList;
+  //late List<Tag> panelDataList;
+  late List<dynamic> panelDataList = List.empty(growable: true);
   final data =
       '[ {"id": "ABCDEF", "tipo": "ERGO", "nombre":"Inventoteca", "mod":true}, {"id": "123456", "tipo": "CRUZ", "nombre": "Demo", "mod":false}]';
 
   //-----  final NetworkInfo _networkInfo = NetworkInfo();
-  final provisioner = Provisioner.espTouchV2();
+  final provisioner = new Provisioner.espTouchV2();
+
+  //EsptouchSmartconfig
   final TextEditingController _bssidFilter = new TextEditingController();
   final TextEditingController _ssidFilter = new TextEditingController();
   final TextEditingController _passwordFilter = new TextEditingController();
@@ -54,8 +61,12 @@ class _AddDeviceState extends State<AddDevice> {
     _passwordFilter.addListener(_passwordListen);
     _bssidFilter.addListener(_bssidListen);
     _isLoading = false;
-    super.initState();
     _currentUser = widget.user;
+    _prefs = widget.prefs;
+    _initNetworkInfo();
+    readResponse();
+    super.initState();
+
     //var dataList = jsonDecode(_currentUser.photoURL.toString());
 
     //if (dataList != null) {
@@ -70,9 +81,14 @@ class _AddDeviceState extends State<AddDevice> {
     //  debugPrint('No hay panels');
     //  panelDataList = List.empty();
     //}
+  }
 
-    _initNetworkInfo();
-    readResponse();
+  @override
+  void dispose() {
+    //Wakelock.disable();
+    //onDisConnected();
+    provisioner.stop();
+    super.dispose();
   }
 
   // ---------------------------ssidListen
@@ -108,7 +124,7 @@ class _AddDeviceState extends State<AddDevice> {
     for (var i = 1; i <= s; i++) {
       Future.delayed(Duration(seconds: i), () => debugPrint('$i'));
       if (i == s) {
-        //provisioner.stop();
+        provisioner.stop();
         setState(() {
           _isLoading = false;
           _msg = "Fail to configure Device";
@@ -119,30 +135,34 @@ class _AddDeviceState extends State<AddDevice> {
 
   Future<void> readResponse() async {
     provisioner.listen((response) async {
-      log.info("Wait for response");
+      //log.info("Wait for response");
       String bssidResp = '$response';
-      log.info('Device: ${bssidResp.split("=")[1]}');
+      //log.info('Device: ${bssidResp.split("=")[1]}');
 
-      var data = jsonDecode(
-          '[ {"id": "${bssidResp.split("=")[1]}", "tipo": "NEO", "nombre":"Nuevo", "mod":true}]');
+      //var data = jsonDecode(
+      //    '[ {"id": "${bssidResp.split("=")[1]}", "type": "unk", "name":"Nuevo", "mod":true}]');
+      var data =
+          '{"id":"${bssidResp.split("=")[1]}","type":"ergo","name":"Nuevo","mod":true}';
+      _panelADD(data);
 
-      var dataList = jsonDecode(_currentUser.photoURL.toString());
-      //log.info(data);
-      if (dataList != null) {
-        var tagObjsJson = jsonDecode(_currentUser.photoURL.toString()) as List;
+      //var dataList = jsonDecode(_currentUser.photoURL.toString());
+      //debugPrint(data);
+      //debugPrint(dataList);
+      //if (dataList != null) {
+      //  var tagObjsJson = jsonDecode(_currentUser.photoURL.toString()) as List;
 
-        List<Tag> tagObjs =
-            tagObjsJson.map((tagJson) => Tag.fromJson(tagJson)).toList();
+      //  List<Tag> tagObjs =
+      //      tagObjsJson.map((tagJson) => Tag.fromJson(tagJson)).toList();
 
-        tagObjs.add(data);
-        dataList = jsonEncode(tagObjs);
-        log.info(dataList);
+      //  tagObjs.add(data);
+      //  dataList = jsonEncode(tagObjs);
+      //  log.info(dataList);
 
-        //await _currentUser.updatePhotoURL(dataList.stringify());
-        //await _currentUser.updatePhotoURL(dataList);
-        //panelDataList = tagObjs;
-        //debugPrint('Panel: $panelDataList');
-      } //else {
+      //await _currentUser.updatePhotoURL(dataList.stringify());
+      //await _currentUser.updatePhotoURL(dataList);
+      //panelDataList = tagObjs;
+      //debugPrint('Panel: $panelDataList');
+      //} //else {
       //debugPrint('No hay panels');
       //panelDataList = List.empty();
 
@@ -151,7 +171,7 @@ class _AddDeviceState extends State<AddDevice> {
         _isLoading = false;
         _msg = "Device Configured OK";
       });
-      Navigator.of(context).push(
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => DeviceList(
             user: _currentUser,
@@ -165,48 +185,64 @@ class _AddDeviceState extends State<AddDevice> {
   // --------------------------sendConfig
   Future<void> _sendConfig() async {
     //await _initNetworkInfo();
+    //await Permission.location.request();
 
     //_ReadResponse();
 
     //const Duration kLongTimeout = Duration(seconds: 1);
+
     setState(() {
       _isLoading = true;
     });
-    //.whenComplete(() => debugPrint('Enviado'));
-
-    provisioner.start(ProvisioningRequest.fromStrings(
-        ssid: _ssid,
+    await Future.delayed(const Duration(seconds: 3));
+    //developer.log('Sending');
+    //developer.log(_ssid);
+    //developer.log(_password);
+//.whenComplete(() => debugPrint('Enviado'));
+/*ProvisioningRequest request = new ProvisioningRequest.(context)
+                .setSSID(ssid) // AP's SSID, nullable
+                .setBSSID(bssid) // AP's BSSID, nonnull
+                .setPassword(password) // AP's password, nullable if the AP is open
+                .setReservedData(customData) // User's custom data, nullable. If not null, the max length is 64
+                .setAESKey(aesKey) // nullable, if not null, it must be 16 bytes. App developer should negotiate an AES key with Device developer first.
+                .build();*/
+    ProvisioningRequest request = new ProvisioningRequest.fromStrings(
         bssid: _bssid,
         password: _password,
-        reservedData: '${_currentUser.email}'));
+        reservedData: '${_currentUser.email}',
+        ssid: _ssid);
 
-    developer.log('Sending');
-    developer.log(_ssid);
-    developer.log(_password);
+    //await Future.delayed(const Duration(seconds: 1));
 
-    //await Future.delayed(const Duration(seconds: 60));
-    //setState(() {
-    //provisioner.stop();
-    //if (_isLoading) {
-    //  _msg = "Config Fail";
-    //  _isLoading = false;
-    //}
-    //});
-
+    await provisioner.start(request);
     //countSeconds(60);
 
-    //try {
-    //const Duration kLongTimeout = Duration(seconds: 10);
-    //await provisioner.start(ProvisioningRequest.fromStrings(
-    //    ssid: _ssid,
-    //    bssid: _bssid,
-    //    password: _password,
-    //    reservedData: '${_currentUser.email}'));
-    //.timeout(kLongTimeout);
-    //provisioner.stop();
-    //} on PlatformException catch (e) {
-    //  log.info("Failed to configure: '${e.message}'.");
-    // }
+    await Future.delayed(const Duration(seconds: 60));
+    //readResponse();
+
+    setState(() {
+      if (_isLoading) {
+        _msg = "Config Fail";
+        _isLoading = false;
+        provisioner.stop();
+      }
+    });
+
+    //
+
+    /*try {
+      const Duration kLongTimeout = Duration(seconds: 10);
+      await provisioner
+          .start(ProvisioningRequest.fromStrings(
+              ssid: "Inventoteca_2G",
+              bssid: _bssid,
+              password: _password,
+              reservedData: '${_currentUser.email}'))
+          .timeout(kLongTimeout);
+    } on PlatformException catch (e) {
+      log.info("Failed to configure: '${e.message}'.");
+      provisioner.stop();
+    }*/
   }
 
   // ----------------------------IinitNetworkInfo
@@ -247,7 +283,7 @@ class _AddDeviceState extends State<AddDevice> {
           _ssidFilter.text = msgSsid;
           _bssidFilter.text = bssid;
           _msg = "WiFi Details OK";
-          developer.log(_ssidFilter.text);
+          //developer.log(_ssidFilter.text);
         });
       } else {
         developer.log('Location Service is not enabled');
@@ -256,6 +292,74 @@ class _AddDeviceState extends State<AddDevice> {
         });
       }
     }
+  }
+
+  //------------------------------------------------------------- _panelADD
+  Future<void> _panelADD(var cmd) async {
+    debugPrint('Adding List');
+    //if (jsonDecode(cmd) != null)
+    {
+      Map<String, dynamic> data;
+      data = jsonDecode(cmd);
+      //var dataList = jsonDecode(_currentUser.photoURL.toString());
+
+      if (panelDataList.isEmpty) {
+        //setState(() {
+        panelDataList = List.empty(growable: true);
+        //});
+
+      }
+
+      //  var data = jsonDecode(
+      //      '{"id": "123fds", "tipo": "NEO", "nombre":"Nuevo", "mod":true}');
+
+      if ((data.isNotEmpty)) {
+        bool newpanel = true;
+
+        List<dynamic> jsonDataList = panelDataList;
+
+        jsonDataList.forEach((element) {
+          debugPrint('${element['id']}');
+          if ('${element['id']}' == '${data['id']}') {
+            newpanel = false;
+          }
+        });
+
+        if (newpanel) {
+          jsonDataList.add(data);
+          debugPrint('New panel');
+          debugPrint('Panel: ${jsonEncode(jsonDataList)}');
+
+          //await _currentUser.updatePhotoURL(jsonEncode(jsonDataList));
+          await uploadString(jsonEncode(jsonDataList));
+          setState(() {
+            panelDataList = jsonDataList;
+          });
+        } else {
+          debugPrint('Panel already on list');
+        }
+      }
+    }
+  }
+
+  /// A new string is uploaded to storage.
+  UploadTask uploadString(String putStringText) {
+    //const String putStringText = '[]';
+
+    // Create a Reference to the file
+    Reference ref = FirebaseStorage.instance
+        .ref()
+        .child('${_currentUser.email}')
+        .child('/panels.json');
+
+    // Start upload of putString
+    return ref.putString(
+      putStringText,
+      //metadata: SettableMetadata(
+      //  contentLanguage: 'en',
+      //  customMetadata: <String, String>{'example': 'putString'},
+      //),
+    );
   }
 
   // ------------------------------------ widget
@@ -327,8 +431,8 @@ class Tag {
   Tag(this.idpanel, this.tipo, this.nombre, this.mod);
 
   factory Tag.fromJson(dynamic json) {
-    return Tag(json['id'] as String, json['tipo'] as String,
-        json['nombre'] as String, json['mod'] as bool);
+    return Tag(json['id'] as String, json['type'] as String,
+        json['name'] as String, json['mod'] as bool);
   }
 
   @override

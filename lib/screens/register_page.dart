@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '/screens/profile_page.dart';
+import '/screens/device_list_page.dart';
 import '/utils/fire_auth.dart';
 import '/utils/validator.dart';
+import 'package:device_info/device_info.dart';
+import 'dart:io';
+
+late SharedPreferences _prefs;
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -20,8 +24,57 @@ class _RegisterPageState extends State<RegisterPage> {
   final _focusName = FocusNode();
   final _focusEmail = FocusNode();
   final _focusPassword = FocusNode();
+  //final SharedPreferences prefs;
 
   bool _isProcessing = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _loadConfig();
+    super.initState();
+  }
+
+  // -------------------------------- _loadConfig
+  Future _loadConfig() async {
+    final prefs = await SharedPreferences.getInstance();
+    final prefBroker = prefs.getString('broker') ?? 'inventoteca.com';
+    final prefPort = prefs.getInt('port') ?? 1883;
+    final prefMqttClient = prefs.getString('mqttClient') ?? await _getId();
+    final rootTopic = prefs.getString('rootTopic') ?? 'smart/';
+    setState(() {
+      // mqttClient = prefMqttClient;
+      // broker = prefBroker;
+      // port = prefPort;
+
+      prefs.setString('broker', prefBroker);
+      prefs.setString('mqttClient', prefMqttClient);
+      prefs.setInt('port', prefPort);
+      prefs.setString('rootTopic', rootTopic);
+
+      _prefs = prefs;
+
+      //debugPrint('$mqttClient');
+    });
+    //client = MqttServerClient('test.mosquitto.org', '');
+    //client = MqttServerClient(broker, mqttClient);
+    //connect('topicoapp', 'msg app');
+  }
+
+  // -------------------------------- _getId
+  Future _getId() async {
+    var deviceInfo = DeviceInfoPlugin();
+    String clientID = '';
+    if (Platform.isIOS) {
+      // import 'dart:io'
+      var iosDeviceInfo = await deviceInfo.iosInfo;
+      clientID = iosDeviceInfo.identifierForVendor; // unique ID on iOS
+    } else if (Platform.isAndroid) {
+      var androidDeviceInfo = await deviceInfo.androidInfo;
+      clientID = androidDeviceInfo.androidId; // unique ID on Android
+    }
+    return clientID;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,19 +171,21 @@ class _RegisterPageState extends State<RegisterPage> {
                                               _passwordTextController.text,
                                         );
 
-                                        await user?.updateDisplayName(
+                                        user?.updateDisplayName(
                                             _nameTextController.text);
 
                                         setState(() {
+                                          //_prefs.setString('DisplayNAme',
+                                          //   _nameTextController.text);
                                           _isProcessing = false;
                                         });
 
                                         if (user != null) {
-                                          var _prefs;
+                                          //var _prefs;
                                           Navigator.of(context)
                                               .pushAndRemoveUntil(
                                             MaterialPageRoute(
-                                              builder: (context) => ProfilePage(
+                                              builder: (context) => DeviceList(
                                                 user: user,
                                                 prefs: _prefs,
                                               ),

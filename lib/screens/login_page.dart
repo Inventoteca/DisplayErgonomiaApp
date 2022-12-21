@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +11,8 @@ import '/utils/fire_auth.dart';
 import '/utils/validator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:device_info/device_info.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'firebase_options.dart';
 
 //late User _currentUser;
 //late User user;
@@ -44,7 +45,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<FirebaseApp> _initializeFirebase() async {
-    FirebaseApp firebaseApp = await Firebase.initializeApp();
+    FirebaseApp firebaseApp = await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    // await Firebase.initializeApp(
+    //   options: DefaultFirebaseOptions.currentPlatform,
+    // );
 
     User? user = FirebaseAuth.instance.currentUser;
 
@@ -70,9 +76,9 @@ class _LoginPageState extends State<LoginPage> {
         _focusPassword.unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('Smart Industry'),
-        ),
+        //appBar: AppBar(
+        //  title: Text('Smart Industry'),
+        //),
         body: FutureBuilder(
           future: _initializeFirebase(),
           builder: (context, snapshot) {
@@ -83,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Image.asset(
-                      'lib/images/LogoVertical.png',
+                      'lib/images/SmartIndustry.png',
                       fit: BoxFit.contain,
                     ),
 
@@ -130,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 24.0),
+                          SizedBox(height: 8.0),
                           _isProcessing
                               ? CircularProgressIndicator()
                               : Row(
@@ -180,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(width: 24.0),
+                                    SizedBox(width: 8.0),
                                     Expanded(
                                       child: ElevatedButton(
                                         onPressed: () {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:smart_industry/screens/firebase_options.dart';
 //import 'package:mqtt_client/mqtt_client.dart';
 //import 'dart:io';
 import 'screens/login_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,14 +22,14 @@ class MyApp extends StatelessWidget {
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             textStyle: TextStyle(
-              fontSize: 24.0,
+              fontSize: 18.0,
             ),
             padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
           ),
         ),
         textTheme: TextTheme(
           headline1: TextStyle(
-            fontSize: 46.0,
+            fontSize: 18.0,
             color: Colors.blue.shade700,
             fontWeight: FontWeight.w500,
           ),
