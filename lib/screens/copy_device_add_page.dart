@@ -14,7 +14,6 @@ import 'dart:developer' as developer;
 //import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_industry/screens/adding_device_page.dart';
 import 'package:smart_industry/screens/device_list_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -468,28 +467,7 @@ class _AddDeviceState extends State<AddDevice> {
                                       })),
                             ),
                             ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => AddingDevice(
-                                      prefs: _prefs,
-                                      user: _currentUser,
-                                      request: ProvisioningRequest.fromStrings(
-                                        ssid: _ssid,
-                                        bssid: _bssid,
-                                        password: _password,
-                                        reservedData: '${_currentUser.email}',
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                'Enviar',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              //onPressed: _sendConfig, child: Text('Enviar')
-                            )
+                                onPressed: _sendConfig, child: Text('Enviar'))
                           ],
                         ),
                       )

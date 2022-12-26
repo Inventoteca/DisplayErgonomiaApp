@@ -1,3 +1,5 @@
+//import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:smart_industry/screens/NavBar.dart';
@@ -20,8 +22,6 @@ StreamSubscription? subscription;
 late User _currentUser;
 late SharedPreferences _prefs;
 late List<dynamic> panelDataList = List.empty(growable: true);
-//String data =
-//    '[ {"id": "3C:71:BF:FC:BF:94", "type": "ergo", "name":"Inventoteca", "mod":true}, {"id": "123456", "type": "cruz", "name": "Demo", "mod":false}]';
 
 class DeviceList extends StatefulWidget {
   //const webSocket({Key? key}) : super(key: key);
@@ -37,30 +37,15 @@ class DeviceList extends StatefulWidget {
 class _DeviceListState extends State<DeviceList> {
   MqttServerClient? client;
 
-  //late bool connected;
+  late bool connected;
   //late User _currentUser;
   late SharedPreferences prefs;
 
   void initState() {
     _currentUser = widget.user;
     _prefs = widget.prefs;
-
-    //final data =
-    //    '[ {"id": "3C:71:BF:FC:BF:94", "type": "ergo", "name":"Inventoteca", "mod":true}, {"id": "123456", "type": "cruz", "name": "Demo", "mod":false}]';
-
-    //  _currentUser.updatePhotoURL(data); //Uncoment for Test only
-
     _loadConfig();
-
-    //_getId();
-
     super.initState();
-
-    //connected = false; //initially connection status is "NO" so its FALSE
-
-    //final prefBroker = _prefs.getString('broker') ?? 'inventoteca.com';
-    // final prefPort = _prefs.getInt('port') ?? 1883;
-    // final prefMqttClient = _prefs.getString('mqttClient') ?? 'genericID';
   }
 
   //@override
@@ -109,18 +94,12 @@ class _DeviceListState extends State<DeviceList> {
     {
       Map<String, dynamic> data;
       data = jsonDecode(cmd);
-      //var dataList = jsonDecode(_currentUser.photoURL.toString());
 
       if (panelDataList.isEmpty) {
-        //setState(() {
-        panelDataList = List.empty(growable: true);
-        //});
-
+        setState(() {
+          panelDataList = List.empty(growable: true);
+        });
       }
-
-      //  var data = jsonDecode(
-      //      '{"id": "123fds", "tipo": "NEO", "nombre":"Nuevo", "mod":true}');
-
       if (data.isNotEmpty) {
         bool newpanel = true;
 
@@ -157,6 +136,8 @@ class _DeviceListState extends State<DeviceList> {
     // Create a Reference to the file
     Reference ref = FirebaseStorage.instance
         .ref()
+        .child('smart/')
+        .child('users/')
         .child('${_currentUser.email}')
         .child('/panels.json');
 
@@ -268,48 +249,83 @@ class _DeviceListState extends State<DeviceList> {
 
   Future<List> _downloadFile() async {
 // Create a Reference to the file
-    Reference ref = FirebaseStorage.instance
+    //File file;
+    //String fileName = '${_currentUser.email}';
+    final ref = FirebaseStorage.instance
         .ref()
+        .child('smart/')
+        .child('users/')
         .child('${_currentUser.email}')
         .child('/panels.json');
 
-    // if ('${ref.name}' == 'panels.json') {
-    final io.Directory systemTempDir = io.Directory.systemTemp;
-    final io.File tempFile = io.File('${systemTempDir.path}/temp-${ref.name}');
-    if (tempFile.existsSync()) await tempFile.delete();
+    /*final dirs = FirebaseStorage.instance
+        .ref()
+        .child('smart/')
+        .child('users/')
+        .child('${_currentUser.email}')
+        .child('/data')
+        .listAll();*/
 
-    await ref.writeToFile(tempFile);
+    // UploadTask uploadTask = ref.putFile(file);
 
-    //panelDataList = json.decode(tempFile.readAsStringSync()) as List;
+    //try {
+    // var tempList = await ref.listAll();
+    //ListResult listResult = await dirs;
+    //listResult.items.forEach((dirs) {
+    //  print('Found file: $dirs');
+    //});
+    //tempList.items.forEach((ref) {
+    //  print('Found file: $ref');
+    //  return json.decode(tempList.toString());
+    //});
+    //return List.empty();
+    //final io.Directory systemTempDir = io.Directory.systemTemp;
+    //final io.File tempFile =
+    //    io.File('${systemTempDir.path}/temp-${ref.name}');
+    //if (tempFile.existsSync()) await tempFile.delete();
 
-    //debugPrint('$panelDataList');
-    return json.decode(tempFile.readAsStringSync()) as List;
-    // panelDataList = jsonResponse as List;
+    //await ref.writeToFile(tempFile);
 
-    //ScaffoldMessenger.of(context).showSnackBar(
-    //  SnackBar(
-    //    content: Text(
-    //      'Success!\n Downloaded ${ref.name} \n from bucket: ${ref.bucket}\n '
-    //      'at path: ${ref.fullPath} \n'
-    //      'Wrote "${ref.fullPath}" to tmp-${ref.name}',
-    //    ),
-    //  ),
-    //);
-    // } else {
-    // uploadString();
+    // return json.decode(tempFile.readAsStringSync()) as List;
+
+    // } on FirebaseException catch (e) {
+    //   debugPrint('${e.code}: ${e.message}');
+    //   return List.empty();
     //}
+    try {
+      final listResult = await ref.listAll();
+      final io.Directory systemTempDir = io.Directory.systemTemp;
+      final io.File tempFile =
+          io.File('${systemTempDir.path}/temp-${ref.name}');
+      if (tempFile.existsSync()) await tempFile.delete();
+
+      await ref.writeToFile(tempFile);
+
+      //panelDataList = json.decode(tempFile.readAsStringSync()) as List;
+
+      //debugPrint('$panelDataList');
+      return json.decode(tempFile.readAsStringSync()) as List;
+    } on FirebaseException catch (e) {
+      debugPrint('${e.code}: ${e.message}');
+      return List.empty();
+    }
   }
 
   // -------------------------------- _loadConfig
   Future _loadConfig() async {
-    debugPrint('UID ${_prefs.getString('mqttClient')}');
+    //debugPrint('List ${_prefs.getString('mqttClient')}');
+
     final port = _prefs.getInt('port');
     client = MqttServerClient.withPort('${_prefs.getString('broker')}',
         '${_prefs.getString('mqttClient')}', port!);
-    //client = MqttServerClient(broker, mqttClient);
+
     connect('prefBroker', '${_prefs.getString('mqttClient')}');
     // _loadPanels();
-    panelDataList = await _downloadFile();
+    final List<dynamic> listTemp = await _downloadFile();
+    setState(() {
+      panelDataList = listTemp;
+      debugPrint('$panelDataList');
+    });
   }
 
 //--------------------------------- onSubscribe

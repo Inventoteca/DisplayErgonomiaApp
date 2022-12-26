@@ -39,7 +39,7 @@ dependencies:
   #wifi_iot: ^0.3.17
   #wifi_scan: ^0.4.0+1
   esp_smartconfig: ^1.1.10
-  esptouch_smartconfig: ^1.1.0
+  #esptouch_smartconfig: ^1.1.0
   network_info_plus: ^3.0.1
   permission_handler: ^10.0.2
   shared_preferences: ^2.0.15
@@ -52,6 +52,7 @@ dependencies:
   wakelock: ^0.6.2
   firebase_database: ^10.0.7
   firebase_storage: ^11.0.8
+  path_provider: ^2.0.11
   #esptouch_flutter: ^1.0.0
   #firebase_storage: ^10.3.9
 
@@ -66,13 +67,13 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_launcher_icons: ^0.11.0
 
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/icon/icon.png"  
+  #image_path: "assets/icon/icon.png"  
+  image_path: "lib/images/Smart.png"
     #build_runner: ^2.0.0
     #json_serializable: ^6.0.0
 

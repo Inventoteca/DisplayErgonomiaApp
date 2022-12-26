@@ -2,10 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:smart_industry/screens/report_list_page.dart';
 import '/screens/about_us_page.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import '/screens/profile_page.dart';
 import '/screens/device_list_page.dart';
+import '/screens/report_list_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 late SharedPreferences _prefs;
@@ -71,7 +73,7 @@ class _NavBarState extends State<NavBar> {
               ),
             },
           ),
-          ListTile(
+          /*ListTile(
             leading: Icon(Icons.notifications),
             title: Text('Alertas'),
             onTap: () => null,
@@ -91,11 +93,30 @@ class _NavBarState extends State<NavBar> {
                 ),
               ),
             ),
-          ),
+          ),*/
           ListTile(
             leading: Icon(Icons.description),
             title: Text('Reportes'),
-            onTap: () => null,
+            onTap: () => {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ReportListPage(
+                    user: _currentUser,
+                    prefs: _prefs,
+                  ),
+                ),
+              ),
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.person),
+            title: Text('Nosotros'),
+            onTap: () => {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => AboutUs(),
+              ))
+            },
           ),
           Divider(),
           ListTile(
@@ -111,21 +132,11 @@ class _NavBarState extends State<NavBar> {
                       ),
                     ),
                   }),
-          ListTile(
-            leading: Icon(Icons.person),
-            title: Text('Nosotros'),
-            onTap: () => {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => AboutUs(),
-              ))
-            },
-          ),
-          Divider(),
-          ListTile(
+          /*ListTile(
             leading: Icon(Icons.share),
             title: Text('Tiket de Servicio'),
             onTap: () => null,
-          ),
+          ),*/
         ],
       ),
     );

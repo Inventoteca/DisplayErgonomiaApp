@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:smart_industry/screens/firebase_options.dart';
+//import 'package:smart_industry/screens/firebase_options.dart';
 //import 'package:mqtt_client/mqtt_client.dart';
 //import 'dart:io';
 import 'screens/login_page.dart';
-import 'package:firebase_core/firebase_core.dart';
+//import 'package:firebase_core/firebase_core.dart';
 
 void main() {
   runApp(MyApp());
