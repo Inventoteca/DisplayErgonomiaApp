@@ -313,13 +313,17 @@ class _DeviceListState extends State<DeviceList> {
 
   // -------------------------------- _loadConfig
   Future _loadConfig() async {
-    //debugPrint('List ${_prefs.getString('mqttClient')}');
+    debugPrint('List ${_prefs.getString('mqttClient')}');
 
     final port = _prefs.getInt('port');
     client = MqttServerClient.withPort('${_prefs.getString('broker')}',
         '${_prefs.getString('mqttClient')}', port!);
+    //client = MqttServerClient.withPort(
+    //   '${_prefs.getString('broker')}', 'iosclient', port!);
 
     connect('prefBroker', '${_prefs.getString('mqttClient')}');
+    //connect('prefBroker', 'iosclient');
+
     // _loadPanels();
     final List<dynamic> listTemp = await _downloadFile();
     setState(() {
