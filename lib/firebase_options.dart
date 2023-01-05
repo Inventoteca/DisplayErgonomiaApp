@@ -68,12 +68,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAnaDi3cAfnUQfctYmvPQwv-qavjUTfGaw',
-    appId: '1:155002680380:ios:bb1ce432c548013386ff39',
+    appId: '1:155002680380:ios:9b2895608d1d70d986ff39',
     messagingSenderId: '155002680380',
     projectId: 'fir-panel-6af08',
     databaseURL: 'https://fir-panel-6af08-default-rtdb.firebaseio.com',
     storageBucket: 'fir-panel-6af08.appspot.com',
-    iosClientId: '155002680380-4i5ae02gsc9pu201s3rms482jubuhke5.apps.googleusercontent.com',
-    iosBundleId: 'com.souvikbiswas.flutterAuthentication',
+    iosClientId: '155002680380-judmqo81cvqt5glkdtn73bbfun4hrklt.apps.googleusercontent.com',
+    iosBundleId: 'com.smartindustry.app',
   );
 }
