@@ -111,16 +111,16 @@ class _LoginPageState extends State<LoginPage> {
 
     User? user = FirebaseAuth.instance.currentUser;
 
-    if (user != null) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => DeviceList(
-            user: user,
-            prefs: _prefs,
-          ),
-        ),
-      );
-    }
+    //if (user != null) {
+    // Navigator.of(context).pushReplacement(
+    //   MaterialPageRoute(
+    //     builder: (context) => DeviceList(
+    //       user: user,
+    //       prefs: _prefs,
+    //     ),
+    //   ),
+    // );
+    //}
 
     return firebaseApp;
   }
