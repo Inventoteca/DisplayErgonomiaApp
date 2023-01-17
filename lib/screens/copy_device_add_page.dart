@@ -6,10 +6,10 @@ import 'dart:io' as io;
 //import 'package:esptouch_smartconfig/esptouch_smartconfig.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:esp_smartconfig/esp_smartconfig.dart';
-import 'package:flutter/services.dart';
-import 'package:loggerx/loggerx.dart';
+//import 'package:flutter/services.dart';
+//import 'package:loggerx/loggerx.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-import 'dart:developer' as developer;
+//import 'dart:developer' as developer;
 //import 'package:flutter/services.dart';
 //import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -21,6 +21,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 late SharedPreferences _prefs;
 late List<dynamic> panelDataList = List.empty(growable: true);
+// ignore: unused_element
 late ProvisioningRequest _request;
 
 class AddDevice extends StatefulWidget {
@@ -144,13 +145,14 @@ class _AddDeviceState extends State<AddDevice> {
   Future<void> readResponse() async {
     provisioner.listen((response) async {
       //log.info("Wait for response");
-      String bssidResp = '$response';
+      //String bssidResp = '$response';
       //log.info('Device: ${bssidResp.split("=")[1]}');
 
       //var data = jsonDecode(
       //    '[ {"id": "${bssidResp.split("=")[1]}", "type": "unk", "name":"Nuevo", "mod":true}]');
-      var data =
-          '{"id":"${bssidResp.split("=")[1]}","type":"ergo","name":"Nuevo","mod":true}';
+      //var data =
+      //    '{"id":"${bssidResp.split("=")[1]}","type":"ergo","name":"Nuevo","mod":true}';
+
       // _panelADD(data);
 
       //var dataList = jsonDecode(_currentUser.photoURL.toString());
@@ -297,7 +299,7 @@ class _AddDeviceState extends State<AddDevice> {
   }
 
   //------------------------------------------------------------- _panelADD
-  Future<void> _panelADD(var cmd) async {
+  /*Future<void> _panelADD(var cmd) async {
     debugPrint('Adding List');
     //if (jsonDecode(cmd) != null)
     {
@@ -342,7 +344,7 @@ class _AddDeviceState extends State<AddDevice> {
         }
       }
     }
-  }
+  }*/
 
   /// A new string is uploaded to storage.
   UploadTask uploadString(String putStringText) {

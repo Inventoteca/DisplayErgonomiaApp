@@ -1,9 +1,11 @@
+// ignore_for_file: unused_element
+
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:smart_industry/screens/panelList_page.dart';
+//import 'package:smart_industry/screens/panelList_page.dart';
 import '/screens/profile_page.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -25,6 +27,7 @@ String pt4 = '';
 String pt5 = '';
 String pt6 = '';
 String pt7 = '';
+// ignore:
 late Color _pt1Color = Colors.black;
 late Color _pt2Color = Colors.black;
 late Color _pt3Color = Colors.black;
@@ -488,8 +491,8 @@ class _ConfigPanelPageState extends State<ConfigPanelPage> {
       else {
         setState(() {
           //debugPrint(message);
-          debugPrint("[MQTT client] ${event[0].topic}: $message");
-          pt7 = message;
+          //debugPrint("[MQTT client] ${event[0].topic}: $message");
+          // pt7 = message;
           _pt7Color = Colors.grey;
         });
       }

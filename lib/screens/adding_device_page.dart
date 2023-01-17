@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unused_element
 
 //import 'package:flutter/src/widgets/container.dart';
 //import 'package:flutter/src/widgets/framework.dart';
@@ -8,7 +8,7 @@ import 'package:network_info_plus/network_info_plus.dart';
 //import 'package:flutter/services.dart';
 //import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_industry/screens/device_list_page.dart';
+//import 'package:smart_industry/screens/device_list_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -97,32 +97,38 @@ class _AddingDeviceState extends State<AddingDevice> {
 
   // --------------------------sendConfig
   void _sendConfig() async {
-    if(mounted)
-    {
+    if (mounted) {
       provisioner.listen((response) {
-      print("Device ${response.bssidText} connected to WiFi!");
-      setState(() {
-        _isLoading = false;
-        _msg = "Device Configured OK";
+        print("Device ${response.bssidText} connected to WiFi!");
+        setState(() {
+          _isLoading = false;
+          _msg = "Device Configured OK";
+          String bssidResp = '$response';
+          String idResponse = bssidResp.split("=")[1];
+          idResponse = idResponse.toUpperCase();
+          //var data =
+          //    '{"id":"${bssidResp.split("=")[1]}","type":"ergo","name":"Nuevo","mod":true}';
+          var data =
+              '{"id":"$idResponse","type":"ergo","name":"Nuevo","mod":true}';
+
+          _panelADD(data);
+        });
+        provisioner.stop();
       });
-    provisioner.stop();
-    });
     }
-       
 
     setState(() {
       _isLoading = true;
     });
-    
-    try {
 
+    try {
       await provisioner.start(_request);
 
-     // await provisioner.start(ProvisioningRequest.fromStrings(
-     // ssid: 'InventotecaGuest',
-     //   bssid: 'd2:32:e5:3e:4b:df',
-     //   password: 'InventoInvitado',
-     // ));
+      // await provisioner.start(ProvisioningRequest.fromStrings(
+      // ssid: 'InventotecaGuest',
+      //   bssid: 'd2:32:e5:3e:4b:df',
+      //   password: 'InventoInvitado',
+      // ));
 
       /*await provisioner.start(ProvisioningRequest.fromStrings(
         ssid: 'Inventoteca_2G',
@@ -135,7 +141,7 @@ class _AddingDeviceState extends State<AddingDevice> {
       // this is good place to show some Dialog and wait for exit
       //
       // Or simply you can delay with Future.delayed function
-      await Future.delayed(Duration(seconds: 60));
+      await Future.delayed(Duration(seconds: 90));
     } catch (e) {
       print(e);
     }
@@ -153,6 +159,15 @@ class _AddingDeviceState extends State<AddingDevice> {
         }
         provisioner.stop();
       });
+      //Navigator.of(context).pushReplacement(
+      //  MaterialPageRoute(
+      //    builder: (context) => DeviceList(
+      //      user: user,
+      //      prefs: _prefs,
+      //    ),
+      //  ),
+      //);
+
     }
   }
 

@@ -1,4 +1,4 @@
-import 'dart:io';
+//import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -14,8 +14,8 @@ import 'dart:io' as io;
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+//import 'package:firebase_core/firebase_core.dart';
+//import 'firebase_options.dart';
 
 MqttConnectionState? connectionState;
 StreamSubscription? subscription;
@@ -284,6 +284,7 @@ class _DeviceListState extends State<DeviceList> {
     // UploadTask uploadTask = ref.putFile(file);
 
     try {
+      // ignore: unused_local_variable
       final listResult = await ref.listAll();
       final io.Directory systemTempDir = io.Directory.systemTemp;
       final io.File tempFile =

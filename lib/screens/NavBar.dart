@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:smart_industry/screens/report_list_page.dart';
+//import 'package:smart_industry/screens/report_list_page.dart';
 import '/screens/about_us_page.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import '/screens/profile_page.dart';
@@ -29,7 +29,7 @@ class _NavBarState extends State<NavBar> {
     _currentUser = widget.user;
     _prefs = widget.prefs;
     super.initState();
-    debugPrint('UID ${_currentUser.displayName}');
+    debugPrint('Name ${_currentUser.displayName}');
   }
 
   @override

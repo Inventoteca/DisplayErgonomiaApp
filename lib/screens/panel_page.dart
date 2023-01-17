@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,7 +7,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:smart_industry/screens/config_panel_page.dart';
 import 'package:smart_industry/screens/charts_panel_page.dart';
-import '/screens/profile_page.dart';
+//import '/screens/profile_page.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 //import 'package:segment_display/segment_display.dart';
@@ -313,17 +315,19 @@ class _PanelPageState extends State<PanelPage> {
 
 // -------------------------------- onPublish
   void onPublish(String message, String topic) {
-    debugPrint('send msg: $message');
+    if (mounted) {
+      debugPrint('send msg: $message');
 
-    final builder = MqttClientPayloadBuilder();
-    builder.addString(message);
+      final builder = MqttClientPayloadBuilder();
+      builder.addString(message);
 
-    //client?.publishMessage('inv/' + _currentUser.uid + '/app',
-    //    MqttQos.atLeastOnce, builder.payload!);
-    if (mounted)
+      //client?.publishMessage('inv/' + _currentUser.uid + '/app',
+      //    MqttQos.atLeastOnce, builder.payload!);
+
       client?.publishMessage('$topic', MqttQos.atLeastOnce, builder.payload!);
 
-    builder.clear();
+      builder.clear();
+    }
   }
 
 // --------------------------------- onConnected
@@ -506,6 +510,16 @@ class _PanelPageState extends State<PanelPage> {
           0)
         setState(() {
           debugPrint("Report Received");
+        });
+
+      //------------------ panel/sensors/all-----------------------
+      else if (event[0].topic.compareTo('${_prefs.getString('rootTopic')}' +
+              'panels/' +
+              _panelID +
+              '/sensors/all') ==
+          0)
+        setState(() {
+          //debugPrint("All Sensors");
         });
 
       //------------------ Unknown -----------------------

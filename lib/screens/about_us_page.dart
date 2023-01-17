@@ -1,7 +1,7 @@
-import 'dart:ui';
+//import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import '/screens/NavBar.dart';
+//import '/screens/NavBar.dart';
 
 class AboutUs extends StatelessWidget {
   const AboutUs();

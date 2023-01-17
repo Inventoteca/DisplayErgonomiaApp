@@ -4,10 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '/screens/device_list_page.dart';
 import '/utils/fire_auth.dart';
 import '/utils/validator.dart';
-import 'package:device_info/device_info.dart';
+//import 'package:device_info/device_info.dart';
 import 'dart:io';
 
 late SharedPreferences _prefs;
+String _errorMsg = '';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -24,13 +25,14 @@ class _RegisterPageState extends State<RegisterPage> {
   final _focusName = FocusNode();
   final _focusEmail = FocusNode();
   final _focusPassword = FocusNode();
+  bool _isObscure = true;
   //final SharedPreferences prefs;
 
   bool _isProcessing = false;
 
   @override
   void initState() {
-    // TODO: implement initState
+    // implement initState
     _loadConfig();
     super.initState();
   }
@@ -63,15 +65,15 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // -------------------------------- _getId
   Future _getId() async {
-    var deviceInfo = DeviceInfoPlugin();
+    // var deviceInfo = DeviceInfoPlugin();
     String clientID = '';
     if (Platform.isIOS) {
       // import 'dart:io'
-      var iosDeviceInfo = await deviceInfo.iosInfo;
-      clientID = iosDeviceInfo.identifierForVendor; // unique ID on iOS
+      // var iosDeviceInfo = await deviceInfo.iosInfo;
+      // clientID = iosDeviceInfo.identifierForVendor; // unique ID on iOS
     } else if (Platform.isAndroid) {
-      var androidDeviceInfo = await deviceInfo.androidInfo;
-      clientID = androidDeviceInfo.androidId; // unique ID on Android
+      //var androidDeviceInfo = await deviceInfo.androidInfo;
+      //clientID = androidDeviceInfo.androidId; // unique ID on Android
     }
     return clientID;
   }
@@ -105,7 +107,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           name: value,
                         ),
                         decoration: InputDecoration(
-                          hintText: "Nombre",
+                          border: OutlineInputBorder(),
+                          labelText: 'Nombre',
+                          hintText: "Introduce tu Nombre",
                           errorBorder: UnderlineInputBorder(
                             borderRadius: BorderRadius.circular(6.0),
                             borderSide: BorderSide(
@@ -122,7 +126,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           email: value,
                         ),
                         decoration: InputDecoration(
-                          hintText: "Email",
+                          border: OutlineInputBorder(),
+                          labelText: 'Correo',
+                          hintText: "Introduce un correo válido",
                           errorBorder: UnderlineInputBorder(
                             borderRadius: BorderRadius.circular(6.0),
                             borderSide: BorderSide(
@@ -135,12 +141,23 @@ class _RegisterPageState extends State<RegisterPage> {
                       TextFormField(
                         controller: _passwordTextController,
                         focusNode: _focusPassword,
-                        obscureText: true,
+                        obscureText: _isObscure,
                         validator: (value) => Validator.validatePassword(
                           password: value,
                         ),
                         decoration: InputDecoration(
-                          hintText: "Contraseña",
+                          border: OutlineInputBorder(),
+                          labelText: 'Contraseña',
+                          hintText: "Debe contener al menos 6 caracteres",
+                          suffixIcon: IconButton(
+                              icon: Icon(_isObscure
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  _isObscure = !_isObscure;
+                                });
+                              }),
                           errorBorder: UnderlineInputBorder(
                             borderRadius: BorderRadius.circular(6.0),
                             borderSide: BorderSide(
@@ -212,5 +229,24 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+
+  void showError(BuildContext context, String errorMsg) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text(errorMsg),
+            actions: <Widget>[
+              ElevatedButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
   }
 }

@@ -47,33 +47,29 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCILeO3Adsm2OJ4ZsJhVQujb3IL3WEnaXw',
-    appId: '1:155002680380:web:9189d2566eaecb6986ff39',
-    messagingSenderId: '155002680380',
-    projectId: 'fir-panel-6af08',
-    authDomain: 'fir-panel-6af08.firebaseapp.com',
-    databaseURL: 'https://fir-panel-6af08-default-rtdb.firebaseio.com',
-    storageBucket: 'fir-panel-6af08.appspot.com',
-    measurementId: 'G-17RMXLTZ6V',
+    apiKey: 'AIzaSyAOfGOjdpVQZtnhwTjmNRy8mApY993zHfc',
+    appId: '1:314090361026:web:50d629657a34fac2632b5b',
+    messagingSenderId: '314090361026',
+    projectId: 'smart-industry-panels',
+    authDomain: 'smart-industry-panels.firebaseapp.com',
+    storageBucket: 'smart-industry-panels.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB8-pMnD5XXrFU-IkWqMe5onPLi_cPQa2I',
-    appId: '1:155002680380:android:70780a459ee04df486ff39',
-    messagingSenderId: '155002680380',
-    projectId: 'fir-panel-6af08',
-    databaseURL: 'https://fir-panel-6af08-default-rtdb.firebaseio.com',
-    storageBucket: 'fir-panel-6af08.appspot.com',
+    apiKey: 'AIzaSyCPwTMv1WqlaoxSyaLRLmFBRNrjeavOUmM',
+    appId: '1:314090361026:android:20ff9bc57650ec71632b5b',
+    messagingSenderId: '314090361026',
+    projectId: 'smart-industry-panels',
+    storageBucket: 'smart-industry-panels.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAnaDi3cAfnUQfctYmvPQwv-qavjUTfGaw',
-    appId: '1:155002680380:ios:9b2895608d1d70d986ff39',
-    messagingSenderId: '155002680380',
-    projectId: 'fir-panel-6af08',
-    databaseURL: 'https://fir-panel-6af08-default-rtdb.firebaseio.com',
-    storageBucket: 'fir-panel-6af08.appspot.com',
-    iosClientId: '155002680380-judmqo81cvqt5glkdtn73bbfun4hrklt.apps.googleusercontent.com',
+    apiKey: 'AIzaSyANDwRsSjr959L4LYD91P_ANiK5ThsVz-s',
+    appId: '1:314090361026:ios:4caed628c2c7df8d632b5b',
+    messagingSenderId: '314090361026',
+    projectId: 'smart-industry-panels',
+    storageBucket: 'smart-industry-panels.appspot.com',
+    iosClientId: '314090361026-dk7oi1b5olvlhfvs4cu6brcd41s5svpq.apps.googleusercontent.com',
     iosBundleId: 'com.smartindustry.app',
   );
 }

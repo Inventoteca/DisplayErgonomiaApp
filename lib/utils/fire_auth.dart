@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import '/screens/register_page.dart';
 
 class FireAuth {
   // For registering a new user
@@ -17,17 +19,17 @@ class FireAuth {
       );
 
       user = userCredential.user;
-      //await user!.updateProfile(displayName: name);
-      await user?.reload();
+      await user!.updateDisplayName(name);
+      await user.reload();
       user = auth.currentUser;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
+        debugPrint('Contraseña debil.');
       } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
+        debugPrint('La cuenta ya existe');
       }
     } catch (e) {
-      print(e);
+      debugPrint('$e');
     }
 
     return user;
@@ -49,9 +51,9 @@ class FireAuth {
       user = userCredential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
+        debugPrint('Usuario no encontrado');
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided.');
+        debugPrint('Contraseña incorrecta');
       }
     }
 

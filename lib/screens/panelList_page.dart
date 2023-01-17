@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 //import 'package:segment_display/segment_display.dart';
-import 'package:device_info/device_info.dart';
+//import 'package:device_info/device_info.dart';
 import '/screens/NavBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:client_information/client_information.dart';
@@ -195,14 +195,14 @@ class _PanelListPageState extends State<PanelListPage> {
   }
 
   Future _getId() async {
-    var deviceInfo = DeviceInfoPlugin();
+    // var deviceInfo = DeviceInfoPlugin();
     if (Platform.isIOS) {
       // import 'dart:io'
-      var iosDeviceInfo = await deviceInfo.iosInfo;
-      clientID = iosDeviceInfo.identifierForVendor; // unique ID on iOS
+      // var iosDeviceInfo = await deviceInfo.iosInfo;
+      // clientID = iosDeviceInfo.identifierForVendor; // unique ID on iOS
     } else if (Platform.isAndroid) {
-      var androidDeviceInfo = await deviceInfo.androidInfo;
-      clientID = androidDeviceInfo.androidId; // unique ID on Android
+      //var androidDeviceInfo = await deviceInfo.androidInfo;
+      //clientID = androidDeviceInfo.androidId; // unique ID on Android
     }
     debugPrint('CID $clientID');
     //debugPrint('CID $clientID');

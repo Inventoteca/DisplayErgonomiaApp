@@ -1,7 +1,7 @@
 {
   "file_generated_by": "FlutterFire CLI",
   "purpose": "FirebaseAppID & ProjectID for this Firebase app in this directory",
-  "GOOGLE_APP_ID": "1:155002680380:ios:9b2895608d1d70d986ff39",
-  "FIREBASE_PROJECT_ID": "fir-panel-6af08",
-  "GCM_SENDER_ID": "155002680380"
+  "GOOGLE_APP_ID": "1:314090361026:ios:4caed628c2c7df8d632b5b",
+  "FIREBASE_PROJECT_ID": "smart-industry-panels",
+  "GCM_SENDER_ID": "314090361026"
 }

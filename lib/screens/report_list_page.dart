@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 //import '/screens/profile_page.dart';
 import '/screens/NavBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+//import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
 //import 'package:client_information/client_information.dart';
 //import 'package:json_annotation/json_annotation.dart';
@@ -129,6 +129,7 @@ class _ReportListPageState extends State<ReportListPage> {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     debugPrint('$appDocDir');
     //Here you'll specify the file it should be saved as
+    // ignore: unused_local_variable
     File downloadToFile = File('${appDocDir.path}/Reporte.pdf');
     //Here you'll specify the file it should download from Cloud Storage
     //String fileToDownload = 'uploads/uploaded-pdf.pdf';
@@ -144,7 +145,7 @@ class _ReportListPageState extends State<ReportListPage> {
 
     //Now you can try to download the specified file, and write it to the downloadToFile.
     try {
-      var archi = await dirs;
+      //var archi = await dirs;
 
       final io.Directory systemTempDir = io.Directory.systemTemp;
       final io.File tempFile =

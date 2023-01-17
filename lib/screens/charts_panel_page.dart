@@ -1,18 +1,20 @@
-import 'dart:convert';
+// ignore_for_file: unused_element
+
+//import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:smart_industry/screens/panelList_page.dart';
-import '/screens/profile_page.dart';
+//import 'package:smart_industry/screens/panelList_page.dart';
+//import '/screens/profile_page.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 //import 'package:segment_display/segment_display.dart';
 //import 'package:device_info/device_info.dart';
-import '/screens/NavBar.dart';
+//import '/screens/NavBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'dart:math' as math;
+//import 'dart:math' as math;
 
 MqttConnectionState? connectionState;
 StreamSubscription? subscription;
@@ -20,7 +22,7 @@ late User _currentUser;
 late SharedPreferences _prefs;
 late String _panelID;
 late TooltipBehavior _tooltipBehavior;
-late bool _chartReceived = false;
+//late bool _chartReceived = false;
 String t = '20';
 String h = '40';
 String uv = '0.0';
