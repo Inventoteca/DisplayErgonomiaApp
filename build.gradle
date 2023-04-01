@@ -1,0 +1,33 @@
+buildscript {
+    ext {
+        kotlin_version = '1.8.0'
+        gradle_version = '7.6'
+    }
+  repositories {
+    // Make sure that you have the following two repositories
+    google()  // Google's Maven repository
+
+    mavenCentral()  // Maven Central repository
+
+  }
+  dependencies {
+    //...
+    // Add the dependency for the Google services Gradle plugin
+    classpath 'com.google.gms:google-services:4.3.13'
+    classpath 'com.android.tools.build:gradle:7.6'
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+
+  }
+}
+
+allprojects {
+ // ...
+  repositories {
+    // Make sure that you have the following two repositories
+    google()  // Google's Maven repository
+
+    mavenCentral()  // Maven Central repository
+
+  }
+}
