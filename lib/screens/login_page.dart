@@ -2,19 +2,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import '/screens/register_page.dart';
-//import '/screens/device_list_page.dart';
 import 'device_list_page.dart';
 import '/utils/fire_auth.dart';
 import '/utils/validator.dart';
-//import 'package:device_info_plus/device_info_plus.dart';
 import '/firebase_options.dart';
 import '/widgets/google_sign_in_button.dart';
+import '/widgets/apple_sign_in_button.dart';
 import '/res/custom_colors.dart';
 import '/utils/authentication.dart';
-//import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
-
-//late FirebaseFirestore _db;
+//import 'package:firebase_app_check/firebase_app_check.dart';
+//import 'package:flutter/foundation.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -29,6 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   final _focusPassword = FocusNode();
   bool _isProcessing = true;
   bool _isObscure = true;
+  String _errorMessage = '';
 
   void initState() {
     // _initializeFirebase();
@@ -49,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    await FirebaseAppCheck.instance.activate(
+    /* await FirebaseAppCheck.instance.activate(
       webRecaptchaSiteKey: 'recaptcha-v3-site-key',
       // Default provider for Android is the Play Integrity provider. You can use the "AndroidProvider" enum to choose
       // your preferred provider. Choose from:
@@ -57,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
       // 2. safety net provider
       // 3. play integrity provider
       androidProvider: AndroidProvider.debug,
-    );
+    );*/
 
     if (user != null) {
       Navigator.of(context).pushReplacement(
@@ -93,8 +91,16 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 50,
+                      height: 35,
                     ),
+                    if (_errorMessage
+                        .isNotEmpty) // Display error message if it's not empty
+                      Text(
+                        _errorMessage,
+                        style: TextStyle(
+                          color: Colors.red,
+                        ),
+                      ),
                     Card(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30)),
@@ -205,6 +211,8 @@ class _LoginPageState extends State<LoginPage> {
                                                         _isProcessing = false;
                                                       });
 
+                                                      debugPrint('TRYING');
+
                                                       if (user != null) {
                                                         Navigator.of(context)
                                                             .pushReplacement(
@@ -218,10 +226,10 @@ class _LoginPageState extends State<LoginPage> {
                                                           ),
                                                         );
                                                       }
+                                                      debugPrint('Alsmost');
                                                     } on FirebaseAuthException catch (e) {
                                                       debugPrint(
-                                                          'Failed with error code: ${e.code}');
-                                                      debugPrint(e.message);
+                                                          'Error message: $e');
                                                     }
                                                   }
                                                 },
@@ -239,7 +247,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             SizedBox(
-                              height: 100,
+                              height: 35,
                             ),
                             FutureBuilder(
                               future: Authentication.initializeFirebase(
@@ -250,6 +258,28 @@ class _LoginPageState extends State<LoginPage> {
                                 } else if (snapshot.connectionState ==
                                     ConnectionState.done) {
                                   return GoogleSignInButton(
+                                      //user: user,
+                                      //prefs: _prefs,
+
+                                      );
+                                }
+                                return CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    CustomColors.firebaseOrange,
+                                  ),
+                                );
+                              },
+                            ),
+
+                            FutureBuilder(
+                              future: Authentication.initializeFirebase(
+                                  context: context),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasError) {
+                                  return Text('Error initializing Firebase');
+                                } else if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  return AppleSignInButton(
                                       //user: user,
                                       //prefs: _prefs,
 

@@ -22,6 +22,7 @@ import 'device_list_page.dart';
 //late SharedPreferences _prefs;
 late List<dynamic> panelDataList = List.empty(growable: true);
 late ProvisioningRequest _request;
+late Provisioner provisioner = Provisioner.espTouchV2();
 
 //MqttConnectionState? connectionState;
 //StreamSubscription? subscription;
@@ -78,7 +79,7 @@ class _AddingDeviceState extends State<AddingDevice> {
     //Wakelock.disable();
     //  onDisConnected();
     // provisioner;
-    //provisioner.stop();
+    provisioner.stop();
     super.dispose();
   }
 
@@ -134,7 +135,7 @@ class _AddingDeviceState extends State<AddingDevice> {
 
   // --------------------------sendConfig
   void _sendConfig() async {
-    final provisioner = Provisioner.espTouchV2();
+    //final provisioner = Provisioner.espTouchV2();
     if (mounted) {
       provisioner.listen((response) {
         debugPrint("Device ${response.bssidText} connected to WiFi!");
@@ -184,15 +185,14 @@ class _AddingDeviceState extends State<AddingDevice> {
         }
         provisioner.stop();
       });
-      //Navigator.of(context).pushReplacement(
-      //  MaterialPageRoute(
-      //    builder: (context) => DeviceList(
-      //      user: user,
-      //      prefs: _prefs,
-      //    ),
-      //  ),
-      //);
-
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => DeviceList(
+            user: _currentUser,
+            //prefs: _prefs,
+          ),
+        ),
+      );
     }
   }
 

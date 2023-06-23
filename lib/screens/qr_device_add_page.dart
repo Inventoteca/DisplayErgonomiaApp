@@ -180,23 +180,115 @@ class _FoundCodeScreenState extends State<FoundCodeScreen> {
               //SizedBox(height: 20.0),
               if (_parsed["type"] != null)
                 if (_parsed["type"] == 'cruz')
-                  Container(
-                    child: Text(
-                      "Cruz de Seguridad",
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
+                  Card(
+                    elevation: 10,
+                    margin: EdgeInsets.all(30),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            "Cruz de Seguridad",
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          TextFormField(
+                            controller: nameTextController,
+                            focusNode: focusName,
+                            validator: (value) => Validator.validateName(
+                              name: value,
+                            ),
+                            decoration: InputDecoration(
+                              labelText: //Text(
+                                  'Nombre',
+                              //style: TextStyle(
+                              //  fontSize: 10,
+                              //),
+                              // ),
 
-                    /*SizedBox(
-                        height: 20,
+                              //hintStyle: ,
+                              //hintText: Text('Introduce un nombre para tu dispositivo'),
+                              border: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(width: 3, color: Colors.orange),
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(width: 3, color: Colors.orange),
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(width: 3, color: Colors.orange),
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                              //labelText: 'Nombre',
+                              //hintText: "Introduce un nombre para tu dispositivo",
+
+                              errorBorder: UnderlineInputBorder(
+                                borderRadius: BorderRadius.circular(6.0),
+                                borderSide: BorderSide(
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                              "Con este panel puedes registrar los días sin accidentes y otras incidencias en el mes." /*widget.value*/,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                              )),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          ElevatedButton(
+                              onPressed: () {
+                                //if (_registerFormKey.currentState!
+                                //.validate()) {
+                                var name = nameTextController.text;
+                                //debugPrint(widget.value['id']);
+                                var decode = jsonDecode(widget.value);
+                                //debugPrint('${decode['id']}');
+
+                                String _id = decode['id'];
+                                String type = decode['type'];
+
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => WifiConfig(
+                                      user: _currentUser,
+                                      id: _id,
+                                      name: name,
+                                      type: type,
+                                      demo: false,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Text("Continuar"))
+                        ],
                       ),
+
+                      /*
                       Text(
                         widget.value,
                         style: TextStyle(
                           fontSize: 16,
                         ),
                       ),*/
+                    ),
                   ),
               if (_parsed["type"] == 'ergo')
                 Card(

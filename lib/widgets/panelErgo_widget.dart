@@ -347,8 +347,8 @@ class _PanelErgoState extends State<PanelErgo> {
                     //setState(() {
 
                     final dynamic jsonValue = data.value;
-                    final int uv = jsonValue["uv"] as int;
-                    final int uv_max = jsonValue["uv_max"] as int;
+                    final uv = jsonValue["uv"];
+                    final int uv_max = (jsonValue["uv_max"] as int);
                     final int uv_min = jsonValue["uv_min"] as int;
                     final Color uv_colMax = Color(jsonValue["uv_colMax"]);
                     final Color uv_colMin = Color(jsonValue["uv_colMin"]);

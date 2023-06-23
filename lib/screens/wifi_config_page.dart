@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io' as io;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:esp_smartconfig/esp_smartconfig.dart';
+import 'package:firebase_database/firebase_database.dart';
 //import 'package:json_rpc_2/error_code.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,6 +20,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 late List<dynamic> _panelDataList = List.empty(growable: true);
 var _doc;
+//StreamSubscription<EventSnapshot>? _subscription;
 //MqttConnectionState? connectionState;
 //StreamSubscription? subscription;
 late User _currentUser;
@@ -27,6 +29,8 @@ late String _name;
 late String _type;
 //late MqttServerClient client;
 late bool _isDemo;
+late bool _isConnected;
+late dynamic newValue;
 
 class WifiConfig extends StatefulWidget {
   //const AddDevice({super.key});
@@ -77,6 +81,7 @@ class _WifiConfigState extends State<WifiConfig> {
     _type = widget.type;
     debugPrint(_panelID);
     _isDemo = widget.demo;
+    _isConnected = false;
     //_prefs = widget.prefs;
     _loadConfig();
 
@@ -311,11 +316,22 @@ class _WifiConfigState extends State<WifiConfig> {
 
   // -------------------------------- _loadConfig
   Future _loadConfig() async {
+    //if (_configLoaded) {
+    // return; // Salir temprano si la configuración ya se ha cargado
+    //}
+
+    //if (mounted) {
+
     var encode = {'id': _panelID, 'type': _type, 'name': _name};
 
     debugPrint('$encode');
 
     await _updatePanel(jsonEncode(encode));
+
+    final DatabaseReference ref =
+        FirebaseDatabase.instance.ref('/panels/$_panelID/');
+    await ref.child('actual/ping').set(false);
+
     //await _panelADD(jsonEncode(encode));
 
     if (_isDemo) {
@@ -328,31 +344,65 @@ class _WifiConfigState extends State<WifiConfig> {
           ),
         ),
       );
-    } else {
-      //final topic1 = 'smart/' + 'panels/' + _panelID + '/app/#';
-      //client = await connect(topic1);
-
-      //client.subscribe(topic1, MqttQos.atLeastOnce);
-      //subscription = client.updates?.listen(onMessage);
-      //print(subscription);
-
-      //onPublish('1', 'smart/' + 'panels/' + _panelID + '/app/conf');
-
-      //await Future.delayed(const Duration(seconds: 60));
-      //if (_msg == '')
-      //{
-      //  setState(() {
-      //    _isLoading = false;
-      //  });
-
-      //if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-
-      _initNetworkInfo();
-      //}
+      return;
     }
+    ref.child('actual').onValue.listen((event) {
+      newValue = event.snapshot.value;
+      Future.delayed(const Duration(seconds: 5));
+      // Imprimir el valor en la consola
+      //print('Nuevo valor: $newValue');
+      //debugPrint("${newValue["ping"]}");
+
+      if (newValue["ping"]) {
+        if (mounted) {
+          setState(() {
+            debugPrint("aqui se repite?");
+            _isConnected = true;
+          });
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => DeviceList(
+                user: _currentUser,
+                //id: _panelID,
+                // prefs: _prefs,
+              ),
+            ),
+          );
+          return;
+        }
+        //return;
+      } else {
+        //final topic1 = 'smart/' + 'panels/' + _panelID + '/app/#';
+        //client = await connect(topic1);
+
+        //client.subscribe(topic1, MqttQos.atLeastOnce);
+        //subscription = client.updates?.listen(onMessage);
+        //print(subscription);
+
+        //onPublish('1', 'smart/' + 'panels/' + _panelID + '/app/conf');
+
+        //await Future.delayed(const Duration(seconds: 60));
+        //if (_msg == '')
+        //{
+        //  setState(() {
+        //    _isLoading = false;
+        //  });
+
+        //if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        _initNetworkInfo();
+        //}
+
+        // _configLoaded = true;
+      }
+    });
+
+    // if (_isConnected) {
+    //   return;
+    //}
   }
 
   // ---------------------------------------------------------- onMsg
@@ -429,11 +479,15 @@ class _WifiConfigState extends State<WifiConfig> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
+                                      Icon(
+                                        Icons.wifi,
+                                        size: 100,
+                                      ),
                                       SizedBox(
                                         height: 25,
                                       ),
                                       Text(
-                                          "Conectar panel el panel a la siguinete Red WiFi" /*widget.value*/,
+                                          "Conectar el panel a la siguinete Red WiFi" /*widget.value*/,
                                           style: TextStyle(
                                             fontSize: 20,
                                           )),
@@ -487,7 +541,7 @@ class _WifiConfigState extends State<WifiConfig> {
                                         },
 
                                         child: Text(
-                                          'Enviar configuración',
+                                          'Conectar',
                                           style: TextStyle(color: Colors.white),
                                         ),
                                         //onPressed: _sendConfig, child: Text('Enviar')

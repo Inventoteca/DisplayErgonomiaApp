@@ -52,7 +52,7 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
 
     //debugPrint('update');
 
-    getLimits();
+    //getLimits();
   }
 
   @override
