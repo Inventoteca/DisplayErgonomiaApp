@@ -1,5 +1,4 @@
 //import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '/res/custom_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -183,19 +182,19 @@ class _PanelErgoState extends State<PanelErgo> {
 
                 final dynamic jsonValue = data.value;
                 final int t = jsonValue["t"] as int;
-                final int t_max = jsonValue["t_max"] as int;
-                final int t_min = jsonValue["t_min"] as int;
-                final Color t_colMax = Color(jsonValue["t_colMax"]);
-                final Color t_colMin = Color(jsonValue["t_colMin"]);
-                final Color t_colDef = Color(jsonValue["t_colDef"]);
+                final int tMax = jsonValue["t_max"] as int;
+                final int tMin = jsonValue["t_min"] as int;
+                final Color tColmax = Color(jsonValue["t_colMax"]);
+                final Color tColmin = Color(jsonValue["t_colMin"]);
+                final Color tColdef = Color(jsonValue["t_colDef"]);
                 final Color color;
 
-                if (t >= t_max)
-                  color = t_colMax;
-                else if (t <= t_min)
-                  color = t_colMin;
+                if (t >= tMax)
+                  color = tColmax;
+                else if (t <= tMin)
+                  color = tColmin;
                 else
-                  color = t_colDef;
+                  color = tColdef;
 
                 ///_t = t;
 
@@ -263,19 +262,19 @@ class _PanelErgoState extends State<PanelErgo> {
 
                     final dynamic jsonValue = data.value;
                     final int h = jsonValue["h"] as int;
-                    final int h_max = jsonValue["h_max"] as int;
-                    final int h_min = jsonValue["h_min"] as int;
-                    final Color h_colMax = Color(jsonValue["h_colMax"]);
-                    final Color h_colMin = Color(jsonValue["h_colMin"]);
-                    final Color h_colDef = Color(jsonValue["h_colDef"]);
+                    final int hMax = jsonValue["h_max"] as int;
+                    final int hMin = jsonValue["h_min"] as int;
+                    final Color hColmax = Color(jsonValue["h_colMax"]);
+                    final Color hColmin = Color(jsonValue["h_colMin"]);
+                    final Color hColdef = Color(jsonValue["h_colDef"]);
                     final Color color;
 
-                    if (h >= h_max)
-                      color = h_colMax;
-                    else if (h <= h_min)
-                      color = h_colMin;
+                    if (h >= hMax)
+                      color = hColmax;
+                    else if (h <= hMin)
+                      color = hColmin;
                     else
-                      color = h_colDef;
+                      color = hColdef;
 
                     ///_t = t;
 
@@ -348,19 +347,19 @@ class _PanelErgoState extends State<PanelErgo> {
 
                     final dynamic jsonValue = data.value;
                     final uv = jsonValue["uv"];
-                    final int uv_max = (jsonValue["uv_max"] as int);
-                    final int uv_min = jsonValue["uv_min"] as int;
-                    final Color uv_colMax = Color(jsonValue["uv_colMax"]);
-                    final Color uv_colMin = Color(jsonValue["uv_colMin"]);
-                    final Color uv_colDef = Color(jsonValue["uv_colDef"]);
+                    final int uvMax = (jsonValue["uv_max"] as int);
+                    final int uvMin = jsonValue["uv_min"] as int;
+                    final Color uvColmax = Color(jsonValue["uv_colMax"]);
+                    final Color uvColmin = Color(jsonValue["uv_colMin"]);
+                    final Color uvColdef = Color(jsonValue["uv_colDef"]);
                     final Color color;
 
-                    if (uv >= uv_max)
-                      color = uv_colMax;
-                    else if (uv <= uv_min)
-                      color = uv_colMin;
+                    if (uv >= uvMax)
+                      color = uvColmax;
+                    else if (uv <= uvMin)
+                      color = uvColmin;
                     else
-                      color = uv_colDef;
+                      color = uvColdef;
 
                     ///_t = t;
 
@@ -433,19 +432,19 @@ class _PanelErgoState extends State<PanelErgo> {
 
                     final dynamic jsonValue = data.value;
                     final int db = jsonValue["db"] as int;
-                    final int db_max = jsonValue["db_max"] as int;
-                    final int db_min = jsonValue["db_min"] as int;
-                    final Color db_colMax = Color(jsonValue["db_colMax"]);
-                    final Color db_colMin = Color(jsonValue["db_colMin"]);
-                    final Color db_colDef = Color(jsonValue["db_colDef"]);
+                    final int dbMax = jsonValue["db_max"] as int;
+                    final int dbMin = jsonValue["db_min"] as int;
+                    final Color dbColmax = Color(jsonValue["db_colMax"]);
+                    final Color dbColmin = Color(jsonValue["db_colMin"]);
+                    final Color dbColdef = Color(jsonValue["db_colDef"]);
                     final Color color;
 
-                    if (db >= db_max)
-                      color = db_colMax;
-                    else if (db <= db_min)
-                      color = db_colMin;
+                    if (db >= dbMax)
+                      color = dbColmax;
+                    else if (db <= dbMin)
+                      color = dbColmin;
                     else
-                      color = db_colDef;
+                      color = dbColdef;
 
                     ///_t = t;
 
@@ -514,19 +513,19 @@ class _PanelErgoState extends State<PanelErgo> {
 
                   final dynamic jsonValue = data.value;
                   final int lux = jsonValue["lux"] as int;
-                  final int lux_max = jsonValue["lux_max"] as int;
-                  final int lux_min = jsonValue["lux_min"] as int;
-                  final Color lux_colMax = Color(jsonValue["lux_colMax"]);
-                  final Color lux_colMin = Color(jsonValue["lux_colMin"]);
-                  final Color lux_colDef = Color(jsonValue["lux_colDef"]);
+                  final int luxMax = jsonValue["lux_max"] as int;
+                  final int luxMin = jsonValue["lux_min"] as int;
+                  final Color luxColmax = Color(jsonValue["lux_colMax"]);
+                  final Color luxColmin = Color(jsonValue["lux_colMin"]);
+                  final Color luxColdef = Color(jsonValue["lux_colDef"]);
                   final Color color;
 
-                  if (lux >= lux_max)
-                    color = lux_colMax;
-                  else if (lux <= lux_min)
-                    color = lux_colMin;
+                  if (lux >= luxMax)
+                    color = luxColmax;
+                  else if (lux <= luxMin)
+                    color = luxColmin;
                   else
-                    color = lux_colDef;
+                    color = luxColdef;
 
                   ///_t = t;
 
@@ -598,19 +597,19 @@ class _PanelErgoState extends State<PanelErgo> {
 
                     final dynamic jsonValue = data.value;
                     final int ppm = jsonValue["ppm"] as int;
-                    final int ppm_max = jsonValue["ppm_max"] as int;
-                    final int ppm_min = jsonValue["ppm_min"] as int;
-                    final Color ppm_colMax = Color(jsonValue["ppm_colMax"]);
-                    final Color ppm_colMin = Color(jsonValue["ppm_colMin"]);
-                    final Color ppm_colDef = Color(jsonValue["ppm_colDef"]);
+                    final int ppmMax = jsonValue["ppm_max"] as int;
+                    final int ppmMin = jsonValue["ppm_min"] as int;
+                    final Color ppmColmax = Color(jsonValue["ppm_colMax"]);
+                    final Color ppmColmin = Color(jsonValue["ppm_colMin"]);
+                    final Color ppmColdef = Color(jsonValue["ppm_colDef"]);
                     final Color color;
 
-                    if (ppm >= ppm_max)
-                      color = ppm_colMax;
-                    else if (ppm <= ppm_min)
-                      color = ppm_colMin;
+                    if (ppm >= ppmMax)
+                      color = ppmColmax;
+                    else if (ppm <= ppmMin)
+                      color = ppmColmin;
                     else
-                      color = ppm_colDef;
+                      color = ppmColdef;
 
                     ///_t = t;
 

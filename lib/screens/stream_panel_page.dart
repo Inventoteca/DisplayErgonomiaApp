@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
-import 'dart:io' as io;
 import 'package:flutter/material.dart';
 //import 'package:smart_industry/screens/config_panel_page.dart';
 //import 'package:smart_industry/screens/charts_panel_page.dart';
@@ -9,7 +7,6 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:smart_industry/screens/chat_page.dart';
 import 'package:smart_industry/screens/report_list_page.dart';
-import 'package:smart_industry/widgets/config_panelPro_widget.dart';
 import 'package:smart_industry/widgets/panelPro_widget.dart';
 //import '/utils/mqtt_client.dart';
 import '/widgets/panelErgo_widget.dart';

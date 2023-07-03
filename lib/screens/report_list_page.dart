@@ -1,14 +1,12 @@
 //import 'dart:async';
 // ignore_for_file: deprecated_member_use, unused_element
 
-import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'dart:io';
-import 'dart:io' as io;
 import 'package:flutter/material.dart';
 //import 'package:smart_industry/screens/report_files_page.dart';
 //import '/screens/profile_page.dart';
@@ -18,10 +16,7 @@ import '/screens/NavBar.dart';
 import 'package:path_provider/path_provider.dart';
 //import 'package:client_information/client_information.dart';
 //import 'package:json_annotation/json_annotation.dart';
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:path_provider/path_provider.dart';
 
 late User _currentUser;
 late List<Map<String, dynamic>> jsonList = [];

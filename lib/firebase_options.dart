@@ -52,6 +52,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '314090361026',
     projectId: 'smart-industry-panels',
     authDomain: 'smart-industry-panels.firebaseapp.com',
+    databaseURL: 'https://smart-industry-panels-default-rtdb.firebaseio.com',
     storageBucket: 'smart-industry-panels.appspot.com',
   );
 
@@ -60,6 +61,7 @@ class DefaultFirebaseOptions {
     appId: '1:314090361026:android:20ff9bc57650ec71632b5b',
     messagingSenderId: '314090361026',
     projectId: 'smart-industry-panels',
+    databaseURL: 'https://smart-industry-panels-default-rtdb.firebaseio.com',
     storageBucket: 'smart-industry-panels.appspot.com',
   );
 
@@ -68,7 +70,9 @@ class DefaultFirebaseOptions {
     appId: '1:314090361026:ios:4caed628c2c7df8d632b5b',
     messagingSenderId: '314090361026',
     projectId: 'smart-industry-panels',
+    databaseURL: 'https://smart-industry-panels-default-rtdb.firebaseio.com',
     storageBucket: 'smart-industry-panels.appspot.com',
+    androidClientId: '314090361026-qrfi8cidjef3to3sr9flvov83704mvdd.apps.googleusercontent.com',
     iosClientId: '314090361026-dk7oi1b5olvlhfvs4cu6brcd41s5svpq.apps.googleusercontent.com',
     iosBundleId: 'com.smartindustry.app',
   );

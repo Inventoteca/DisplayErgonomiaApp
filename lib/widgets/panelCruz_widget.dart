@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '/screens/wifi_config_page.dart';
 import '/res/custom_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

@@ -7,11 +7,9 @@ import 'package:smart_industry/widgets/panelPro_widget.dart';
 import '../widgets/panelCruz_widget.dart';
 import '/widgets/panelErgo_widget.dart';
 import '/utils/qr_overlay.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '/utils/validator.dart';
 import 'wifi_config_page.dart';
-import '/res/custom_colors.dart';
 //import '/res/custom_icons.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 

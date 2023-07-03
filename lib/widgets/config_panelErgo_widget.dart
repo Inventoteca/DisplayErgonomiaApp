@@ -188,13 +188,13 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
       final dynamic jsonValue = event.snapshot.value;
       //debugPrint('$jsonValue');
 
-      final int t_max = jsonValue["t_max"] as int;
-      final int t_min = jsonValue["t_min"] as int;
-      final Color t_colMax = Color(jsonValue["t_colMax"]);
-      final Color t_colMin = Color(jsonValue["t_colMin"]);
-      final Color t_colDef = Color(jsonValue["t_colDef"]);
+      final int tMax = jsonValue["t_max"] as int;
+      final int tMin = jsonValue["t_min"] as int;
+      final Color tColmax = Color(jsonValue["t_colMax"]);
+      final Color tColmin = Color(jsonValue["t_colMin"]);
+      final Color tColdef = Color(jsonValue["t_colDef"]);
 
-      _currentRangeValues = RangeValues(t_min.toDouble(), t_max.toDouble());
+      _currentRangeValues = RangeValues(tMin.toDouble(), tMax.toDouble());
     }, onError: (error) {
       // Handle any errors that occur while retrieving data
       print('Error: $error');
@@ -267,19 +267,19 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
 
                 jsonValue = data.value;
                 final int t = jsonValue["t"] as int;
-                final int t_max = jsonValue["t_max"] as int;
-                final int t_min = jsonValue["t_min"] as int;
-                final Color t_colMax = Color(jsonValue["t_colMax"]);
-                final Color t_colMin = Color(jsonValue["t_colMin"]);
-                final Color t_colDef = Color(jsonValue["t_colDef"]);
+                final int tMax = jsonValue["t_max"] as int;
+                final int tMin = jsonValue["t_min"] as int;
+                final Color tColmax = Color(jsonValue["t_colMax"]);
+                final Color tColmin = Color(jsonValue["t_colMin"]);
+                final Color tColdef = Color(jsonValue["t_colDef"]);
                 final Color color;
 
-                if (t >= t_max)
-                  color = t_colMax;
-                else if (t <= t_min)
-                  color = t_colMin;
+                if (t >= tMax)
+                  color = tColmax;
+                else if (t <= tMin)
+                  color = tColmin;
                 else
-                  color = t_colDef;
+                  color = tColdef;
 
                 //RangeValues _currentRangeValues =
                 //    RangeValues(t_min.toDouble(), t_max.toDouble());

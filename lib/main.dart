@@ -26,12 +26,12 @@ class MyApp extends StatelessWidget {
           ),
         ),
         textTheme: TextTheme(
-          headline1: TextStyle(
+          displayLarge: TextStyle(
             fontSize: 18.0,
             color: Colors.blue.shade700,
             fontWeight: FontWeight.w500,
           ),
-          bodyText1: TextStyle(fontSize: 18.0),
+          bodyLarge: TextStyle(fontSize: 18.0),
         ),
       ),
       home: LoginPage(),

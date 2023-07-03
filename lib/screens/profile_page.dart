@@ -84,12 +84,12 @@ class _ProfilePageState extends State<ProfilePage> {
               SizedBox(height: 16.0),
               Text(
                 '${_currentUser.displayName}',
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
               SizedBox(height: 16.0),
               Text(
                 '${_currentUser.email}',
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
               SizedBox(height: 16.0),
               /*_currentUser.emailVerified

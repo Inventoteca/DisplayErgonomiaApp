@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io' as io;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:esp_smartconfig/esp_smartconfig.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -11,7 +10,6 @@ import '/screens/send_wifi_page.dart';
 //import 'package:smart_industry/screens/device_list_page.dart';
 import 'device_list_page.dart';
 import 'dart:convert';
-import 'package:firebase_storage/firebase_storage.dart';
 //import 'package:mqtt_client/mqtt_client.dart';
 //import 'package:mqtt_client/mqtt_server_client.dart';
 //import '/screens/panel_page.dart';
