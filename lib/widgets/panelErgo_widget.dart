@@ -17,7 +17,7 @@ late User _currentUser;
 //    FirebaseDatabase.instance.ref('/panels/$_panelID/');
 //DatabaseReference ref =
 //    FirebaseDatabase.instance.ref('/panels/40:91:51:93:45:B8/');
-late DatabaseEvent _event;
+//late DatabaseEvent _event;
 
 var _user = {
   "name": "${_currentUser.displayName}",

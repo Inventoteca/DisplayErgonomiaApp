@@ -48,11 +48,10 @@ class _NavBarState extends State<NavBar> {
             accountEmail: Text("${_currentUser.email}"),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
-                child: Image.network(
-                  'https://static.wixstatic.com/media/1f433e_ae1479d6202f4695b47c5469b98eec67~mv2.png/v1/fill/w_268,h_208,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Smart%20industry.png',
-                  fit: BoxFit.cover,
-                  width: 90,
-                  height: 90,
+                child: Image.asset(
+                  'lib/images/SmartIndustry.png',
+                  fit: BoxFit.contain,
+                  alignment: Alignment.topCenter,
                 ),
               ),
             ),
@@ -79,7 +78,7 @@ class _NavBarState extends State<NavBar> {
               ),
             },
           ),
-          ListTile(
+          /*ListTile(
             leading: Icon(Icons.notifications),
             title: Text('Alertas'),
             onTap: () => {
@@ -108,7 +107,7 @@ class _NavBarState extends State<NavBar> {
                 ),
               ),
             ),
-          ),
+          ),*/
           ListTile(
             leading: Icon(Icons.description),
             title: Text('Reportes'),

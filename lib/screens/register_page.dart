@@ -31,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   bool _isProcessing = false;
 
-  @override
+  //@override
   void initState() {
     // implement initState
     //_loadConfig();
@@ -91,22 +91,29 @@ class _RegisterPageState extends State<RegisterPage> {
         appBar: AppBar(
           title: Text('Registro'),
         ),
-        body: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          margin: EdgeInsets.all(25),
-          elevation: 10,
-          color: CustomColors.panel,
-          //child: Image
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Center(
+        body: SingleChildScrollView(
+          child: Card(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            margin: EdgeInsets.all(25),
+            elevation: 10,
+            color: CustomColors.panel,
+            //child: Image
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 15.0, right: 15.0, top: 0, bottom: 15),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  Image.asset(
+                    'lib/images/SmartIndustry.png',
+                    fit: BoxFit.contain,
+                    alignment: Alignment.topCenter,
+                  ),
                   Form(
                     key: _registerFormKey,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         TextFormField(
                           controller: _nameTextController,
@@ -174,7 +181,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 32.0),
+                        SizedBox(height: 8.0),
                         _isProcessing
                             ? CircularProgressIndicator()
                             : Row(

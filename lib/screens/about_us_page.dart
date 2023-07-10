@@ -34,7 +34,7 @@ class AboutUs extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     CircleAvatar(
-                      backgroundColor: Colors.blue.shade300,
+                      backgroundColor: Colors.white,
                       minRadius: 35.0,
                       child: Icon(
                         Icons.call,
@@ -51,7 +51,7 @@ class AboutUs extends StatelessWidget {
                       ),
                     ),
                     CircleAvatar(
-                      backgroundColor: Colors.blue.shade300,
+                      backgroundColor: Colors.white,
                       minRadius: 35.0,
                       child: Icon(
                         Icons.message,

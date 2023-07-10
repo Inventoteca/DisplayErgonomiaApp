@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:smart_industry/screens/fireconnection.dart';
 import 'package:smart_industry/widgets/panelPro_widget.dart';
 //import 'package:smart_industry/utils/mqtt_client.dart';
 import '../widgets/panelCruz_widget.dart';
@@ -123,7 +124,6 @@ class _QRDeviceAddState extends State<QRDeviceAdd> {
         }
       } catch (e) {
         // final parsed = {};
-
       }
     }
   }
@@ -265,6 +265,7 @@ class _FoundCodeScreenState extends State<FoundCodeScreen> {
 
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
+                                    //FireConnection
                                     builder: (context) => WifiConfig(
                                       user: _currentUser,
                                       id: _id,
@@ -426,9 +427,9 @@ class _FoundCodeScreenState extends State<FoundCodeScreen> {
                         onTap: () {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                              builder: (context) => WifiConfig(
+                              builder: (context) => FireConnection(
                                 user: _currentUser,
-                                id: '01',
+                                id: 'DEMOERGO',
                                 name: 'Panel Ergo',
                                 type: 'ergo',
                                 demo: true,
@@ -442,7 +443,7 @@ class _FoundCodeScreenState extends State<FoundCodeScreen> {
                           child: PanelErgo(
                               user: _currentUser,
                               name: 'Ergonomía Ambiental',
-                              id: '01'),
+                              id: 'DEMOERGO'),
                         ),
                       ),
                       SizedBox(
@@ -452,9 +453,9 @@ class _FoundCodeScreenState extends State<FoundCodeScreen> {
                         onTap: () {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                              builder: (context) => WifiConfig(
+                              builder: (context) => FireConnection(
                                 user: _currentUser,
-                                id: '03',
+                                id: 'DEMOCRUZ',
                                 name: 'Panel Cruz',
                                 type: 'cruz',
                                 demo: true,
@@ -463,9 +464,11 @@ class _FoundCodeScreenState extends State<FoundCodeScreen> {
                           );
                         },
                         child: panelCruz(
-                            // panelErgo(
-                            user: _currentUser,
-                            name: 'Cruz de seguridad'),
+                          // panelErgo(
+                          user: _currentUser,
+                          name: 'Cruz de seguridad',
+                          id: 'DEMOCRUZ',
+                        ),
                       ),
                       SizedBox(
                         height: 50,
@@ -474,9 +477,9 @@ class _FoundCodeScreenState extends State<FoundCodeScreen> {
                         onTap: () {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                              builder: (context) => WifiConfig(
+                              builder: (context) => FireConnection(
                                 user: _currentUser,
-                                id: '02',
+                                id: 'DEMOPRO',
                                 name: 'Panel Productividad',
                                 type: 'pro',
                                 demo: true,

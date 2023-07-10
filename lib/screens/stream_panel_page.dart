@@ -7,8 +7,10 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:smart_industry/screens/chat_page.dart';
 import 'package:smart_industry/screens/report_list_page.dart';
+import 'package:smart_industry/widgets/config_panelCruz_widget.dart';
 import 'package:smart_industry/widgets/panelPro_widget.dart';
 //import '/utils/mqtt_client.dart';
+import '../widgets/panelCruz_widget.dart';
 import '/widgets/panelErgo_widget.dart';
 import '/screens/NavBar.dart';
 import 'package:wakelock/wakelock.dart';
@@ -19,6 +21,7 @@ import 'package:flip_card/flip_card.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '/res/custom_colors.dart';
 import '/widgets/config_panelErgo_widget.dart';
+import '/widgets/config_panelCruz_widget.dart';
 
 MqttConnectionState? connectionState;
 StreamSubscription? subscription;
@@ -123,17 +126,51 @@ class _StreamPanelPageState extends State<StreamPanelPage> {
                         //id: _panelID,
                       ),
                     ),
+                  if (_type == 'cruz')
+                    SizedBox(
+                      width: 350,
+                      height: 650,
+                      child: panelCruz(
+                        name: '$_name',
+                        user: _currentUser,
+                        id: _panelID,
+                      ),
+                    ),
                 ],
               ),
-              back: SizedBox(
-                width: 350,
-                height: 650,
-                child: ConfigPanelErgo(
-                  user: _currentUser,
-                  //prefs: _prefs,
-                  id: _panelID,
-                  name: _name,
-                ),
+              back: Column(
+                children: [
+                  if (_type == 'ergo')
+                    SizedBox(
+                      width: 350,
+                      height: 650,
+                      child: ConfigPanelErgo(
+                        name: '$_name',
+                        user: _currentUser,
+                        id: _panelID,
+                      ),
+                    ),
+                  if (_type == 'pro')
+                    SizedBox(
+                      width: 350,
+                      height: 650,
+                      child: ConfigPanelErgo(
+                        name: '$_name',
+                        user: _currentUser,
+                        id: _panelID,
+                      ),
+                    ),
+                  if (_type == 'cruz')
+                    SizedBox(
+                      width: 350,
+                      height: 650,
+                      child: ConfigPanelCruz(
+                        name: '$_name',
+                        user: _currentUser,
+                        id: _panelID,
+                      ),
+                    ),
+                ],
               ),
             ),
           ),

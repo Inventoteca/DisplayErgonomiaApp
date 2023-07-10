@@ -286,6 +286,7 @@ class ProjectsExpansionTile extends StatelessWidget {
                 child: panelCruz(
                   user: _currentUser,
                   name: name,
+                  id: id,
                 ),
               ),
             ),

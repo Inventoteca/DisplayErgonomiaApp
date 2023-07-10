@@ -69,19 +69,21 @@ class _WifiConfigState extends State<WifiConfig> {
 
   // ---------------------- Init State
   void initState() {
-    _ssidFilter.addListener(_ssidListen);
-    _passwordFilter.addListener(_passwordListen);
-    _bssidFilter.addListener(_bssidListen);
     _isLoading = true;
     _currentUser = widget.user;
     _panelID = widget.id;
     _name = widget.name;
     _type = widget.type;
+    debugPrint("panel:");
     debugPrint(_panelID);
     _isDemo = widget.demo;
     _isConnected = false;
     //_prefs = widget.prefs;
     _loadConfig();
+
+    _ssidFilter.addListener(_ssidListen);
+    _passwordFilter.addListener(_passwordListen);
+    _bssidFilter.addListener(_bssidListen);
 
     readResponse();
     super.initState();
@@ -328,7 +330,7 @@ class _WifiConfigState extends State<WifiConfig> {
 
     final DatabaseReference ref =
         FirebaseDatabase.instance.ref('/panels/$_panelID/');
-    await ref.child('actual/ping').set(false);
+    //await ref.child('actual/ping').set(false);
 
     //await _panelADD(jsonEncode(encode));
 
@@ -344,48 +346,34 @@ class _WifiConfigState extends State<WifiConfig> {
       );
       return;
     }
-    ref.child('actual').onValue.listen((event) {
+    ref.child('config').onValue.listen((event) {
       newValue = event.snapshot.value;
-      Future.delayed(const Duration(seconds: 5));
+      Future.delayed(const Duration(seconds: 60));
       // Imprimir el valor en la consola
       //print('Nuevo valor: $newValue');
       //debugPrint("${newValue["ping"]}");
 
-      if (newValue["ping"]) {
-        if (mounted) {
-          setState(() {
-            debugPrint("aqui se repite?");
-            _isConnected = true;
-          });
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => DeviceList(
-                user: _currentUser,
-                //id: _panelID,
-                // prefs: _prefs,
+      if (newValue != null && newValue.containsKey("registered")) {
+        if (newValue["registered"]) {
+          if (mounted) {
+            setState(() {
+              debugPrint("aqui se repite?");
+              _isConnected = true;
+            });
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => DeviceList(
+                  user: _currentUser,
+                  //id: _panelID,
+                  // prefs: _prefs,
+                ),
               ),
-            ),
-          );
-          return;
+            );
+            return;
+          }
+          //return;
         }
-        //return;
       } else {
-        //final topic1 = 'smart/' + 'panels/' + _panelID + '/app/#';
-        //client = await connect(topic1);
-
-        //client.subscribe(topic1, MqttQos.atLeastOnce);
-        //subscription = client.updates?.listen(onMessage);
-        //print(subscription);
-
-        //onPublish('1', 'smart/' + 'panels/' + _panelID + '/app/conf');
-
-        //await Future.delayed(const Duration(seconds: 60));
-        //if (_msg == '')
-        //{
-        //  setState(() {
-        //    _isLoading = false;
-        //  });
-
         //if (mounted) {
         setState(() {
           _isLoading = false;
@@ -485,13 +473,19 @@ class _WifiConfigState extends State<WifiConfig> {
                                         height: 25,
                                       ),
                                       Text(
-                                          "Conectar el panel a la siguinete Red WiFi" /*widget.value*/,
+                                          "Compartir la red WiFi al panel" /*widget.value*/,
                                           style: TextStyle(
                                             fontSize: 20,
                                           )),
                                       SizedBox(
                                         height: 25,
                                       ),
+                                      Text(
+                                          "El dispositivo no es compatible con redes 5G" /*widget.value*/,
+                                          style: TextStyle(
+                                            color: Colors.redAccent,
+                                            fontSize: 12,
+                                          )),
                                       TextField(
                                         controller: _ssidFilter,
                                         decoration: InputDecoration(
@@ -539,7 +533,7 @@ class _WifiConfigState extends State<WifiConfig> {
                                         },
 
                                         child: Text(
-                                          'Conectar',
+                                          'Compartir',
                                           style: TextStyle(color: Colors.white),
                                         ),
                                         //onPressed: _sendConfig, child: Text('Enviar')

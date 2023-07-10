@@ -7,7 +7,6 @@ import '/utils/fire_auth.dart';
 import '/utils/validator.dart';
 import '/firebase_options.dart';
 import '/widgets/google_sign_in_button.dart';
-import '/widgets/apple_sign_in_button.dart';
 import '/res/custom_colors.dart';
 import '/utils/authentication.dart';
 //import 'package:firebase_app_check/firebase_app_check.dart';
@@ -271,7 +270,7 @@ class _LoginPageState extends State<LoginPage> {
                               },
                             ),
 
-                            FutureBuilder(
+                            /*FutureBuilder(
                               future: Authentication.initializeFirebase(
                                   context: context),
                               builder: (context, snapshot) {
@@ -291,7 +290,7 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 );
                               },
-                            ),
+                            ),*/
 
                             //SizedBox(
                             //  height: 30,
