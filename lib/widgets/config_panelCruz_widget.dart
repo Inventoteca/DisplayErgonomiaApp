@@ -7,8 +7,6 @@ import 'package:firebase_database/firebase_database.dart';
 import '/utils/validator.dart';
 
 late User _currentUser;
-late var _t_max;
-late var _t_min;
 late RangeValues _currentRangeValues = const RangeValues(15, 30);
 late dynamic jsonValue;
 
@@ -99,37 +97,13 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
             SizedBox(
               height: 10,
             ),
-            _buildRowT(
-              icon: Icons.thermostat,
-              units: ' ºC',
-            ),
-            _buildRowT(
-              icon: Icons.water_drop_rounded,
-              units: ' ºC',
-            ),
-            _buildRowT(
-              icon: Icons.sunny,
-              units: ' ºC',
-            ),
-            _buildRowT(
-              icon: Icons.campaign_rounded,
-              units: ' ºC',
-            ),
-            _buildRowT(
-              icon: Icons.light_rounded,
-              units: ' ºC',
-            ),
-            _buildRowT(
-              icon: Icons.local_florist_rounded,
-              units: ' ºC',
-            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
                   onPressed: () {
                     final name = nameTextController.text;
-                    _updatePanel(name);
+                    _updatePanelName(name);
                     debugPrint(name);
 
                     Navigator.of(context).pushReplacement(
@@ -151,15 +125,38 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                     backgroundColor: Colors.red, // change button color to red
                   ),
                   onPressed: () {
-                    //final name = nameTextController.text;
-                    _deletePanel();
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => DeviceList(
-                          user: _currentUser,
-                          // prefs: _prefs,
-                        ),
-                      ),
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Eliminar panel'),
+                          content: Text(
+                              '¿Estás seguro de que deseas eliminar el panel?'),
+                          actions: [
+                            TextButton(
+                              child: Text('Cancelar'),
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pop(); // Cerrar el cuadro de diálogo
+                              },
+                            ),
+                            TextButton(
+                              child: Text('Aceptar'),
+                              onPressed: () {
+                                _deletePanel();
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => DeviceList(
+                                      user: _currentUser,
+                                      // prefs: _prefs,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
                   child: Text(
@@ -174,31 +171,6 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
         ),
       ),
     );
-  }
-
-  Future<void> getLimits() async {
-    var panelID = widget.id;
-    DatabaseReference refID =
-        FirebaseDatabase.instance.ref('/panels/$panelID/actual');
-
-    refID.onValue.listen((DatabaseEvent event) {
-      // The data from refID is available in the event parameter.
-      // You can access the data using event.snapshot.value
-
-      final dynamic jsonValue = event.snapshot.value;
-      //debugPrint('$jsonValue');
-
-      final int tMax = jsonValue["t_max"] as int;
-      final int tMin = jsonValue["t_min"] as int;
-      final Color tColmax = Color(jsonValue["t_colMax"]);
-      final Color tColmin = Color(jsonValue["t_colMin"]);
-      final Color tColdef = Color(jsonValue["t_colDef"]);
-
-      _currentRangeValues = RangeValues(tMin.toDouble(), tMax.toDouble());
-    }, onError: (error) {
-      // Handle any errors that occur while retrieving data
-      print('Error: $error');
-    });
   }
 
   //------------------------------------------------------------- _deletePanel
@@ -222,12 +194,12 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
   }
 
   //------------------------------------------------------------- _updatePanel
-  Future<void> _updatePanel(var name) async {
+  Future<void> _updatePanelName(var name) async {
     if (mounted) {
       final db = FirebaseFirestore.instance;
       final panelID = widget.id;
 
-      var encode = {'id': panelID, 'type': 'ergo', 'name': name};
+      var encode = {'id': panelID, 'type': 'cruz', 'name': name};
 
       Map<String, dynamic> data = encode;
       debugPrint('$data');
@@ -245,7 +217,7 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
   }
 
   // ------------------------------------- T Row
-  Widget _buildRowT({
+  Widget _buildRow({
     IconData? icon,
     //String? text,
     String? units,

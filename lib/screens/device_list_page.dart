@@ -253,8 +253,8 @@ class ProjectsExpansionTile extends StatelessWidget {
               );
             },
             child: SizedBox(
-              width: 180,
-              height: 330,
+              width: 200,
+              height: 400,
               child: PanelErgo(
                 user: _currentUser,
                 name: name,
@@ -279,8 +279,8 @@ class ProjectsExpansionTile extends StatelessWidget {
               );
             },
             child: SizedBox(
-              width: 330,
-              height: 330,
+              width: 200,
+              height: 450,
               child: Hero(
                 tag: '$id',
                 child: panelCruz(

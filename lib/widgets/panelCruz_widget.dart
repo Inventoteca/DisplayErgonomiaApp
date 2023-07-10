@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
 
 late User _currentUser;
+late dynamic _eventos;
 
 var _user = {
   "name": "${_currentUser.displayName}",
@@ -40,7 +41,26 @@ class panelCruz extends StatefulWidget {
 // ignore: camel_case_types
 class _panelCruzState extends State<panelCruz> {
   late Map<String, dynamic> _actualData;
+  late int diaHoy = 31;
   late DatabaseReference _actualRef;
+  final List<int> ignoredIndices = [
+    1,
+    2,
+    6,
+    7,
+    8,
+    9,
+    13,
+    14,
+    36,
+    37,
+    41,
+    42,
+    43,
+    44,
+    48,
+    49
+  ];
   @override
   void initState() {
     super.initState();
@@ -109,7 +129,7 @@ class _panelCruzState extends State<panelCruz> {
               ),
             ),
             SizedBox(
-              height: 50,
+              height: 30,
             ),
             FittedBox(
               fit: BoxFit.scaleDown,
@@ -127,23 +147,84 @@ class _panelCruzState extends State<panelCruz> {
                 fontSize: 12,
               ),
             ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: GridView.count(
+                  crossAxisCount: 7,
+                  children: List.generate(49, (index) {
+                    int dayNumber = index + 1; // El número del día
+                    final bool isIgnored = ignoredIndices.contains(
+                        dayNumber); // Verificar si el índice debe ser ignorado
 
-            /* Expanded(
-              child: GridView.count(
-                crossAxisCount: 7,
-                children: List.generate(49, (index) {
-                  return Container(
-                    color: Colors.grey[300],
-                    child: Center(
-                      child: Text(
-                        '$index',
-                        style: TextStyle(fontSize: 11),
+                    if (isIgnored) {
+                      // Ignorar este índice y mostrar un contenedor vacío
+                      return Container();
+                    }
+
+                    if (index >= 2 && index <= 5)
+                      dayNumber = index - 1;
+                    else if (index >= 9 && index <= 12)
+                      dayNumber = index - 5;
+                    else if (index >= 14 && index <= 35)
+                      dayNumber = index - 7;
+                    else if (index >= 37 && index <= 40)
+                      dayNumber = index - 9;
+                    else if (index >= 44 && index <= 47) dayNumber = index - 13;
+
+                    Color dayColor = Colors
+                        .green; //_getDayColorFromJson(dayNumber); // Obtener el color del día desde el objeto JSON en Firebase
+
+                    if (dayNumber > diaHoy)
+                      dayColor = Colors.transparent;
+                    //else if()
+                    else {
+                      //for (days_index = 1; days_index <= dia_hoy; days_index++)
+                      //for (int days_index = 1; days_index <= diaHoy; days_index++)
+                      //{
+
+                      //}
+                      //if (_eventos['$dayNumber'].isNull() == false) {
+                      //dayColor = Colors.orange;
+                      //} else
+                      dayColor = Colors.green;
+                    }
+
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color:
+                                Colors.orange), // Color del contorno de la cruz
+                        //color: dayColor, // Color de fondo del contenedor
                       ),
-                    ),
-                  );
-                }),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  '$dayNumber', // Número del día
+                                  style:
+                                      TextStyle(fontSize: 18, color: dayColor),
+                                ),
+                              ),
+                            ),
+                            //Container(
+                            //  width: 5,
+                            //  height: 5,
+                            //  color:
+                            //      dayColor, // Color del día extraído del objeto JSON
+                            //),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+                ),
               ),
-            ),*/
+            ),
           ],
         ),
       ),
@@ -151,14 +232,7 @@ class _panelCruzState extends State<panelCruz> {
   }
 
   // ------------------------------------- Time
-  Widget _buildRowTime(
-      //{
-      //IconData? icon,
-      //String? text,
-      //String? units,
-      //Color? color
-      //}
-      ) {
+  Widget _buildRowTime() {
     final panelID = widget.id;
     final DatabaseReference ref =
         FirebaseDatabase.instance.ref('/panels/$panelID/');
@@ -171,7 +245,6 @@ class _panelCruzState extends State<panelCruz> {
           Container(
             child: FittedBox(
               fit: BoxFit.scaleDown,
-              //child: Icon(icon, color: Colors.white, size: 50),
             ),
           ),
           FittedBox(
@@ -182,25 +255,13 @@ class _panelCruzState extends State<panelCruz> {
                   if (snapshot.hasData && snapshot.data != null) {
                     DataSnapshot data = snapshot.data.snapshot;
 
-                    //debugPrint('${data.value}');
-
-                    //setState(() {
-
                     final dynamic jsonValue = data.value;
                     final int timeNow = jsonValue["time"] as int;
+                    //final dynamic jsonEvents = jsonValue["events"];
                     final int gmtOff = jsonValue["gmtOff"];
-                    //final int hMax = jsonValue["h_max"] as int;
-                    //final int hMin = jsonValue["h_min"] as int;
-                    //final Color hColmax = Color(jsonValue["h_colMax"]);
-                    //final Color hColmin = Color(jsonValue["h_colMin"]);
                     final Color defColor = Color(jsonValue["defColor"]);
                     final Color color;
 
-                    //if (h >= hMax)
-                    //  color = hColmax;
-                    //else if (h <= hMin)
-                    //  color = hColmin;
-                    //else
                     color = defColor;
 
                     final DateTime dateTime =
@@ -211,24 +272,21 @@ class _panelCruzState extends State<panelCruz> {
                     final DateFormat dateFormatter =
                         DateFormat('yyyy-MM-dd HH:mm:ss');
                     final String formattedDate = dateFormatter.format(dateTime);
-                    print(formattedDate);
+                    debugPrint(formattedDate);
+                    //debugPrint('$jsonEvents');
 
-                    ///_t = t;
+                    //final dynamic eventos = jsonEvents;
+                    final int day = dateTime.day;
 
-                    debugPrint('final $timeNow');
-                    debugPrint('final $gmtOff');
-                    // final DateTime dateTime =
-                    //     DateTime.fromMillisecondsSinceEpoch(
-                    //         (timeNow - gmtOff) * 1000);
-                    //final String formattedDate = dateTime.toString();
-                    //print(formattedDate);
-
+                    //setState(() {
+                    diaHoy = day;
+                    //_eventos = eventos;
                     //});
 
                     return Text(
                       '$formattedDate',
-                      style: TextStyle(color: color, fontSize: 25),
-                      overflow: TextOverflow.fade,
+                      style: TextStyle(color: color, fontSize: 28),
+                      overflow: TextOverflow.ellipsis,
                     );
                   } else {
                     return Text(
@@ -244,14 +302,7 @@ class _panelCruzState extends State<panelCruz> {
   }
 
   // ------------------------------------- Days
-  Widget _buildRowDays(
-      //{
-      //IconData? icon,
-      //String? text,
-      //String? units,
-      //Color? color
-      //}
-      ) {
+  Widget _buildRowDays() {
     final panelID = widget.id;
     final DatabaseReference ref =
         FirebaseDatabase.instance.ref('/panels/$panelID/');
@@ -271,25 +322,9 @@ class _panelCruzState extends State<panelCruz> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData && snapshot.data != null) {
                 DataSnapshot data = snapshot.data.snapshot;
-
-                //debugPrint('${data.value}');
-
-                //setState(() {
-
                 final dynamic jsonValue = data.value;
-                //final int timeNow = (jsonValue["time"] as num).toInt();
                 final int daysAc = jsonValue["days_ac"] as int;
                 final Color color = Color(jsonValue["defColor"]);
-                //final Color color;
-
-                //color = Colors.white;
-                //color = defColor;
-
-                ///_t = t;
-
-                debugPrint('final $color');
-                //debugPrint('final $timeNow');
-                //});
 
                 return Text(
                   '$daysAc',
