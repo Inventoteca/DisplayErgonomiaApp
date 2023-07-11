@@ -260,10 +260,14 @@ class _panelCruzState extends State<panelCruz> {
                     final int timeNow = jsonValue["time"] as int;
                     //final dynamic jsonEvents = jsonValue["events"];
                     final int gmtOff = jsonValue["gmtOff"];
-                    final Color defColor = Color(jsonValue["defColor"]);
-                    final Color color;
-
-                    color = defColor;
+                    final int defColor = jsonValue[
+                        "defColor"]; // Valor hexadecimal de 6 dígitos (RGB)
+                    final Color color = Color.fromARGB(
+                      0xFF, // Canal alfa (opacidad total)
+                      (defColor >> 16) & 0xFF, // Canal rojo
+                      (defColor >> 8) & 0xFF, // Canal verde
+                      defColor & 0xFF, // Canal azul
+                    );
 
                     final DateTime dateTime =
                         DateTime.fromMillisecondsSinceEpoch(
@@ -325,7 +329,14 @@ class _panelCruzState extends State<panelCruz> {
                 DataSnapshot data = snapshot.data.snapshot;
                 final dynamic jsonValue = data.value;
                 final int daysAc = jsonValue["days_ac"] as int;
-                final Color color = Color(jsonValue["defColor"]);
+                final int defColor = jsonValue[
+                    "defColor"]; // Valor hexadecimal de 6 dígitos (RGB)
+                final Color color = Color.fromARGB(
+                  0xFF, // Canal alfa (opacidad total)
+                  (defColor >> 16) & 0xFF, // Canal rojo
+                  (defColor >> 8) & 0xFF, // Canal verde
+                  defColor & 0xFF, // Canal azul
+                );
 
                 return Text(
                   '$daysAc',
