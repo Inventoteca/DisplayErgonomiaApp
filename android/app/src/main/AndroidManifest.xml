@@ -5,12 +5,17 @@
    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
    <uses-permission android:name="android.permission.INTERNET"/>
+   <uses-permission android:name="android.permission.CAMERA" />
+   <meta-data
+    android:name="google-play-services-enable-ads"
+    android:value="false" />
    <application
         android:usesCleartextTraffic="true"
         android:label="Smart Industry"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
+            android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

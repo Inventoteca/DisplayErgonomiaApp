@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 late User _currentUser;
 late dynamic _eventos;
+late int diaHoy = 31;
 
 var _user = {
   "name": "${_currentUser.displayName}",
@@ -40,9 +41,9 @@ class panelCruz extends StatefulWidget {
 
 // ignore: camel_case_types
 class _panelCruzState extends State<panelCruz> {
-  late Map<String, dynamic> _actualData;
-  late int diaHoy = 31;
-  late DatabaseReference _actualRef;
+  //late Map<String, dynamic> _actualData;
+
+  //late DatabaseReference _actualRef;
   final List<int> ignoredIndices = [
     1,
     2,

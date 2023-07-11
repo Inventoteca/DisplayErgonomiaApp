@@ -108,7 +108,7 @@ class _NavBarState extends State<NavBar> {
               ),
             ),
           ),*/
-          ListTile(
+          /*ListTile(
             leading: Icon(Icons.description),
             title: Text('Reportes'),
             onTap: () => {
@@ -121,7 +121,7 @@ class _NavBarState extends State<NavBar> {
                 ),
               ),
             },
-          ),
+          ),*/
           Divider(),
           ListTile(
             leading: Icon(Icons.person),

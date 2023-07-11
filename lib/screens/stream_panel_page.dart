@@ -238,7 +238,7 @@ class _StreamPanelPageState extends State<StreamPanelPage> {
             //onLongPress: () => print('SECOND CHILD LONG PRESS'),
           ),
 
-          SpeedDialChild(
+          /*SpeedDialChild(
             child: Icon(Icons.add_alert),
             backgroundColor: Colors.blue,
             foregroundColor: Colors.white,
@@ -263,7 +263,7 @@ class _StreamPanelPageState extends State<StreamPanelPage> {
               );
             },
             //onLongPress: () => print('SECOND CHILD LONG PRESS'),
-          ),
+          ),*/
           //add more menu item children here
         ],
       ),
