@@ -279,8 +279,8 @@ class ProjectsExpansionTile extends StatelessWidget {
               );
             },
             child: SizedBox(
-              width: 200,
-              height: 450,
+              width: 300,
+              height: 600,
               child: Hero(
                 tag: '$id',
                 child: panelCruz(

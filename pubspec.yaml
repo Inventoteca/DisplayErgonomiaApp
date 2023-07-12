@@ -29,42 +29,21 @@ dependencies:
   cupertino_icons: ^1.0.5
   firebase_core: ^2.4.1
   firebase_auth: ^4.2.5
-  mqtt_client: ^9.6.8
-  #json_annotation: ^4.6.0
-  segment_display: ^0.5.0
-  #device_info_plus: ^3.2.3
-  #device_info: ^2.0.3
-  web_socket_channel: ^2.3.0
-  json_rpc_2: ^3.0.2
-  #wifi_iot: ^0.3.17
-  #wifi_scan: ^0.4.0+1
   esp_smartconfig: ^1.1.10
-  #esptouch_smartconfig: ^1.1.0
   network_info_plus: ^2.1.4+1
   permission_handler: ^10.2.0
-  shared_preferences: ^2.0.16
-  syncfusion_flutter_charts: ^20.4.43
-  flutter_localizations:
-    sdk: flutter
-  syncfusion_localizations: ^20.4.43
-  desktop_window: ^0.4.0
   firebase_messaging: ^14.2.1
   wakelock: ^0.6.2
   firebase_database: ^10.0.9
   firebase_storage: ^11.0.10
   path_provider: ^2.0.11
-  device_info_plus: ^8.0.0
   google_sign_in: ^5.4.3
   sign_in_with_apple: ^4.3.0
   flutter_speed_dial: ^6.2.0
   mobile_scanner: ^2.1.0
-  firebase_app_check: ^0.1.1+8
   flip_card: ^0.7.0
   cloud_firestore: ^4.3.1
-  rxdart: ^0.27.7
   intl: ^0.18.0
-  #esptouch_flutter: ^1.0.0
-  #firebase_storage: ^10.3.9
 
 #dependency_overrides:
 #  firebase_messaging_platform_interface: 3.1.6

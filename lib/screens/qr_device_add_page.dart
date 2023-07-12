@@ -438,8 +438,8 @@ class _FoundCodeScreenState extends State<FoundCodeScreen> {
                           );
                         },
                         child: SizedBox(
-                          width: 180,
-                          height: 330,
+                          width: 200,
+                          height: 400,
                           child: PanelErgo(
                               user: _currentUser,
                               name: 'Ergonomía Ambiental',
@@ -463,11 +463,15 @@ class _FoundCodeScreenState extends State<FoundCodeScreen> {
                             ),
                           );
                         },
-                        child: panelCruz(
-                          // panelErgo(
-                          user: _currentUser,
-                          name: 'Cruz de seguridad',
-                          id: 'DEMOCRUZ',
+                        child: SizedBox(
+                          width: 400,
+                          height: 600,
+                          child: panelCruz(
+                            // panelErgo(
+                            user: _currentUser,
+                            name: 'Cruz de seguridad',
+                            id: 'DEMOCRUZ',
+                          ),
                         ),
                       ),
                       SizedBox(

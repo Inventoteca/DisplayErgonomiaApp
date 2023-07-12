@@ -19,10 +19,8 @@ var _userTime = {
   "Ts": '${DateTime.now().millisecondsSinceEpoch}',
   "defColor": 4294967295,
   "days_ac": 1234,
-  //"email": "${_currentUser.email}",
 };
 
-// ignore: camel_case_types
 class panelCruz extends StatefulWidget {
   final User user;
   final String name;
@@ -39,11 +37,7 @@ class panelCruz extends StatefulWidget {
   State<panelCruz> createState() => _panelCruzState();
 }
 
-// ignore: camel_case_types
 class _panelCruzState extends State<panelCruz> {
-  //late Map<String, dynamic> _actualData;
-
-  //late DatabaseReference _actualRef;
   final List<int> ignoredIndices = [
     1,
     2,
@@ -62,24 +56,15 @@ class _panelCruzState extends State<panelCruz> {
     48,
     49
   ];
+
   @override
   void initState() {
     super.initState();
     _currentUser = widget.user;
     final panelID = widget.id;
-
     final DatabaseReference ref =
         FirebaseDatabase.instance.ref('/panels/$panelID/');
     ref.child('actual/z_user').update(_user);
-
-    debugPrint(panelID);
-    debugPrint('update cruz');
-  }
-
-  @override
-  void dispose() {
-    //_actualRef.onValue.drain();
-    super.dispose();
   }
 
   @override
@@ -94,9 +79,7 @@ class _panelCruzState extends State<panelCruz> {
         height: 300,
         child: Column(
           children: [
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
@@ -110,15 +93,10 @@ class _panelCruzState extends State<panelCruz> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             FittedBox(
               fit: BoxFit.scaleDown,
-              child: _buildRowDays(
-                  //icon: Icons.thermostat,
-                  //units: ' Días sin accidentes',
-                  ),
+              child: _buildRowDays(),
             ),
             Text(
               "Días sin accidentes",
@@ -129,37 +107,18 @@ class _panelCruzState extends State<panelCruz> {
                 fontSize: 12,
               ),
             ),
-            SizedBox(
-              height: 30,
-            ),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: _buildRowTime(
-                  //icon: Icons.thermostat,
-                  //units: ' Fecha',
-                  ),
-            ),
-            Text(
-              "Ultima actualización",
-              overflow: TextOverflow.clip,
-              maxLines: 1,
-              style: TextStyle(
-                color: Colors.orange,
-                fontSize: 12,
-              ),
-            ),
+            SizedBox(height: 30),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: GridView.count(
+                  physics: NeverScrollableScrollPhysics(),
                   crossAxisCount: 7,
                   children: List.generate(49, (index) {
-                    int dayNumber = index + 1; // El número del día
-                    final bool isIgnored = ignoredIndices.contains(
-                        dayNumber); // Verificar si el índice debe ser ignorado
+                    int dayNumber = index + 1;
+                    final bool isIgnored = ignoredIndices.contains(dayNumber);
 
                     if (isIgnored) {
-                      // Ignorar este índice y mostrar un contenedor vacío
                       return Container();
                     }
 
@@ -173,30 +132,16 @@ class _panelCruzState extends State<panelCruz> {
                       dayNumber = index - 9;
                     else if (index >= 44 && index <= 47) dayNumber = index - 13;
 
-                    Color dayColor = Colors
-                        .green; //_getDayColorFromJson(dayNumber); // Obtener el color del día desde el objeto JSON en Firebase
+                    Color dayColor = Colors.green;
 
                     if (dayNumber > diaHoy)
                       dayColor = Colors.transparent;
-                    //else if()
-                    else {
-                      //for (days_index = 1; days_index <= dia_hoy; days_index++)
-                      //for (int days_index = 1; days_index <= diaHoy; days_index++)
-                      //{
-
-                      //}
-                      //if (_eventos['$dayNumber'].isNull() == false) {
-                      //dayColor = Colors.orange;
-                      //} else
+                    else
                       dayColor = Colors.green;
-                    }
 
                     return Container(
                       decoration: BoxDecoration(
-                        border: Border.all(
-                            color:
-                                Colors.orange), // Color del contorno de la cruz
-                        //color: dayColor, // Color de fondo del contenedor
+                        border: Border.all(color: Colors.orange),
                       ),
                       child: Center(
                         child: Column(
@@ -206,18 +151,14 @@ class _panelCruzState extends State<panelCruz> {
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Text(
-                                  '$dayNumber', // Número del día
-                                  style:
-                                      TextStyle(fontSize: 18, color: dayColor),
+                                  '$dayNumber',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: dayColor,
+                                  ),
                                 ),
                               ),
                             ),
-                            //Container(
-                            //  width: 5,
-                            //  height: 5,
-                            //  color:
-                            //      dayColor, // Color del día extraído del objeto JSON
-                            //),
                           ],
                         ),
                       ),
@@ -226,13 +167,25 @@ class _panelCruzState extends State<panelCruz> {
                 ),
               ),
             ),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: _buildRowTime(),
+            ),
+            Text(
+              "Ultima actualización",
+              overflow: TextOverflow.clip,
+              maxLines: 1,
+              style: TextStyle(
+                color: Colors.orange,
+                fontSize: 12,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  // ------------------------------------- Time
   Widget _buildRowTime() {
     final panelID = widget.id;
     final DatabaseReference ref =
@@ -251,105 +204,97 @@ class _panelCruzState extends State<panelCruz> {
           FittedBox(
             fit: BoxFit.scaleDown,
             child: StreamBuilder(
-                stream: ref.child('actual').onValue,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData && snapshot.data != null) {
-                    DataSnapshot data = snapshot.data.snapshot;
+              stream: ref.child('actual').onValue,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData && snapshot.data != null) {
+                  DataSnapshot data = snapshot.data.snapshot;
+                  final dynamic jsonValue = data.value;
+                  final int timeNow = jsonValue["time"] as int;
+                  final int gmtOff = jsonValue["gmtOff"];
+                  final int defColor = jsonValue["defColor"];
+                  final Color color = Color.fromARGB(
+                    0xFF,
+                    (defColor >> 16) & 0x80,
+                    (defColor >> 8) & 0x80,
+                    defColor & 0x80,
+                  );
+                  final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+                      (timeNow - gmtOff) * 1000);
+                  final DateFormat dateFormatter =
+                      DateFormat('yyyy-MM-dd HH:mm:ss');
+                  final String formattedDate = dateFormatter.format(dateTime);
 
-                    final dynamic jsonValue = data.value;
-                    final int timeNow = jsonValue["time"] as int;
-                    //final dynamic jsonEvents = jsonValue["events"];
-                    final int gmtOff = jsonValue["gmtOff"];
-                    final int defColor = jsonValue[
-                        "defColor"]; // Valor hexadecimal de 6 dígitos (RGB)
-                    final Color color = Color.fromARGB(
-                      0xFF, // Canal alfa (opacidad total)
-                      (defColor >> 16) & 0xFF, // Canal rojo
-                      (defColor >> 8) & 0xFF, // Canal verde
-                      defColor & 0xFF, // Canal azul
-                    );
+                  diaHoy = dateTime.day;
 
-                    final DateTime dateTime =
-                        DateTime.fromMillisecondsSinceEpoch(
-                            (timeNow - gmtOff) * 1000);
-
-                    // Utiliza el formato deseado sin los milisegundos
-                    final DateFormat dateFormatter =
-                        DateFormat('yyyy-MM-dd HH:mm:ss');
-                    final String formattedDate = dateFormatter.format(dateTime);
-                    debugPrint(formattedDate);
-                    //debugPrint('$jsonEvents');
-
-                    //final dynamic eventos = jsonEvents;
-                    final int day = dateTime.day;
-
-                    //setState(() {
-                    diaHoy = day;
-                    //_eventos = eventos;
-                    //});
-
-                    return Text(
-                      '$formattedDate',
-                      style: TextStyle(color: color, fontSize: 28),
-                      overflow: TextOverflow.ellipsis,
-                    );
-                  } else {
-                    return Text(
-                      "Loading...",
-                      style: TextStyle(color: CustomColors.panelBackground),
-                    );
-                  }
-                }),
+                  return Text(
+                    '$formattedDate',
+                    style: TextStyle(color: color, fontSize: 28),
+                    overflow: TextOverflow.ellipsis,
+                  );
+                } else {
+                  return Text(
+                    "Loading...",
+                    style: TextStyle(color: CustomColors.panelBackground),
+                  );
+                }
+              },
+            ),
           ),
         ],
       ),
     );
   }
 
-  // ------------------------------------- Days
   Widget _buildRowDays() {
     final panelID = widget.id;
     final DatabaseReference ref =
         FirebaseDatabase.instance.ref('/panels/$panelID/');
 
     if (panelID == 'DEMOCRUZ') {
-      //final DatabaseReference refConfig =
-      //    FirebaseDatabase.instance.ref('/panels/$panelID/');
       ref.child('actual/').update(_userTime);
     }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        //Icon(icon, color: Colors.white, size: 50),
         StreamBuilder(
-            stream: ref.child('actual').onValue,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData && snapshot.data != null) {
-                DataSnapshot data = snapshot.data.snapshot;
-                final dynamic jsonValue = data.value;
-                final int daysAc = jsonValue["days_ac"] as int;
-                final int defColor = jsonValue[
-                    "defColor"]; // Valor hexadecimal de 6 dígitos (RGB)
-                final Color color = Color.fromARGB(
-                  0xFF, // Canal alfa (opacidad total)
-                  (defColor >> 16) & 0xFF, // Canal rojo
-                  (defColor >> 8) & 0xFF, // Canal verde
-                  defColor & 0xFF, // Canal azul
-                );
+          stream: ref.child('actual').onValue,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              DataSnapshot data = snapshot.data.snapshot;
+              final dynamic jsonValue = data.value;
+              final int daysAc = jsonValue["days_ac"] as int;
+              final int timeNow = jsonValue["time"] as int;
+              final int gmtOff = jsonValue["gmtOff"];
+              final int defColor = jsonValue["defColor"];
+              final Color color = Color.fromARGB(
+                0xFF,
+                (defColor >> 16) & 0x80,
+                (defColor >> 8) & 0x80,
+                defColor & 0x80,
+              );
 
-                return Text(
-                  '$daysAc',
-                  style: TextStyle(color: color, fontSize: 50),
-                  overflow: TextOverflow.fade,
-                );
-              } else {
-                return Text(
-                  "Loading...",
-                  style: TextStyle(color: CustomColors.panelBackground),
-                );
-              }
-            }),
+              final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+                  (timeNow - gmtOff) * 1000);
+              // final DateFormat dateFormatter =
+              //    DateFormat('yyyy-MM-dd HH:mm:ss');
+              //final String formattedDate = dateFormatter.format(dateTime);
+
+              diaHoy = dateTime.day;
+
+              return Text(
+                '$daysAc',
+                style: TextStyle(color: color, fontSize: 50),
+                overflow: TextOverflow.fade,
+              );
+            } else {
+              return Text(
+                "Loading...",
+                style: TextStyle(color: CustomColors.panelBackground),
+              );
+            }
+          },
+        ),
       ],
     );
   }

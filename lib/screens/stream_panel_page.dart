@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 //import 'package:smart_industry/screens/config_panel_page.dart';
 //import 'package:smart_industry/screens/charts_panel_page.dart';
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
+//import 'package:mqtt_client/mqtt_client.dart';
+//import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:smart_industry/screens/chat_page.dart';
 import 'package:smart_industry/screens/report_list_page.dart';
 import 'package:smart_industry/widgets/config_panelCruz_widget.dart';
@@ -18,19 +18,19 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flip_card/flip_card.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:firebase_storage/firebase_storage.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+//import 'package:syncfusion_flutter_charts/charts.dart';
 import '/res/custom_colors.dart';
 import '/widgets/config_panelErgo_widget.dart';
 import '/widgets/config_panelCruz_widget.dart';
 
-MqttConnectionState? connectionState;
+//MqttConnectionState? connectionState;
 StreamSubscription? subscription;
 late User _currentUser;
 late String _panelID;
-late MqttServerClient client;
+//late MqttServerClient client;
 late String _name;
 late String _type;
-late TooltipBehavior _tooltipBehavior;
+//late TooltipBehavior _tooltipBehavior;
 late bool isCardView = true;
 late CardSide _panelSide = CardSide.BACK;
 
@@ -64,7 +64,7 @@ class StreamPanelPage extends StatefulWidget {
 
 class _StreamPanelPageState extends State<StreamPanelPage> {
   late int count;
-  ChartSeriesController? _chartSeriesController;
+  //ChartSeriesController? _chartSeriesController;
 
   void initState() {
     _currentUser = widget.user;
@@ -73,7 +73,7 @@ class _StreamPanelPageState extends State<StreamPanelPage> {
     _type = widget.type;
     _panelSide = widget.side;
     debugPrint('$_name');
-    _tooltipBehavior = TooltipBehavior(enable: true);
+    //_tooltipBehavior = TooltipBehavior(enable: true);
     // _updateDataSource();
     super.initState();
     Wakelock.enable();
@@ -82,7 +82,7 @@ class _StreamPanelPageState extends State<StreamPanelPage> {
   @override
   void dispose() {
     //chartData!.clear();
-    _chartSeriesController = null;
+    //_chartSeriesController = null;
     Wakelock.disable();
     //readData();
     super.dispose();
