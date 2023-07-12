@@ -214,9 +214,9 @@ class _panelCruzState extends State<panelCruz> {
                   final int defColor = jsonValue["defColor"];
                   final Color color = Color.fromARGB(
                     0xFF,
-                    (defColor >> 16) & 0x80,
-                    (defColor >> 8) & 0x80,
-                    defColor & 0x80,
+                    (defColor >> 16) & 0xFF,
+                    (defColor >> 8) & 0xFF,
+                    defColor & 0xFF,
                   );
                   final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
                       (timeNow - gmtOff) * 1000);
@@ -269,9 +269,9 @@ class _panelCruzState extends State<panelCruz> {
               final int defColor = jsonValue["defColor"];
               final Color color = Color.fromARGB(
                 0xFF,
-                (defColor >> 16) & 0x80,
-                (defColor >> 8) & 0x80,
-                defColor & 0x80,
+                (defColor >> 16) & 0xFF,
+                (defColor >> 8) & 0xFF,
+                defColor & 0xFF,
               );
 
               final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(

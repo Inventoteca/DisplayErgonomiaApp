@@ -21,7 +21,6 @@ import 'package:flip_card/flip_card.dart';
 //import 'package:syncfusion_flutter_charts/charts.dart';
 import '/res/custom_colors.dart';
 import '/widgets/config_panelErgo_widget.dart';
-import '/widgets/config_panelCruz_widget.dart';
 
 //MqttConnectionState? connectionState;
 StreamSubscription? subscription;

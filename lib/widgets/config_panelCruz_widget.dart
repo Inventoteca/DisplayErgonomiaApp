@@ -213,6 +213,19 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
       } on FirebaseAuthException catch (e) {
         debugPrint('$e');
       }
+
+      var _config = {
+        "name": "${data['name']}"
+        //"Ts": '${DateTime.now().millisecondsSinceEpoch}',
+        // "email": "${_currentUser.email}",
+      };
+
+      Map<String, dynamic> config_data = _config;
+      debugPrint('$config_data');
+
+      final DatabaseReference ref =
+          FirebaseDatabase.instance.ref('/panels/$panelID/');
+      ref.child('config').update(_user);
     }
   }
 
