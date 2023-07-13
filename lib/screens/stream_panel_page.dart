@@ -108,7 +108,7 @@ class _StreamPanelPageState extends State<StreamPanelPage> {
                   if (_type == 'ergo')
                     SizedBox(
                       width: 350,
-                      height: 650,
+                      height: 700,
                       child: PanelErgo(
                         name: '$_name',
                         user: _currentUser,
@@ -118,7 +118,7 @@ class _StreamPanelPageState extends State<StreamPanelPage> {
                   if (_type == 'pro')
                     SizedBox(
                       width: 350,
-                      height: 650,
+                      height: 700,
                       child: PanelPro(
                         name: '$_name',
                         user: _currentUser,
@@ -128,7 +128,7 @@ class _StreamPanelPageState extends State<StreamPanelPage> {
                   if (_type == 'cruz')
                     SizedBox(
                       width: 350,
-                      height: 650,
+                      height: 700,
                       child: panelCruz(
                         name: '$_name',
                         user: _currentUser,
@@ -142,7 +142,7 @@ class _StreamPanelPageState extends State<StreamPanelPage> {
                   if (_type == 'ergo')
                     SizedBox(
                       width: 350,
-                      height: 650,
+                      height: 700,
                       child: ConfigPanelErgo(
                         name: '$_name',
                         user: _currentUser,
@@ -152,7 +152,7 @@ class _StreamPanelPageState extends State<StreamPanelPage> {
                   if (_type == 'pro')
                     SizedBox(
                       width: 350,
-                      height: 650,
+                      height: 700,
                       child: ConfigPanelErgo(
                         name: '$_name',
                         user: _currentUser,
@@ -162,7 +162,7 @@ class _StreamPanelPageState extends State<StreamPanelPage> {
                   if (_type == 'cruz')
                     SizedBox(
                       width: 350,
-                      height: 650,
+                      height: 700,
                       child: ConfigPanelCruz(
                         name: '$_name',
                         user: _currentUser,

@@ -1,14 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import '../screens/device_list_page.dart';
 import '/res/custom_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '/utils/validator.dart';
+import 'dart:convert';
 
 late User _currentUser;
 late RangeValues _currentRangeValues = const RangeValues(15, 30);
 late dynamic jsonValue;
+late int diaHoy = 31;
 
 var _user = {
   "name": "${_currentUser.displayName}",
@@ -16,14 +19,12 @@ var _user = {
   "email": "${_currentUser.email}",
 };
 
-//late User _currentUser;
-
 class ConfigPanelCruz extends StatefulWidget {
   final User user;
   final String name;
   final String id;
 
-  const ConfigPanelCruz({
+  ConfigPanelCruz({
     Key? key,
     required this.user,
     required this.name,
@@ -36,6 +37,38 @@ class ConfigPanelCruz extends StatefulWidget {
 
 class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
   late String text;
+  final TextEditingController textFieldController1 = TextEditingController();
+  final TextEditingController textFieldController2 = TextEditingController();
+  Color? selectedColor;
+
+  int? selectedOption; // Variable para almacenar la opción seleccionada
+
+  final List<String> options = [
+    "Sin incidentes",
+    "Casi accidentes",
+    "No incapacitante",
+    "Primer auxilio",
+    "Accidente incapacitante",
+  ];
+
+  final List<int> ignoredIndices = [
+    1,
+    2,
+    6,
+    7,
+    8,
+    9,
+    13,
+    14,
+    36,
+    37,
+    41,
+    42,
+    43,
+    44,
+    48,
+    49
+  ];
 
   @override
   void initState() {
@@ -48,9 +81,14 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
     ref.child('actual/z_user').update(_user);
     debugPrint(panelID);
     debugPrint('conifg');
-    //debugPrint('update');
+  }
 
-    //getLimits();
+  @override
+  void dispose() {
+    textFieldController1.dispose();
+    textFieldController2.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -68,7 +106,6 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
         padding: const EdgeInsets.all(15.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //crossAxisAlignment: CrossAxisAlignment.spaceBetween,
           children: [
             FittedBox(
               fit: BoxFit.scaleDown,
@@ -97,6 +134,8 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
             SizedBox(
               height: 10,
             ),
+            _buildDayNumberGrid(diaHoy, ignoredIndices, Colors.green),
+            _buildRow(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -110,7 +149,6 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                       MaterialPageRoute(
                         builder: (context) => DeviceList(
                           user: _currentUser,
-                          // prefs: _prefs,
                         ),
                       ),
                     );
@@ -122,7 +160,7 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red, // change button color to red
+                    backgroundColor: Colors.red,
                   ),
                   onPressed: () {
                     showDialog(
@@ -136,8 +174,7 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                             TextButton(
                               child: Text('Cancelar'),
                               onPressed: () {
-                                Navigator.of(context)
-                                    .pop(); // Cerrar el cuadro de diálogo
+                                Navigator.of(context).pop();
                               },
                             ),
                             TextButton(
@@ -148,7 +185,6 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                                   MaterialPageRoute(
                                     builder: (context) => DeviceList(
                                       user: _currentUser,
-                                      // prefs: _prefs,
                                     ),
                                   ),
                                 );
@@ -173,7 +209,7 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
     );
   }
 
-  //------------------------------------------------------------- _deletePanel
+// ---------------------------------------- _deletePanel
   Future<void> _deletePanel() async {
     if (mounted) {
       final db = FirebaseFirestore.instance;
@@ -193,7 +229,7 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
     }
   }
 
-  //------------------------------------------------------------- _updatePanel
+// ----------------------------------------------- _updatePanelName
   Future<void> _updatePanelName(var name) async {
     if (mounted) {
       final db = FirebaseFirestore.instance;
@@ -215,9 +251,8 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
       }
 
       var _config = {
-        "name": "${data['name']}"
-        //"Ts": '${DateTime.now().millisecondsSinceEpoch}',
-        // "email": "${_currentUser.email}",
+        "name": "${data['name']}",
+        "mainTime": int.parse(textFieldController1.text),
       };
 
       Map<String, dynamic> config_data = _config;
@@ -225,78 +260,237 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
 
       final DatabaseReference ref =
           FirebaseDatabase.instance.ref('/panels/$panelID/');
-      ref.child('config').update(_user);
+      ref.child('config').update(_config);
     }
   }
 
-  // ------------------------------------- T Row
-  Widget _buildRow({
-    IconData? icon,
-    //String? text,
-    String? units,
-    //Color? color
-  }) {
+// ---------------------------------------------- rowColor
+  Widget _buildRow() {
     final panelID = widget.id;
     final DatabaseReference ref =
         FirebaseDatabase.instance.ref('/panels/$panelID/');
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Icon(icon, color: Colors.white, size: 70),
-        StreamBuilder(
-            stream: ref.child('actual').onValue,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData && snapshot.data != null) {
-                DataSnapshot data = snapshot.data.snapshot;
+    return StreamBuilder(
+      stream: ref.child('config').onValue,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          DataSnapshot data = snapshot.data.snapshot;
 
-                jsonValue = data.value;
-                final int t = jsonValue["t"] as int;
-                final int tMax = jsonValue["t_max"] as int;
-                final int tMin = jsonValue["t_min"] as int;
-                final Color tColmax = Color(jsonValue["t_colMax"]);
-                final Color tColmin = Color(jsonValue["t_colMin"]);
-                final Color tColdef = Color(jsonValue["t_colDef"]);
-                final Color color;
+          jsonValue = data.value;
+          //debugPrint('$jsonValue');
 
-                if (t >= tMax)
-                  color = tColmax;
-                else if (t <= tMin)
-                  color = tColmin;
-                else
-                  color = tColdef;
+          textFieldController1.text = jsonValue["mainTime"].toString();
 
-                //RangeValues _currentRangeValues =
-                //    RangeValues(t_min.toDouble(), t_max.toDouble());
-
-                return RangeSlider(
-                  values: _currentRangeValues,
-                  max: 50,
-                  divisions: 50,
-                  labels: RangeLabels(
-                    _currentRangeValues.start.round().toString(),
-                    _currentRangeValues.end.round().toString(),
+          return Column(
+            children: [
+              ListTile(
+                title: Text(
+                  'Color ',
+                  style: TextStyle(fontSize: 18),
+                ),
+                trailing: Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: Color(jsonValue["defColor"]),
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: 1.0,
+                    ),
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  onChanged: (RangeValues values) {
-                    setState(() {
-                      _currentRangeValues = values;
-                      jsonValue["t_max"] = values.end.toInt();
-                      jsonValue["t_min"] = values.start.toInt();
-                      debugPrint('${jsonValue["t_max"]}');
-                    });
-                    final DatabaseReference ref =
-                        FirebaseDatabase.instance.ref('/panels/$panelID/');
-                    ref.child('actual/').update(jsonValue);
-                  },
-                );
-              } else {
-                return Text(
-                  "Loading...",
-                  style: TextStyle(color: CustomColors.panelBackground),
-                );
-              }
-            }),
-      ],
+                ),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Seleccionar color'),
+                        content: SingleChildScrollView(
+                          child: ColorPicker(
+                            pickerColor: Color(jsonValue["defColor"]),
+                            onColorChanged: (color) {
+                              setState(() {
+                                selectedColor = color;
+                              });
+                            },
+                            pickerAreaHeightPercent: 0.8,
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            child: Text('Aceptar'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              if (selectedColor != null) {
+                                ref.child('config').update({
+                                  "defColor": selectedColor!.value,
+                                });
+                              }
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          );
+        } else {
+          return Text(
+            "...",
+            style: TextStyle(color: Colors.transparent),
+          );
+        }
+      },
+    );
+  }
+
+  //----------------------------- cruz
+  Widget _buildDayNumberGrid(
+      int diaHoy, List<int> ignoredIndices, Color dayColor) {
+    final panelID = widget.id;
+    final DatabaseReference ref =
+        FirebaseDatabase.instance.ref('/panels/$panelID/');
+
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+        child: StreamBuilder(
+          stream: ref.child('actual').onValue,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              DataSnapshot data = snapshot.data.snapshot;
+              final dynamic jsonValue = data.value;
+              final int timeNow = jsonValue["time"] as int;
+              final int gmtOff = jsonValue["gmtOff"];
+
+              final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+                  (timeNow - gmtOff) * 1000);
+              final dynamic events = jsonValue["events"];
+
+              diaHoy = dateTime.day;
+
+              return GridView.count(
+                physics: NeverScrollableScrollPhysics(),
+                crossAxisCount: 7,
+                children: List.generate(49, (index) {
+                  int dayNumber = index + 1;
+                  final bool isIgnored = ignoredIndices.contains(dayNumber);
+
+                  if (isIgnored) {
+                    return Container();
+                  }
+
+                  if (index >= 2 && index <= 5)
+                    dayNumber = index - 1;
+                  else if (index >= 9 && index <= 12)
+                    dayNumber = index - 5;
+                  else if (index >= 14 && index <= 35)
+                    dayNumber = index - 7;
+                  else if (index >= 37 && index <= 40)
+                    dayNumber = index - 9;
+                  else if (index >= 44 && index <= 47) dayNumber = index - 13;
+
+                  if (dayNumber > diaHoy)
+                    dayColor = Colors.transparent;
+                  else {
+                    if (events != null && events is Map) {
+                      //debugPrint('$events');
+                      // Acceder a los valores del objeto "events"
+                      final int? eventDay = events['$dayNumber'] as int?;
+
+                      //final int eventNumber = events["number"] as int?;
+                      // ... otros valores del objeto "events"
+
+                      // Utilizar los valores extraídos
+                      if (eventDay != null /*&& eventNumber != null*/) {
+                        // Realizar acciones con eventDay y eventNumber
+                        //debugPrint('$eventDay');
+                        if (eventDay == 0)
+                          dayColor = Colors.green;
+                        else if (eventDay == 1)
+                          dayColor = Colors.blue;
+                        else if (eventDay == 2)
+                          dayColor = Colors.yellow;
+                        else if (eventDay == 3)
+                          dayColor = Colors.orange;
+                        else if (eventDay == 4) dayColor = Colors.red;
+                      } else
+                        dayColor = Colors.green;
+                    } else {
+                      //debugPrint('null');
+                      dayColor = Colors.green;
+                    }
+                  }
+                  //
+
+                  return GestureDetector(
+                    onTap: () {
+                      if (dayNumber <= diaHoy) {
+                        debugPrint('Tapped on day number: $dayNumber');
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: options.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return ListTile(
+                                  title: Text(options[index]),
+                                  onTap: () {
+                                    setState(() {
+                                      selectedOption =
+                                          index; // Actualiza la opción seleccionada
+                                    });
+                                    Navigator.pop(context); // Cierra el modal
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        );
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.zero, // Eliminar el padding
+                      margin: EdgeInsets.zero,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: CustomColors.firebaseOrange,
+                          width: 0.5,
+                        ),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  '$dayNumber',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: dayColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              );
+            } else {
+              return Container(); // Placeholder mientras carga los datos
+            }
+          },
+        ),
+      ),
     );
   }
 }

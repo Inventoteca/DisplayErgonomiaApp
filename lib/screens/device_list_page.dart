@@ -253,8 +253,8 @@ class ProjectsExpansionTile extends StatelessWidget {
               );
             },
             child: SizedBox(
-              width: 200,
-              height: 400,
+              width: 350,
+              height: 600,
               child: PanelErgo(
                 user: _currentUser,
                 name: name,
@@ -278,9 +278,23 @@ class ProjectsExpansionTile extends StatelessWidget {
                 ),
               );
             },
+            onLongPress: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => StreamPanelPage(
+                    user: _currentUser,
+                    id: id,
+                    name: name,
+                    type: 'cruz',
+                    side: CardSide.BACK,
+                    //demo: true,
+                  ),
+                ),
+              );
+            },
             child: SizedBox(
-              width: 300,
-              height: 600,
+              width: 350,
+              height: 650,
               child: Hero(
                 tag: '$id',
                 child: panelCruz(
@@ -308,8 +322,8 @@ class ProjectsExpansionTile extends StatelessWidget {
               );
             },
             child: SizedBox(
-              width: 180,
-              height: 330,
+              width: 350,
+              height: 600,
               child: Hero(
                 tag: '$id',
                 child: PanelPro(

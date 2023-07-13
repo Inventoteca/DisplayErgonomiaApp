@@ -45,6 +45,7 @@ dependencies:
   cloud_firestore: ^4.3.1
   intl: ^0.18.0
   provider: ^5.0.0
+  flutter_colorpicker: ^1.0.3
 
 #dependency_overrides:
 #  firebase_messaging_platform_interface: 3.1.6
