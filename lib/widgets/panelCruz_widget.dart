@@ -279,7 +279,7 @@ class _panelCruzState extends State<panelCruz> {
                   final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
                       (timeNow - gmtOff) * 1000);
                   final DateFormat dateFormatter =
-                      DateFormat('yyyy-MM-dd HH:mm:ss');
+                      DateFormat('dd/MM/yyyy  HH:mm:ss');
                   final String formattedDate = dateFormatter.format(dateTime);
 
                   diaHoy = dateTime.day;
@@ -423,11 +423,11 @@ class _panelCruzState extends State<panelCruz> {
                         if (eventDay == 0)
                           dayColor = Colors.green;
                         else if (eventDay == 1)
-                          dayColor = Colors.blue;
-                        else if (eventDay == 2)
-                          dayColor = Colors.yellow;
-                        else if (eventDay == 3)
                           dayColor = Colors.orange;
+                        else if (eventDay == 2)
+                          dayColor = Colors.blue;
+                        else if (eventDay == 3)
+                          dayColor = Colors.yellow;
                         else if (eventDay == 4) dayColor = Colors.red;
                       } else
                         dayColor = Colors.green;

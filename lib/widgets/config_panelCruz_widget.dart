@@ -255,12 +255,12 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
         "mainTime": int.parse(textFieldController1.text),
       };
 
-      Map<String, dynamic> config_data = _config;
-      debugPrint('$config_data');
+      Map<String, dynamic> configData = _config;
+      debugPrint('$configData');
 
       final DatabaseReference ref =
           FirebaseDatabase.instance.ref('/panels/$panelID/');
-      ref.child('config').update(_config);
+      ref.child('config').update(configData);
     }
   }
 
@@ -351,6 +351,8 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
   Widget _buildDayNumberGrid(
       int diaHoy, List<int> ignoredIndices, Color dayColor) {
     final panelID = widget.id;
+    int mes = 0;
+    int anio = 23;
     final DatabaseReference ref =
         FirebaseDatabase.instance.ref('/panels/$panelID/');
 
@@ -371,6 +373,8 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
               final dynamic events = jsonValue["events"];
 
               diaHoy = dateTime.day;
+              mes = dateTime.month;
+              anio = dateTime.year;
 
               return GridView.count(
                 physics: NeverScrollableScrollPhysics(),
@@ -411,11 +415,11 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                         if (eventDay == 0)
                           dayColor = Colors.green;
                         else if (eventDay == 1)
-                          dayColor = Colors.blue;
-                        else if (eventDay == 2)
-                          dayColor = Colors.yellow;
-                        else if (eventDay == 3)
                           dayColor = Colors.orange;
+                        else if (eventDay == 2)
+                          dayColor = Colors.blue;
+                        else if (eventDay == 3)
+                          dayColor = Colors.yellow;
                         else if (eventDay == 4) dayColor = Colors.red;
                       } else
                         dayColor = Colors.green;
@@ -429,24 +433,47 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                   return GestureDetector(
                     onTap: () {
                       if (dayNumber <= diaHoy) {
-                        debugPrint('Tapped on day number: $dayNumber');
                         showModalBottomSheet(
                           context: context,
                           builder: (BuildContext context) {
                             return ListView.builder(
                               shrinkWrap: true,
-                              itemCount: options.length,
+                              itemCount: options.length +
+                                  1, // Add 1 for the dayNumber item
                               itemBuilder: (BuildContext context, int index) {
-                                return ListTile(
-                                  title: Text(options[index]),
-                                  onTap: () {
-                                    setState(() {
-                                      selectedOption =
-                                          index; // Actualiza la opción seleccionada
-                                    });
-                                    Navigator.pop(context); // Cierra el modal
-                                  },
-                                );
+                                if (index == 0) {
+                                  // First item is the dayNumber
+                                  return ListTile(
+                                    title: Text(
+                                      'Fecha: $dayNumber / $mes / $anio ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        //color: dayColor,
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  // Remaining items are options
+                                  return ListTile(
+                                    title: Text(options[index -
+                                        1]), // Subtract 1 to adjust index
+                                    onTap: () {
+                                      setState(() {
+                                        selectedOption = index -
+                                            1; // Update the selected option
+                                        //debugPrint('');
+                                      });
+                                      Navigator.pop(context); // Close the modal
+                                      debugPrint(
+                                          'events: $dayNumber, $selectedOption');
+                                      //if (selectedColor != null) {
+                                      ref.child('config/events/').update({
+                                        '$dayNumber': selectedOption,
+                                      });
+                                      //}
+                                    },
+                                  );
+                                }
                               },
                             );
                           },
@@ -454,7 +481,7 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                       }
                     },
                     child: Container(
-                      padding: EdgeInsets.zero, // Eliminar el padding
+                      padding: EdgeInsets.zero,
                       margin: EdgeInsets.zero,
                       decoration: BoxDecoration(
                         border: Border.all(
