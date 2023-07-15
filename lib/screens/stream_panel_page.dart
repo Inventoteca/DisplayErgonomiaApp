@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_industry/screens/chat_page.dart';
 import 'package:smart_industry/screens/report_list_page.dart';
 import 'package:smart_industry/widgets/config_panelCruz_widget.dart';
+import 'package:smart_industry/widgets/config_panelPro_widget.dart';
 import 'package:smart_industry/widgets/panelPro_widget.dart';
 //import '/utils/mqtt_client.dart';
 import '../widgets/panelCruz_widget.dart';
@@ -153,7 +154,7 @@ class _StreamPanelPageState extends State<StreamPanelPage> {
                     SizedBox(
                       width: 350,
                       height: 700,
-                      child: ConfigPanelErgo(
+                      child: ConfigPanelPro(
                         name: '$_name',
                         user: _currentUser,
                         id: _panelID,

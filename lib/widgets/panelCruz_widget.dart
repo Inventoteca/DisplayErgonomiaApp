@@ -114,11 +114,21 @@ class _panelCruzState extends State<panelCruz> {
             ),
             SizedBox(height: 15),
             _buildDayNumberGrid(diaHoy, ignoredIndices, Colors.green),
-            SizedBox(height: 15),
+            //SizedBox(height: 15),
             FittedBox(
               fit: BoxFit.scaleDown,
               child: _buildRowTime(),
             ),
+
+            //GridView.count(
+            // crossAxisCount: 2, // Número de columnas
+            //children: [
+            //buildColorIndicator('Casi accidente', Colors.orange),
+            //buildColorIndicator('No incapacitante', Colors.blue),
+            //buildColorIndicator('Primer Auxilio', Colors.yellow),
+            //buildColorIndicator('Accidente incapacitante', Colors.red),
+            //],
+            //),
             Text(
               " ",
               style: TextStyle(
@@ -369,7 +379,10 @@ class _panelCruzState extends State<panelCruz> {
 
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+        padding: const EdgeInsets.only(
+          left: 10,
+          right: 10, /*top: 10*/
+        ),
         child: StreamBuilder(
           stream: ref.child('actual').onValue,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -476,6 +489,24 @@ class _panelCruzState extends State<panelCruz> {
           },
         ),
       ),
+    );
+  }
+
+  Widget buildColorIndicator(String text, Color color) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 50,
+          height: 50,
+          color: color,
+        ),
+        SizedBox(height: 10),
+        Text(
+          text,
+          style: TextStyle(fontSize: 16),
+        ),
+      ],
     );
   }
 }

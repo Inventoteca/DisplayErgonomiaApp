@@ -116,31 +116,45 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 35,
+                  fontSize: 20,
                 ),
               ),
             ),
             TextFormField(
-              maxLines: 1,
-              style: TextStyle(fontSize: 20, color: CustomColors.firebaseAmber),
-              controller: nameTextController,
-              focusNode: focusName,
-              validator: (value) => Validator.validateName(
-                name: value,
-              ),
-              decoration: InputDecoration(
-                labelText: 'Nombre', // Etiqueta de Nombre
-                labelStyle: TextStyle(
-                  fontSize: 14, /*color: CustomColors.firebaseAmber*/
+                maxLines: 1,
+                style:
+                    TextStyle(fontSize: 20, color: CustomColors.firebaseAmber),
+                controller: nameTextController,
+                focusNode: focusName,
+                validator: (value) => Validator.validateName(
+                      name: value,
+                    ),
+                decoration: InputDecoration(
+                  labelText: 'Nombre', // Etiqueta de Nombre
+                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontSize: 14, /*color: CustomColors.firebaseAmber*/
+                  ),
                 ),
-              ),
-            ),
+                onFieldSubmitted: (value) {
+                  final name = nameTextController.text;
+                  _updatePanelName(name);
+                  debugPrint(name);
+
+                  /*Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => DeviceList(
+                        user: _currentUser,
+                      ),
+                    ),
+                  );*/
+                }),
             SizedBox(
               height: 10,
             ),
             _buildRowDays(),
-            _buildDayNumberGrid(diaHoy, ignoredIndices, Colors.green),
             _buildRowColor(),
+            _buildDayNumberGrid(diaHoy, ignoredIndices, Colors.green),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -186,7 +200,7 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
-                ElevatedButton(
+                /*ElevatedButton(
                   onPressed: () {
                     final name = nameTextController.text;
                     _updatePanelName(name);
@@ -204,7 +218,7 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                     'Actualizar',
                     style: TextStyle(color: Colors.white),
                   ),
-                ),
+                ),*/
               ],
             ),
             Text(widget.id),
@@ -256,15 +270,9 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
       }
 
       var _config = {
-        "name": "${data['name']}",
-        "last_ac": updatedLastAc,
+        "name": "${data['name']}"
+        //"last_ac": updatedLastAc,
       };
-
-      //if (updatedLastAc != null) {
-      //      ref.child('config').update({
-      //        "last_ac": updatedLastAc,
-      //      });
-      //    }
 
       Map<String, dynamic> configData = _config;
       debugPrint('$configData');
@@ -306,36 +314,42 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
           return TextFormField(
             initialValue: dias.toString(), // Valor inicial del campo
             keyboardType: TextInputType.number, // Teclado numérico
-            onChanged: (value) {},
+            style: TextStyle(fontSize: 20, color: CustomColors.firebaseAmber),
+            //onChanged: (value) {},
             onFieldSubmitted: (value) {
               // Actualiza el valor actualizado de last_ac al presionar Enter o enviar el formulario
               // Actualiza el valor de dias al editar el campo
-              setState(() {
-                newDays = int.parse(value);
+              //setState(() {
+              newDays = int.parse(value);
 
-                DateTime now = DateTime.now();
-                DateTime startOfDay = DateTime(now.year, now.month, now.day);
-                Duration remainingDuration = now.difference(startOfDay);
-                int remainingSeconds = remainingDuration.inSeconds;
+              DateTime now = DateTime.now();
+              DateTime startOfDay = DateTime(now.year, now.month, now.day);
+              Duration remainingDuration = now.difference(startOfDay);
+              int remainingSeconds = remainingDuration.inSeconds;
 
-                int updatedSeconds =
-                    (newDays * 24 * 60 * 60) + remainingSeconds;
+              int updatedSeconds = (newDays * 24 * 60 * 60) + remainingSeconds;
 
-                updatedLastAc =
-                    (now.millisecondsSinceEpoch ~/ 1000) - updatedSeconds;
+              updatedLastAc =
+                  (now.millisecondsSinceEpoch ~/ 1000) - updatedSeconds;
 
-                //updatedLastAc = DateTime.now()
-                //        .subtract(Duration(days: newDays))
-                //        .millisecondsSinceEpoch ~/
-                //    1000;
+              //updatedLastAc = DateTime.now()
+              //        .subtract(Duration(days: newDays))
+              //        .millisecondsSinceEpoch ~/
+              //    1000;
 
-                debugPrint('$updatedLastAc');
-                final DateTime dateTimeLastUp =
-                    DateTime.fromMillisecondsSinceEpoch((updatedLastAc) * 1000);
-                DateFormat dateFormatter = DateFormat('dd/MM/yyyy  HH:mm:ss');
-                String formattedDate = dateFormatter.format(dateTimeLastUp);
-                debugPrint('$formattedDate');
-              });
+              debugPrint('$updatedLastAc');
+              final DateTime dateTimeLastUp =
+                  DateTime.fromMillisecondsSinceEpoch((updatedLastAc) * 1000);
+              DateFormat dateFormatter = DateFormat('dd/MM/yyyy  HH:mm:ss');
+              String formattedDate = dateFormatter.format(dateTimeLastUp);
+              debugPrint('$formattedDate');
+              // });
+
+              if (updatedLastAc > 0) {
+                ref.child('config').update({
+                  "last_ac": updatedLastAc,
+                });
+              }
             },
             decoration: InputDecoration(
               labelText: 'Días sin accidentes', // Etiqueta del campo

@@ -1,20 +1,34 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../screens/device_list_page.dart';
 import '/res/custom_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-//late User _currentUser;
+late User _currentUser;
 
-class ConfigPanelPro extends StatelessWidget {
+class ConfigPanelPro extends StatefulWidget {
   final User user;
   final String name;
+  final String id;
 
   const ConfigPanelPro({
     Key? key,
     required this.user,
     required this.name,
+    required this.id,
   }) : super(key: key);
 
-  //_currentUser = widget.user;
+  @override
+  State<ConfigPanelPro> createState() => _ConfigPanelProState();
+}
+
+class _ConfigPanelProState extends State<ConfigPanelPro> {
+  @override
+  void initState() {
+    super.initState();
+    _currentUser = widget.user;
+    final panelID = widget.id;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +45,7 @@ class ConfigPanelPro extends StatelessWidget {
             Container(
               width: 180,
               child: Text(
-                'Configuracion: $name',
+                'Configuracion: ${widget.name}',
                 overflow: TextOverflow.fade,
                 maxLines: 4,
                 textAlign: TextAlign.center,
@@ -78,6 +92,48 @@ class ConfigPanelPro extends StatelessWidget {
               units: ' Turno',
               color: Colors.white,
             ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Eliminar panel'),
+                      content: Text(
+                          '¿Estás seguro de que deseas eliminar el panel?'),
+                      actions: [
+                        TextButton(
+                          child: Text('Eliminar'),
+                          onPressed: () {
+                            _deletePanel();
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => DeviceList(
+                                  user: _currentUser,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        TextButton(
+                          child: Text('Cancelar'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Text(
+                'Eliminar',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
           ],
         ),
       ),
@@ -111,5 +167,25 @@ class ConfigPanelPro extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // ---------------------------------------- _deletePanel
+  Future<void> _deletePanel() async {
+    if (mounted) {
+      final db = FirebaseFirestore.instance;
+      final panelID = widget.id;
+      try {
+        db
+            .collection("users")
+            .doc('${_currentUser.email}')
+            .collection('devices')
+            .doc('$panelID')
+            .delete();
+
+        debugPrint('$panelID');
+      } on FirebaseAuthException catch (e) {
+        debugPrint('$e');
+      }
+    }
   }
 }
