@@ -104,15 +104,16 @@ class _panelCruzState extends State<panelCruz> {
               maxLines: 1,
               style: TextStyle(
                 color: CustomColors.firebaseOrange,
-                fontSize: 18,
+                fontSize: 14,
               ),
             ),
             SizedBox(height: 15),
-            _buildDayNumberGrid(diaHoy, ignoredIndices, Colors.green),
             FittedBox(
               fit: BoxFit.scaleDown,
               child: _buildRowMY(),
             ),
+            SizedBox(height: 15),
+            _buildDayNumberGrid(diaHoy, ignoredIndices, Colors.green),
             SizedBox(height: 15),
             FittedBox(
               fit: BoxFit.scaleDown,

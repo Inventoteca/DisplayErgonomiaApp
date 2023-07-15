@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:intl/intl.dart';
 import '../screens/device_list_page.dart';
 import '/res/custom_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,6 +13,7 @@ late User _currentUser;
 late RangeValues _currentRangeValues = const RangeValues(15, 30);
 late dynamic jsonValue;
 late int diaHoy = 31;
+late int updatedLastAc = 0;
 
 var _user = {
   "name": "${_currentUser.displayName}",
@@ -80,7 +82,7 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
         FirebaseDatabase.instance.ref('/panels/$panelID/');
     ref.child('actual/z_user').update(_user);
     debugPrint(panelID);
-    debugPrint('conifg');
+    debugPrint('config page');
   }
 
   @override
@@ -127,18 +129,63 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                 name: value,
               ),
               decoration: InputDecoration(
-                hintStyle:
-                    TextStyle(fontSize: 25, color: CustomColors.firebaseAmber),
+                labelText: 'Nombre', // Etiqueta de Nombre
+                labelStyle: TextStyle(
+                  fontSize: 14, /*color: CustomColors.firebaseAmber*/
+                ),
               ),
             ),
             SizedBox(
               height: 10,
             ),
+            _buildRowDays(),
             _buildDayNumberGrid(diaHoy, ignoredIndices, Colors.green),
-            _buildRow(),
+            _buildRowColor(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Eliminar panel'),
+                          content: Text(
+                              '¿Estás seguro de que deseas eliminar el panel?'),
+                          actions: [
+                            TextButton(
+                              child: Text('Eliminar'),
+                              onPressed: () {
+                                _deletePanel();
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => DeviceList(
+                                      user: _currentUser,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            TextButton(
+                              child: Text('Cancelar'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Text(
+                    'Eliminar',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
                 ElevatedButton(
                   onPressed: () {
                     final name = nameTextController.text;
@@ -155,48 +202,6 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                   },
                   child: Text(
                     'Actualizar',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Eliminar panel'),
-                          content: Text(
-                              '¿Estás seguro de que deseas eliminar el panel?'),
-                          actions: [
-                            TextButton(
-                              child: Text('Cancelar'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            TextButton(
-                              child: Text('Aceptar'),
-                              onPressed: () {
-                                _deletePanel();
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (context) => DeviceList(
-                                      user: _currentUser,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  child: Text(
-                    'Eliminar',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -252,8 +257,14 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
 
       var _config = {
         "name": "${data['name']}",
-        "mainTime": int.parse(textFieldController1.text),
+        "last_ac": updatedLastAc,
       };
+
+      //if (updatedLastAc != null) {
+      //      ref.child('config').update({
+      //        "last_ac": updatedLastAc,
+      //      });
+      //    }
 
       Map<String, dynamic> configData = _config;
       debugPrint('$configData');
@@ -264,8 +275,98 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
     }
   }
 
+  // ---------------------------------------------- rowDays
+  Widget _buildRowDays() {
+    final panelID = widget.id;
+    final DatabaseReference ref =
+        FirebaseDatabase.instance.ref('/panels/$panelID/');
+    //late int
+    //    updatedLastAc; // Variable para almacenar el valor actualizado de last_ac
+
+    return StreamBuilder(
+      stream: ref.child('config').onValue,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          DataSnapshot data = snapshot.data.snapshot;
+
+          jsonValue = data.value;
+          //debugPrint('$jsonValue');
+
+          textFieldController1.text = jsonValue["mainTime"].toString();
+          int lastAc = jsonValue["last_ac"];
+
+          DateTime dateTimeLast =
+              DateTime.fromMillisecondsSinceEpoch((lastAc) * 1000);
+          DateTime dateTimeCel = DateTime.now();
+
+          final int dias = dateTimeCel.difference(dateTimeLast).inDays;
+          late int newDays;
+          //debugPrint('$dias');
+
+          return TextFormField(
+            initialValue: dias.toString(), // Valor inicial del campo
+            keyboardType: TextInputType.number, // Teclado numérico
+            onChanged: (value) {},
+            onFieldSubmitted: (value) {
+              // Actualiza el valor actualizado de last_ac al presionar Enter o enviar el formulario
+              // Actualiza el valor de dias al editar el campo
+              setState(() {
+                newDays = int.parse(value);
+
+                DateTime now = DateTime.now();
+                DateTime startOfDay = DateTime(now.year, now.month, now.day);
+                Duration remainingDuration = now.difference(startOfDay);
+                int remainingSeconds = remainingDuration.inSeconds;
+
+                int updatedSeconds =
+                    (newDays * 24 * 60 * 60) + remainingSeconds;
+
+                updatedLastAc =
+                    (now.millisecondsSinceEpoch ~/ 1000) - updatedSeconds;
+
+                //updatedLastAc = DateTime.now()
+                //        .subtract(Duration(days: newDays))
+                //        .millisecondsSinceEpoch ~/
+                //    1000;
+
+                debugPrint('$updatedLastAc');
+                final DateTime dateTimeLastUp =
+                    DateTime.fromMillisecondsSinceEpoch((updatedLastAc) * 1000);
+                DateFormat dateFormatter = DateFormat('dd/MM/yyyy  HH:mm:ss');
+                String formattedDate = dateFormatter.format(dateTimeLastUp);
+                debugPrint('$formattedDate');
+              });
+            },
+            decoration: InputDecoration(
+              labelText: 'Días sin accidentes', // Etiqueta del campo
+              labelStyle: TextStyle(fontSize: 16),
+              border: OutlineInputBorder(),
+            ),
+          );
+          //SizedBox(height: 10),
+          //ElevatedButton(
+          //  onPressed: () {
+          // Guarda el valor actualizado de last_ac en Firebase
+          //    if (updatedLastAc != null) {
+          //      ref.child('config').update({
+          //        "last_ac": updatedLastAc,
+          //      });
+          //    }
+          // },
+          //child: Text('Guardar'),
+          //),
+        } else {
+          return Text(
+            "...",
+            style: TextStyle(color: Colors.transparent),
+          );
+        }
+      },
+    );
+  }
+
 // ---------------------------------------------- rowColor
-  Widget _buildRow() {
+  Widget _buildRowColor() {
     final panelID = widget.id;
     final DatabaseReference ref =
         FirebaseDatabase.instance.ref('/panels/$panelID/');
@@ -360,21 +461,29 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
       child: Padding(
         padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
         child: StreamBuilder(
-          stream: ref.child('actual').onValue,
+          stream: ref.child('config').onValue,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
               DataSnapshot data = snapshot.data.snapshot;
               final dynamic jsonValue = data.value;
-              final int timeNow = jsonValue["time"] as int;
-              final int gmtOff = jsonValue["gmtOff"];
+              //final int gmtOff = jsonValue["gmtOff"];
+              //final int lastAc = jsonValue["last_ac"];
 
-              final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-                  (timeNow - gmtOff) * 1000);
+              //final DateTime dateTimeLast =
+              //    DateTime.fromMillisecondsSinceEpoch((lastAc) * 1000);
+              final DateTime dateTimeCel = DateTime.now();
+              //final DateFormat dateFormatter =
+              //    DateFormat('dd/MM/yyyy  HH:mm:ss');
+              //final String formattedDate = dateFormatter.format(dateTimeLast);
+              //debugPrint('$formattedDate');
+              //final int dias = dateTimeCel.difference(dateTimeLast).inDays;
+              //debugPrint('$dias');
+
               final dynamic events = jsonValue["events"];
 
-              diaHoy = dateTime.day;
-              mes = dateTime.month;
-              anio = dateTime.year;
+              diaHoy = dateTimeCel.day;
+              mes = dateTimeCel.month;
+              anio = dateTimeCel.year;
 
               return GridView.count(
                 physics: NeverScrollableScrollPhysics(),
