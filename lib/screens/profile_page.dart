@@ -51,9 +51,14 @@ class _ProfilePageState extends State<ProfilePage> {
           //prefs: _prefs,
         ),
         appBar: AppBar(
-          title: Text('Perfil'),
+          title: Text('Cuenta'),
         ),
-        body: Center(
+        body: Card(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          margin: EdgeInsets.all(20),
+          elevation: 10,
+          color: CustomColors.panel,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -92,57 +97,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               SizedBox(height: 16.0),
-              /*_currentUser.emailVerified
-                  ? Text(
-                      'Email verificado',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .copyWith(color: Colors.green),
-                    )
-                  : Text(
-                      'Email NO verificado',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .copyWith(color: Colors.red),
-                    ),
-              SizedBox(height: 16.0),*/
-
-              /*_isSendingVerification
-                  ? CircularProgressIndicator()
-                  : Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () async {
-                            setState(() {
-                              _isSendingVerification = true;
-                            });
-                            await _currentUser.sendEmailVerification();
-                            setState(() {
-                              _isSendingVerification = false;
-                            });
-                          },
-                          child: Text('Verifcar email'),
-                        ),
-                        SizedBox(width: 8.0),
-                        IconButton(
-                          icon: Icon(Icons.refresh),
-                          onPressed: () async {
-                            User? user =
-                                await FireAuth.refreshUser(_currentUser);
-
-                            if (user != null) {
-                              setState(() {
-                                _currentUser = user;
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    ),*/
-              SizedBox(height: 16.0),
               _isSigningOut
                   ? CircularProgressIndicator()
                   : ElevatedButton(
@@ -164,7 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Text('Cerrar Cesión'),
                       style: ElevatedButton.styleFrom(
                         //
-                        // backgroundColor: Colors.red,
+                        backgroundColor: Colors.red,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),

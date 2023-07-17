@@ -4,9 +4,6 @@
    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
    <uses-permission android:name="android.permission.INTERNET"/>
    <uses-permission android:name="android.permission.CAMERA" />
-   <meta-data
-    android:name="google-play-services-enable-ads"
-    android:value="false" />
    <application
         android:usesCleartextTraffic="true"
         android:label="Smart Industry"

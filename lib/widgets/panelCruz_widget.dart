@@ -123,10 +123,18 @@ class _panelCruzState extends State<panelCruz> {
             //GridView.count(
             // crossAxisCount: 2, // Número de columnas
             //children: [
-            //buildColorIndicator('Casi accidente', Colors.orange),
-            //buildColorIndicator('No incapacitante', Colors.blue),
-            //buildColorIndicator('Primer Auxilio', Colors.yellow),
-            //buildColorIndicator('Accidente incapacitante', Colors.red),
+
+            Row(
+              children: [
+                buildColorIndicator('Casi accidente', Colors.orange),
+                buildColorIndicator('No incapacitante', Colors.blue),
+                buildColorIndicator('Primer Auxilio', Colors.yellow),
+                buildColorIndicator('Accidente incapacitante', Colors.red),
+              ],
+            ),
+
+            //
+            //
             //],
             //),
             Text(
@@ -493,20 +501,22 @@ class _panelCruzState extends State<panelCruz> {
   }
 
   Widget buildColorIndicator(String text, Color color) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          width: 50,
-          height: 50,
-          color: color,
-        ),
-        SizedBox(height: 10),
-        Text(
-          text,
-          style: TextStyle(fontSize: 16),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(left: 5),
+      child: Row(
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            color: color,
+          ),
+          //SizedBox(height: 15),
+          Text(
+            text,
+            style: TextStyle(fontSize: 8, color: color),
+          ),
+        ],
+      ),
     );
   }
 }
