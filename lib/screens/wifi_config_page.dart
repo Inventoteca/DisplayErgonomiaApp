@@ -17,6 +17,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 late List<dynamic> _panelDataList = List.empty(growable: true);
+StreamSubscription<DatabaseEvent>? _configSubscription;
 var _doc;
 //StreamSubscription<EventSnapshot>? _subscription;
 //MqttConnectionState? connectionState;
@@ -92,6 +93,7 @@ class _WifiConfigState extends State<WifiConfig> {
   @override
   void dispose() {
     //onDisconnected();
+    _configSubscription?.cancel();
     provisioner.stop();
     super.dispose();
   }
@@ -315,13 +317,7 @@ class _WifiConfigState extends State<WifiConfig> {
   }
 
   // -------------------------------- _loadConfig
-  Future _loadConfig() async {
-    //if (_configLoaded) {
-    // return; // Salir temprano si la configuración ya se ha cargado
-    //}
-
-    //if (mounted) {
-
+  Future<void> _loadConfig() async {
     var encode = {'id': _panelID, 'type': _type, 'name': _name};
 
     debugPrint('$encode');
@@ -330,65 +326,54 @@ class _WifiConfigState extends State<WifiConfig> {
 
     final DatabaseReference ref =
         FirebaseDatabase.instance.ref('/panels/$_panelID/');
-    //await ref.child('actual/ping').set(false);
 
-    //await _panelADD(jsonEncode(encode));
+    await ref.child('config/registered').set(false);
 
     if (_isDemo) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => DeviceList(
             user: _currentUser,
-            //id: _panelID,
-            // prefs: _prefs,
           ),
         ),
       );
       return;
     }
-    ref.child('config').onValue.listen((event) {
+
+    if (_configSubscription != null) {
+      _configSubscription?.cancel();
+    }
+
+    _configSubscription = ref.child('config').onValue.listen((event) {
       newValue = event.snapshot.value;
       Future.delayed(const Duration(seconds: 60));
-      // Imprimir el valor en la consola
-      //print('Nuevo valor: $newValue');
-      //debugPrint("${newValue["ping"]}");
 
-      if (newValue != null && newValue.containsKey("registered")) {
-        if (newValue["registered"]) {
-          if (mounted) {
-            setState(() {
-              debugPrint("aqui se repite?");
-              _isConnected = true;
-            });
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => DeviceList(
-                  user: _currentUser,
-                  //id: _panelID,
-                  // prefs: _prefs,
-                ),
+      if (newValue != null &&
+          newValue.containsKey("registered") &&
+          newValue["registered"] == true) {
+        if (mounted) {
+          setState(() {
+            debugPrint("aqui se repite?");
+            _isConnected = true;
+          });
+          _configSubscription?.cancel();
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => DeviceList(
+                user: _currentUser,
               ),
-            );
-            return;
-          }
-          //return;
+            ),
+          );
+          return;
         }
       } else {
-        //if (mounted) {
         setState(() {
           _isLoading = false;
         });
 
         _initNetworkInfo();
-        //}
-
-        // _configLoaded = true;
       }
     });
-
-    // if (_isConnected) {
-    //   return;
-    //}
   }
 
   // ---------------------------------------------------------- onMsg
@@ -511,6 +496,7 @@ class _WifiConfigState extends State<WifiConfig> {
                                       ),
                                       ElevatedButton(
                                         onPressed: () {
+                                          debugPrint('Sending Prov Req');
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
                                               builder: (context) =>
