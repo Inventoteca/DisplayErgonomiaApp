@@ -591,6 +591,10 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                                           'events: $dayNumber, $selectedOption');
                                       //if (selectedColor != null) {
                                       ref.child('config/events/').update({
+                                        'm32': 0,
+                                      });
+
+                                      ref.child('config/events/').update({
                                         '$dayNumber': selectedOption,
                                       });
                                       //}
