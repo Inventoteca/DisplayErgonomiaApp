@@ -426,10 +426,12 @@ class _ConfigPanelCruzState extends State<ConfigPanelCruz> {
                             pickerColor: Color(jsonValue["defColor"]),
                             onColorChanged: (color) {
                               setState(() {
-                                selectedColor = color;
+                                selectedColor = color.withAlpha(255);  //Permite solo agregar numeros con alpha(a de rgba)
+                                //selectedColor = color;
                               });
                             },
                             pickerAreaHeightPercent: 0.8,
+                            enableAlpha: false,  //Setea el valor de a a 1.0 siempre y no deja modificarlo desde app
                           ),
                         ),
                         actions: [

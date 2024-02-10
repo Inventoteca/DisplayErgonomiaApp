@@ -146,7 +146,7 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
-                ElevatedButton(
+/*                ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red, // change button color to red
                   ),
@@ -166,7 +166,7 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
                     'Eliminar',
                     style: TextStyle(color: Colors.white),
                   ),
-                ),
+                ), */  //Botón de borrar panel
               ],
             ),
             Text(widget.id),
@@ -266,13 +266,14 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
                 DataSnapshot data = snapshot.data.snapshot;
 
                 jsonValue = data.value;
+                debugPrint(jsonValue);
                 final int t = jsonValue["t"] as int;
                 final int tMax = jsonValue["t_max"] as int;
                 final int tMin = jsonValue["t_min"] as int;
                 final Color tColmax = Color(jsonValue["t_colMax"]);
                 final Color tColmin = Color(jsonValue["t_colMin"]);
                 final Color tColdef = Color(jsonValue["t_colDef"]);
-                final Color color;
+                final Color color; 
 
                 if (t >= tMax)
                   color = tColmax;
