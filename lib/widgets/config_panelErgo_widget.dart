@@ -96,6 +96,7 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
                     TextStyle(fontSize: 25, color: CustomColors.firebaseAmber),
               ),
             ),
+            //Iconos
             SizedBox(
               height: 10,
             ),
@@ -123,6 +124,8 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
               icon: Icons.local_florist_rounded,
               units: ' ºC',
             ),
+
+            //Botón eliminar y actualizar
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -166,15 +169,20 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
                     'Eliminar',
                     style: TextStyle(color: Colors.white),
                   ),
-                ), */  //Botón de borrar panel
+                ), */  //Botón de borrar
               ],
             ),
+
+            //Texto de id panel
             Text(widget.id),
           ],
         ),
       ),
     );
   }
+
+
+//Obtiene los datos de la base de datos
 
   Future<void> getLimits() async {
     var panelID = widget.id;
@@ -201,6 +209,8 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
     });
   }
 
+
+//Elimina el panel demo (no se usa)
   //------------------------------------------------------------- _deletePanel
   Future<void> _deletePanel() async {
     if (mounted) {
@@ -221,6 +231,8 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
     }
   }
 
+
+//Actualiza los datos del panel
   //------------------------------------------------------------- _updatePanel
   Future<void> _updatePanel(var name) async {
     if (mounted) {
@@ -259,6 +271,7 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Icon(icon, color: Colors.white, size: 70),
+        //Aqui es lo de los sliders
         StreamBuilder(
             stream: ref.child('actual').onValue,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -266,7 +279,6 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
                 DataSnapshot data = snapshot.data.snapshot;
 
                 jsonValue = data.value;
-                debugPrint(jsonValue);
                 final int t = jsonValue["t"] as int;
                 final int tMax = jsonValue["t_max"] as int;
                 final int tMin = jsonValue["t_min"] as int;
