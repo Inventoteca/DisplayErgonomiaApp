@@ -298,7 +298,8 @@ class _LoginPageState extends State<LoginPage> {
 
                             //Text('Registrarse'),
                             //Expanded(
-                            /*child: */ ElevatedButton(
+                            /*child: */
+                            ElevatedButton(
                               onPressed: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
