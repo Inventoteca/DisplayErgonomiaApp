@@ -5,6 +5,7 @@ import '/res/custom_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '/utils/validator.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 late User _currentUser;
 late var _t_max;
@@ -38,10 +39,23 @@ class ConfigPanelErgo extends StatefulWidget {
 
 class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
   late String text;
+  late IconData? selectedIcon = null; // Inicializar selectedIcon con null
+  late Map<IconData, Color> iconColors;
+  Color? selectedColor;
 
   @override
   void initState() {
     super.initState();
+
+    iconColors = {
+      Icons.thermostat: Colors.grey,
+      Icons.water_drop_rounded: Colors.grey,
+      Icons.sunny: Colors.grey,
+      Icons.campaign_rounded: Colors.grey,
+      Icons.light_rounded: Colors.grey,
+      Icons.local_florist_rounded: Colors.grey
+    };
+
     _currentUser = widget.user;
     final panelID = widget.id;
 
@@ -256,6 +270,57 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
     }
   }
 
+  Widget _buildColorPickerTile({
+    required Color color, 
+    required ValueChanged<Color> onColorChanged, 
+    required String title,
+  }) {
+    return ListTile(
+      title: Text(
+        title,
+        style: TextStyle(fontSize: 18),
+      ),
+      trailing: Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          color: color,
+          border: Border.all(
+            color: Colors.grey,
+            width: 1.0,
+          ),
+          borderRadius: BorderRadius.circular(5),
+        ),
+      ),
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Seleccionar color'),
+              content: SingleChildScrollView(
+                child: ColorPicker(
+                  pickerColor: color,
+                  onColorChanged: onColorChanged,
+                  pickerAreaHeightPercent: 0.8,
+                  enableAlpha: false,
+                ),
+              ),
+              actions: [
+                TextButton(
+                  child: Text('Guardar'),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Cerrar el diálogo
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   // ------------------------------------- T Row
   Widget _buildRowT({
     IconData? icon,
@@ -267,63 +332,94 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
     final DatabaseReference ref =
         FirebaseDatabase.instance.ref('/panels/$panelID/');
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Icon(icon, color: Colors.white, size: 70),
-        //Aqui es lo de los sliders
-        StreamBuilder(
-            stream: ref.child('actual').onValue,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData && snapshot.data != null) {
-                DataSnapshot data = snapshot.data.snapshot;
-
-                jsonValue = data.value;
-                final int t = jsonValue["t"] as int;
-                final int tMax = jsonValue["t_max"] as int;
-                final int tMin = jsonValue["t_min"] as int;
-                final Color tColmax = Color(jsonValue["t_colMax"]);
-                final Color tColmin = Color(jsonValue["t_colMin"]);
-                final Color tColdef = Color(jsonValue["t_colDef"]);
-                final Color color; 
-
-                if (t >= tMax)
-                  color = tColmax;
-                else if (t <= tMin)
-                  color = tColmin;
-                else
-                  color = tColdef;
-
-                //RangeValues _currentRangeValues =
-                //    RangeValues(t_min.toDouble(), t_max.toDouble());
-
-                return RangeSlider(
-                  values: _currentRangeValues,
-                  max: 50,
-                  divisions: 50,
-                  labels: RangeLabels(
-                    _currentRangeValues.start.round().toString(),
-                    _currentRangeValues.end.round().toString(),
-                  ),
-                  onChanged: (RangeValues values) {
-                    setState(() {
-                      _currentRangeValues = values;
-                      jsonValue["t_max"] = values.end.toInt();
-                      jsonValue["t_min"] = values.start.toInt();
-                      debugPrint('${jsonValue["t_max"]}');
-                    });
-                    final DatabaseReference ref =
-                        FirebaseDatabase.instance.ref('/panels/$panelID/');
-                    ref.child('actual/').update(jsonValue);
-                  },
-                );
-              } else {
-                return Text(
-                  "Loading...",
-                  style: TextStyle(color: CustomColors.panelBackground),
-                );
+    
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      GestureDetector(
+          onTap: () {
+            // Cambiar el color del ícono al ser tocado
+            setState(() {
+              // Si ya hay un ícono seleccionado, restaura su color al valor inicial
+              if (selectedIcon != null) {
+                iconColors[selectedIcon!] = Colors.grey;
               }
-            }),
+              // Actualiza el ícono seleccionado y su color
+              selectedIcon = icon;
+              iconColors[icon!] = Colors.white;
+            });
+          },
+        child: Icon(icon, color: iconColors[icon], size: 70), // Usar el color actualizado
+      ),
+
+        //Aqui es lo de los sliders
+        
+        StreamBuilder(
+        stream: ref.child('config').onValue,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            DataSnapshot data = snapshot.data.snapshot;
+            jsonValue = data.value;
+            // Asegúrate de que tienes valores no nulos aquí
+            final Color tColmax = Color(jsonValue["t_colMax"] ?? 0xFFFFFFFF);
+            final Color tColmin = Color(jsonValue["t_colMin"] ?? 0xFFFFFFFF);
+            final Color tColdef = Color(jsonValue["t_colDef"] ?? 0xFFFFFFFF);
+
+            return Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: _buildColorPickerTile(
+                      color: tColmin,
+                      onColorChanged: (Color newColor) {
+                        setState(() {
+                          jsonValue["t_colMin"] = newColor.value;
+                          ref.child('config').update({'t_colMin': newColor.value});
+                        });
+                      },
+                      title: 'Min',
+                    ),
+                  ),
+                  Expanded(
+                    child: _buildColorPickerTile(
+                      color: tColdef,
+                      onColorChanged: (Color newColor) {
+                        setState(() {
+                          jsonValue["t_colDef"] = newColor.value;
+                          ref.child('config').update({'t_colDef': newColor.value});
+                        });
+                      },
+                      title: 'Def',
+                    ),
+                  ),
+                  Expanded(
+                    child: _buildColorPickerTile(
+                      color: tColmax,
+                      onColorChanged: (Color newColor) {
+                        setState(() {
+                          jsonValue["t_colMax"] = newColor.value;
+                          ref.child('config').update({'t_colMax': newColor.value});
+                        });
+                      },
+                      title: 'Max',
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return Expanded(
+              child: Center(
+                child: Text(
+                  "Loading...",
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+            );
+          }
+        },
+      )
       ],
     );
   }
