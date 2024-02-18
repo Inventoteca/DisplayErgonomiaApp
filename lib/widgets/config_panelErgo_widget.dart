@@ -353,95 +353,165 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
 
 
     // ------------------------------------- T Row
-    Widget _setdata({
-    String? units,
-  }) {
-    final panelID = widget.id;
-    final DatabaseReference ref =
-        FirebaseDatabase.instance.ref('/panels/$panelID/');
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start, // Alinea los elementos a la izquierda
-      crossAxisAlignment: CrossAxisAlignment.center, // Centra verticalmente los elementos
-      children: [
-        // Columna para los iconos
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start, // Alinea los iconos a la izquierda
-          children: [
-            _iconset(icon: Icons.thermostat, units: ' ºC'),
-            _iconset(icon: Icons.water_drop_rounded, units: ' ºC'),
-            _iconset(icon: Icons.sunny, units: ' ºC'),
-            _iconset(icon: Icons.campaign_rounded, units: ' ºC'),
-            _iconset(icon: Icons.light_rounded, units: ' ºC'),
-            _iconset(icon: Icons.local_florist_rounded, units: ' ºC'),
-          ],
+final TextEditingController _maxController = TextEditingController();
+final TextEditingController _minController = TextEditingController();
+
+
+Widget _setdata({
+  String? units,
+}) {
+  final panelID = widget.id;
+  final DatabaseReference ref = FirebaseDatabase.instance.ref('/panels/$panelID/');
+
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      // Columna para los iconos
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _iconset(icon: Icons.thermostat, units: ' ºC'),
+          _iconset(icon: Icons.water_drop_rounded, units: ' ºC'),
+          _iconset(icon: Icons.sunny, units: ' ºC'),
+          _iconset(icon: Icons.campaign_rounded, units: ' ºC'),
+          _iconset(icon: Icons.light_rounded, units: ' ºC'),
+          _iconset(icon: Icons.local_florist_rounded, units: ' ºC'),
+        ],
+      ),
+      // Columna para los number entrys y los color pickers
+      Expanded(
+        child: SizedBox(
+          height: 400,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Primer text field
+              StreamBuilder(
+                stream: ref.child('config').onValue,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData && snapshot.data != null) {
+                    DataSnapshot data = snapshot.data!.snapshot;
+                    Map<dynamic, dynamic>? jsonValue = data.value as Map<dynamic, dynamic>?;
+
+                    if (jsonValue != null) {
+                      String tMax = jsonValue['t_max']?.toString() ?? '';
+                      String tMin = jsonValue['t_min']?.toString() ?? '';
+                    
+                    _maxController.text = tMax.toString();
+                    _minController.text = tMin.toString();
+
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 50,
+                            width: 55,
+                            child: TextField(
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Max',
+                                labelStyle: TextStyle(fontSize: 15),
+                              ),
+                              style: TextStyle(fontSize: 20),
+                              controller: _maxController,
+                              onChanged: (value) {
+                                // Maneja los cambios en el primer text field
+                                // Actualiza el valor en Firebase
+                                int? max = int.tryParse(value);
+                                if (max != null) {
+                                  ref.child('config').update({'t_max': max});}
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 30),
+                          // Segundo text field
+                          SizedBox(
+                            height: 50,
+                            width: 55,
+                            child: TextField(
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Min',
+                                labelStyle: TextStyle(fontSize: 15),
+                              ),
+                              style: TextStyle(fontSize: 20),
+                              controller: _minController,
+                              onChanged: (value) {
+                                // Maneja los cambios en el segundo text field
+                                // Actualiza el valor en Firebase
+                                int? min = int.tryParse(value);
+                                if (min != null) {
+                                  ref.child('config').update({'t_min': min});}
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  }
+                  return CircularProgressIndicator();
+                },
+              ),
+              SizedBox(width: 30),
+              // Columna para los color pickers
+              StreamBuilder(
+                stream: ref.child('config').onValue,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData && snapshot.data != null) {
+                    DataSnapshot data = snapshot.data!.snapshot;
+                    Map<dynamic, dynamic>? jsonValue = data.value as Map<dynamic, dynamic>?;
+
+                    if (jsonValue != null) {
+                      final Color tColmax = Color(jsonValue["t_colMax"] ?? 0xFFFFFFFF);
+                      final Color tColmin = Color(jsonValue["t_colMin"] ?? 0xFFFFFFFF);
+                      final Color tColdef = Color(jsonValue["t_colDef"] ?? 0xFFFFFFFF);
+
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildColorPickerTile(
+                            color: tColmax,
+                            onColorChanged: (Color newColor) {
+                              // Actualiza el valor en Firebase
+                              ref.child('config').update({'t_colMax': newColor.value});
+                            },
+                            title: 'Max',
+                          ),
+                          _buildColorPickerTile(
+                            color: tColdef,
+                            onColorChanged: (Color newColor) {
+                              // Actualiza el valor en Firebase
+                              ref.child('config').update({'t_colDef': newColor.value});
+                            },
+                            title: 'Def',
+                          ),
+                          _buildColorPickerTile(
+                            color: tColmin,
+                            onColorChanged: (Color newColor) {
+                              // Actualiza el valor en Firebase
+                              ref.child('config').update({'t_colMin': newColor.value});
+                            },
+                            title: 'Min',
+                          ),
+                        ],
+                      );
+                    }
+                  }
+                  return CircularProgressIndicator();
+                },
+              ),
+            ],
+          ),
         ),
-        SizedBox(width: 20), // Espacio entre los iconos y los color pickers
-        // Columna para los color pickers
+      ),
+    ],
+  );
+}
 
-        StreamBuilder(
-          stream: ref.child('config').onValue,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
-              DataSnapshot data = snapshot.data.snapshot;
-              jsonValue = data.value;
-              // Asegúrate de que tienes valores no nulos aquí
-              final Color tColmax = Color(jsonValue["t_colMax"] ?? 0xFFFFFFFF);
-              final Color tColmin = Color(jsonValue["t_colMin"] ?? 0xFFFFFFFF);
-              final Color tColdef = Color(jsonValue["t_colDef"] ?? 0xFFFFFFFF);
-              
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start, // Alinea los color pickers a la izquierda
-                
-                children: [
-
-                  _buildColorPickerTile(
-                    color: tColmin,
-                    onColorChanged: (Color newColor) {
-                      setState(() {
-                        jsonValue["t_colMin"] = newColor.value;
-                        ref.child('config').update({'t_colMin': newColor.value});
-                      });
-                    },
-                    title: 'Min',
-                  ),
-                  SizedBox(width: 20), // Espacio entre los iconos y los color pickers
-                  _buildColorPickerTile(
-                    color: tColdef,
-                    onColorChanged: (Color newColor) {
-                      setState(() {
-                        jsonValue["t_colDef"] = newColor.value;
-                        ref.child('config').update({'t_colDef': newColor.value});
-                      });
-                    },
-                    title: 'Def',
-                  ),
-                  SizedBox(width: 20), // Espacio entre los iconos y los color pickers
-                  _buildColorPickerTile(
-                    color: tColmax,
-                    onColorChanged: (Color newColor) {
-                      setState(() {
-                        jsonValue["t_colMax"] = newColor.value;
-                        ref.child('config').update({'t_colMax': newColor.value});
-                      });
-                    },
-                    title: 'Max',
-                  ),
-                ],
-              );
-            } else {
-              return Expanded(
-                child: Center(
-                  child: Text(
-                    "Loading...",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-              );
-            }
-          },
-        ),
-      ],
-    );
-  }
 }
