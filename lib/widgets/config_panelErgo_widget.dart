@@ -54,7 +54,7 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
       Icons.sunny: Colors.grey,
       Icons.campaign_rounded: Colors.grey,
       Icons.light_rounded: Colors.grey,
-      Icons.local_florist_rounded: Colors.grey
+      Icons.local_florist_rounded: Colors.grey,
     };
 
     _currentUser = widget.user;
@@ -401,7 +401,16 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
                         String tMin = jsonValue['t_min']?.toString() ?? '';
                         String hMax = jsonValue['h_max']?.toString() ?? '';
                         String hMin = jsonValue['h_min']?.toString() ?? '';
+                        String uvMax = jsonValue['uv_max']?.toString() ?? '';
+                        String uvMin = jsonValue['uv_min']?.toString() ?? '';
+                        String dbMax = jsonValue['db_max']?.toString() ?? '';
+                        String dbMin = jsonValue['db_min']?.toString() ?? '';
+                        String luxMax = jsonValue['lux_max']?.toString() ?? '';
+                        String luxMin = jsonValue['lux_min']?.toString() ?? '';
+                        String ppmMax = jsonValue['ppm_max']?.toString() ?? '';
+                        String ppmMin = jsonValue['ppm_min']?.toString() ?? '';
 
+                        // ----------------------------------------------------- temperature
                         if (selectedIcon == Icons.thermostat) {
                           _maxController.text = tMax.toString();
                           _minController.text = tMin.toString();
@@ -473,7 +482,8 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
                               ),
                             ],
                           );
-                        } else if (selectedIcon == Icons.water_drop_rounded) {
+                        } // ----------------------------------------------------- humidity
+                        else if (selectedIcon == Icons.water_drop_rounded) {
                           _maxController.text = hMax.toString();
                           _minController.text = hMin.toString();
                           return Column(
@@ -538,6 +548,299 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
                                       ref
                                           .child('config')
                                           .update({'h_min': min});
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                        // ----------------------------------------------------- uv index
+                        else if (selectedIcon == Icons.sunny) {
+                          _maxController.text = uvMax.toString();
+                          _minController.text = uvMin.toString();
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 50,
+                                width: 100,
+                                child: Text(
+                                  'Radiación UV',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 100),
+                              SizedBox(
+                                height: 50,
+                                width: 70,
+                                child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Máximo',
+                                    labelStyle: TextStyle(fontSize: 15),
+                                  ),
+                                  style: TextStyle(fontSize: 20),
+                                  controller: _maxController,
+                                  onChanged: (value) {
+                                    // Maneja los cambios en el primer text field
+                                    // Actualiza el valor en Firebase
+                                    int? max = int.tryParse(value);
+                                    if (max != null) {
+                                      ref
+                                          .child('config')
+                                          .update({'uv_max': max});
+                                    }
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 30),
+                              // Segundo text field
+                              SizedBox(
+                                height: 50,
+                                width: 70,
+                                child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Mínimo',
+                                    labelStyle: TextStyle(fontSize: 15),
+                                  ),
+                                  style: TextStyle(fontSize: 20),
+                                  controller: _minController,
+                                  onChanged: (value) {
+                                    // Maneja los cambios en el segundo text field
+                                    // Actualiza el valor en Firebase
+                                    int? min = int.tryParse(value);
+                                    if (min != null) {
+                                      ref
+                                          .child('config')
+                                          .update({'uv_min': min});
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                        // ----------------------------------------------------- dB
+                        else if (selectedIcon == Icons.campaign_rounded) {
+                          _maxController.text = dbMax.toString();
+                          _minController.text = dbMin.toString();
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 50,
+                                width: 100,
+                                child: Text(
+                                  'Ruido (dB)',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 100),
+                              SizedBox(
+                                height: 50,
+                                width: 70,
+                                child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Máximo',
+                                    labelStyle: TextStyle(fontSize: 15),
+                                  ),
+                                  style: TextStyle(fontSize: 20),
+                                  controller: _maxController,
+                                  onChanged: (value) {
+                                    // Maneja los cambios en el primer text field
+                                    // Actualiza el valor en Firebase
+                                    int? max = int.tryParse(value);
+                                    if (max != null) {
+                                      ref
+                                          .child('config')
+                                          .update({'db_max': max});
+                                    }
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 30),
+                              // Segundo text field
+                              SizedBox(
+                                height: 50,
+                                width: 70,
+                                child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Mínimo',
+                                    labelStyle: TextStyle(fontSize: 15),
+                                  ),
+                                  style: TextStyle(fontSize: 20),
+                                  controller: _minController,
+                                  onChanged: (value) {
+                                    // Maneja los cambios en el segundo text field
+                                    // Actualiza el valor en Firebase
+                                    int? min = int.tryParse(value);
+                                    if (min != null) {
+                                      ref
+                                          .child('config')
+                                          .update({'db_min': min});
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+
+                        // ----------------------------------------------------- lux
+                        else if (selectedIcon == Icons.light_rounded) {
+                          _maxController.text = luxMax.toString();
+                          _minController.text = luxMin.toString();
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 50,
+                                width: 100,
+                                child: Text(
+                                  'Lux',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 100),
+                              SizedBox(
+                                height: 50,
+                                width: 70,
+                                child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Máximo',
+                                    labelStyle: TextStyle(fontSize: 15),
+                                  ),
+                                  style: TextStyle(fontSize: 20),
+                                  controller: _maxController,
+                                  onChanged: (value) {
+                                    // Maneja los cambios en el primer text field
+                                    // Actualiza el valor en Firebase
+                                    int? max = int.tryParse(value);
+                                    if (max != null) {
+                                      ref
+                                          .child('config')
+                                          .update({'lux_max': max});
+                                    }
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 30),
+                              // Segundo text field
+                              SizedBox(
+                                height: 50,
+                                width: 70,
+                                child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Mínimo',
+                                    labelStyle: TextStyle(fontSize: 15),
+                                  ),
+                                  style: TextStyle(fontSize: 20),
+                                  controller: _minController,
+                                  onChanged: (value) {
+                                    // Maneja los cambios en el segundo text field
+                                    // Actualiza el valor en Firebase
+                                    int? min = int.tryParse(value);
+                                    if (min != null) {
+                                      ref
+                                          .child('config')
+                                          .update({'lux_min': min});
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                        // ----------------------------------------------------- lppm
+                        else if (selectedIcon == Icons.local_florist_rounded) {
+                          _maxController.text = ppmMax.toString();
+                          _minController.text = ppmMin.toString();
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 50,
+                                width: 100,
+                                child: Text(
+                                  'AireQ PPM',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 100),
+                              SizedBox(
+                                height: 50,
+                                width: 70,
+                                child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Máximo',
+                                    labelStyle: TextStyle(fontSize: 15),
+                                  ),
+                                  style: TextStyle(fontSize: 20),
+                                  controller: _maxController,
+                                  onChanged: (value) {
+                                    // Maneja los cambios en el primer text field
+                                    // Actualiza el valor en Firebase
+                                    int? max = int.tryParse(value);
+                                    if (max != null) {
+                                      ref
+                                          .child('config')
+                                          .update({'ppm_max': max});
+                                    }
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 30),
+                              // Segundo text field
+                              SizedBox(
+                                height: 50,
+                                width: 70,
+                                child: TextField(
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Mínimo',
+                                    labelStyle: TextStyle(fontSize: 15),
+                                  ),
+                                  style: TextStyle(fontSize: 20),
+                                  controller: _minController,
+                                  onChanged: (value) {
+                                    // Maneja los cambios en el segundo text field
+                                    // Actualiza el valor en Firebase
+                                    int? min = int.tryParse(value);
+                                    if (min != null) {
+                                      ref
+                                          .child('config')
+                                          .update({'ppm_min': min});
                                     }
                                   },
                                 ),
@@ -617,6 +920,7 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
                           data.value as Map<dynamic, dynamic>?;
 
                       if (jsonValue != null) {
+                        // ------------------------------------------------------ temperatureColors
                         if (selectedIcon == Icons.thermostat) {
                           final Color tColmax =
                               Color(jsonValue["t_colMax"] ?? 0xFFFFFFFF);
@@ -660,7 +964,9 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
                               ),
                             ],
                           );
-                        } else {
+                        }
+                        // ------------------------------------------------------ humidityColors
+                        else if (selectedIcon == Icons.water_drop_rounded) {
                           final Color tColmax =
                               Color(jsonValue["h_colMax"] ?? 0xFFFFFFFF);
                           final Color tColmin =
@@ -698,6 +1004,185 @@ class _ConfigPanelErgoState extends State<ConfigPanelErgo> {
                                   ref
                                       .child('config')
                                       .update({'h_colMin': newColor.value});
+                                },
+                                title: 'Mínimo',
+                              ),
+                            ],
+                          );
+                        }
+                        // ------------------------------------------------------ UVColors
+                        else if (selectedIcon == Icons.sunny) {
+                          final Color tColmax =
+                              Color(jsonValue["uv_colMax"] ?? 0xFFFFFFFF);
+                          final Color tColmin =
+                              Color(jsonValue["uv_colMin"] ?? 0xFFFFFFFF);
+                          final Color tColdef =
+                              Color(jsonValue["uv_colDef"] ?? 0xFFFFFFFF);
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildColorPickerTile(
+                                currentColor: tColmax,
+                                onColorChanged: (Color newColor) {
+                                  // Actualiza el valor en Firebase
+                                  ref
+                                      .child('config')
+                                      .update({'uv_colMax': newColor.value});
+                                },
+                                title: 'Máximo',
+                              ),
+                              _buildColorPickerTile(
+                                currentColor: tColdef,
+                                onColorChanged: (Color newColor) {
+                                  // Actualiza el valor en Firebase
+                                  ref
+                                      .child('config')
+                                      .update({'uv_colDef': newColor.value});
+                                },
+                                title: 'Normal',
+                              ),
+                              _buildColorPickerTile(
+                                currentColor: tColmin,
+                                onColorChanged: (Color newColor) {
+                                  // Actualiza el valor en Firebase
+                                  ref
+                                      .child('config')
+                                      .update({'uv_colMin': newColor.value});
+                                },
+                                title: 'Mínimo',
+                              ),
+                            ],
+                          );
+                        }
+                        // ------------------------------------------------------ DBColors
+                        else if (selectedIcon == Icons.campaign_rounded) {
+                          final Color tColmax =
+                              Color(jsonValue["db_colMax"] ?? 0xFFFFFFFF);
+                          final Color tColmin =
+                              Color(jsonValue["db_colMin"] ?? 0xFFFFFFFF);
+                          final Color tColdef =
+                              Color(jsonValue["db_colDef"] ?? 0xFFFFFFFF);
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildColorPickerTile(
+                                currentColor: tColmax,
+                                onColorChanged: (Color newColor) {
+                                  // Actualiza el valor en Firebase
+                                  ref
+                                      .child('config')
+                                      .update({'db_colMax': newColor.value});
+                                },
+                                title: 'Máximo',
+                              ),
+                              _buildColorPickerTile(
+                                currentColor: tColdef,
+                                onColorChanged: (Color newColor) {
+                                  // Actualiza el valor en Firebase
+                                  ref
+                                      .child('config')
+                                      .update({'db_colDef': newColor.value});
+                                },
+                                title: 'Normal',
+                              ),
+                              _buildColorPickerTile(
+                                currentColor: tColmin,
+                                onColorChanged: (Color newColor) {
+                                  // Actualiza el valor en Firebase
+                                  ref
+                                      .child('config')
+                                      .update({'db_colMin': newColor.value});
+                                },
+                                title: 'Mínimo',
+                              ),
+                            ],
+                          );
+                        } // ------------------------------------------------------ luxColors
+                        else if (selectedIcon == Icons.light_rounded) {
+                          final Color tColmax =
+                              Color(jsonValue["lux_colMax"] ?? 0xFFFFFFFF);
+                          final Color tColmin =
+                              Color(jsonValue["lux_colMin"] ?? 0xFFFFFFFF);
+                          final Color tColdef =
+                              Color(jsonValue["lux_colDef"] ?? 0xFFFFFFFF);
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildColorPickerTile(
+                                currentColor: tColmax,
+                                onColorChanged: (Color newColor) {
+                                  // Actualiza el valor en Firebase
+                                  ref
+                                      .child('config')
+                                      .update({'lux_colMax': newColor.value});
+                                },
+                                title: 'Máximo',
+                              ),
+                              _buildColorPickerTile(
+                                currentColor: tColdef,
+                                onColorChanged: (Color newColor) {
+                                  // Actualiza el valor en Firebase
+                                  ref
+                                      .child('config')
+                                      .update({'lux_colDef': newColor.value});
+                                },
+                                title: 'Normal',
+                              ),
+                              _buildColorPickerTile(
+                                currentColor: tColmin,
+                                onColorChanged: (Color newColor) {
+                                  // Actualiza el valor en Firebase
+                                  ref
+                                      .child('config')
+                                      .update({'lux_colMin': newColor.value});
+                                },
+                                title: 'Mínimo',
+                              ),
+                            ],
+                          );
+                        }
+                        // ------------------------------------------------------ ppmColors
+                        else if (selectedIcon == Icons.local_florist_rounded) {
+                          final Color tColmax =
+                              Color(jsonValue["ppm_colMax"] ?? 0xFFFFFFFF);
+                          final Color tColmin =
+                              Color(jsonValue["ppm_colMin"] ?? 0xFFFFFFFF);
+                          final Color tColdef =
+                              Color(jsonValue["ppm_colDef"] ?? 0xFFFFFFFF);
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildColorPickerTile(
+                                currentColor: tColmax,
+                                onColorChanged: (Color newColor) {
+                                  // Actualiza el valor en Firebase
+                                  ref
+                                      .child('config')
+                                      .update({'ppm_colMax': newColor.value});
+                                },
+                                title: 'Máximo',
+                              ),
+                              _buildColorPickerTile(
+                                currentColor: tColdef,
+                                onColorChanged: (Color newColor) {
+                                  // Actualiza el valor en Firebase
+                                  ref
+                                      .child('config')
+                                      .update({'ppm_colDef': newColor.value});
+                                },
+                                title: 'Normal',
+                              ),
+                              _buildColorPickerTile(
+                                currentColor: tColmin,
+                                onColorChanged: (Color newColor) {
+                                  // Actualiza el valor en Firebase
+                                  ref
+                                      .child('config')
+                                      .update({'ppm_colMin': newColor.value});
                                 },
                                 title: 'Mínimo',
                               ),
